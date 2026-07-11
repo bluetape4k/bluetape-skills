@@ -12,8 +12,10 @@ The repository is a portable public bundle, not a copy of a maintainer's Codex h
 
 ## Install
 
+Install the stable release, validate the bundle, and run the installer:
+
 ```bash
-git clone https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.0.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
@@ -29,7 +31,20 @@ The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrit
 
 Restart Codex after installation so the new skills are discovered.
 
+To follow unreleased changes, clone `main` by omitting the `--branch v1.0.0 --depth 1` options. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
+
 ## Update
+
+Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
+
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.0.0
+cd bluetape-skills-v1.0.0
+./scripts/validate.sh
+./scripts/install.sh --force
+```
+
+If you intentionally track `main`, update that branch in place:
 
 ```bash
 git pull --ff-only
@@ -58,12 +73,20 @@ Start with `$bluetape-workflow` for a Bluetape ecosystem task. It classifies the
 
 The `skills/manifest.json` file is the machine-readable inventory. Skill folders include their own `SKILL.md` and referenced material, so copy the complete folder rather than only `SKILL.md`.
 
+## 7-Tier review gates
+
+Full Feature work reuses the same 7-Tier review engine at `2-R` Spec Review, `3-R` Plan Review, and `6-R` Pre-PR Review. Six independent perspectives—Performance, Stability, Security, Operator/Ops, Developer/API, and User/Caller—find different failures; main-session integration is the seventh tier.
+
+[![The 2-R Spec, 3-R Plan, and 6-R Pre-PR gates pass through six independent review perspectives and main-session integration, then loop through repair and validation until P0 and P1 reach zero](docs/images/bluetape-workflow-7-tier-review-01.png)](docs/images/bluetape-workflow-7-tier-review-01.svg)
+
+Any remaining `P0` or `P1` finding blocks the next gate. Repair the blocker, rerun validation, reopen every affected review lane, and integrate again. Work advances only when the latest result is `P0=0` and `P1=0`.
+
 ## Guides
 
 - [Sharing and installing Bluetape skills](https://bluetape4k.github.io/blog/bluetape-skills-sharing/) explains the public bundle, source ownership, installation, updates, and collaboration model.
 - [Using the Bluetape workflow](https://bluetape4k.github.io/blog/bluetape-skills-workflow-guide/) explains task classification, checklist gates, staged multi-perspective review, and the P0/P1 zero-blocker loop.
 
-The guides contain the detailed source-sync, execution-lane, and 7-Tier review diagrams that complement this quick-start README.
+The guides contain detailed source-sync and execution-lane diagrams that complement this quick-start README.
 
 ## What is deliberately excluded
 
