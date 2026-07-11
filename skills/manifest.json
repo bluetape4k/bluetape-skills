@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "distribution": "canonical-public-bundle",
+  "skills": [
+    "bluetape-bugfix",
+    "bluetape-diagram",
+    "bluetape-fast-track",
+    "bluetape-full-feature",
+    "bluetape-go-patterns",
+    "bluetape-kotlin-patterns",
+    "bluetape-maintenance",
+    "bluetape-publish-go",
+    "bluetape-publish-jvm",
+    "bluetape-py-patterns",
+    "bluetape-rs-patterns",
+    "bluetape-self-improve",
+    "bluetape-workflow",
+    "bluetape-writer"
+  ],
+  "excluded": [
+    "retired aliases",
+    "user memory",
+    "rules and hooks",
+    "configuration",
+    "plugin caches"
+  ]
+}

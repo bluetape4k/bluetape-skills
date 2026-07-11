@@ -1,0 +1,48 @@
+# Kotlin Final Checklist
+
+Use immediately before a Kotlin completion claim or review verdict.
+
+- [ ] **KT-FIN-01 — Inspect the current surface**
+  - **Action:** Inspect current source, references/callers, tests, and public docs.
+  - **Evidence:** Concrete files/symbols and impact notes.
+  - **Failure:** Reopen discovery before verdict.
+- [ ] **KT-FIN-02 — Preserve validation contracts**
+  - **Action:** Verify caller validation uses bluetape4k helpers and compatible exception types.
+  - **Evidence:** Touched validation sites and tests.
+  - **Failure:** Repair contract drift or record a blocking finding.
+- [ ] **KT-FIN-03 — Exclude unsafe Kotlin constructs**
+  - **Action:** Check for new production `!!`, suspend `runCatching`, swallowed cancellation, blocking event-loop calls, and monitors in virtual-thread-aware code.
+  - **Evidence:** Clean diff search and targeted lifecycle tests when touched.
+  - **Failure:** Remove the construct or block progression.
+- [ ] **KT-FIN-04 — Prove lifecycle ownership**
+  - **Action:** Verify resource ownership, cleanup, retry/timeout, and every failure path.
+  - **Evidence:** Code paths and tests for the touched lifecycle.
+  - **Failure:** Add explicit ownership/proof before PASS.
+- [ ] **KT-FIN-05 — Verify Exposed boundaries**
+  - **Action:** When touched, check operator imports, receiver shadowing, transactions, and DDL/API source.
+  - **Evidence:** Current imports/source anchors and targeted tests, or concrete N/A.
+  - **Failure:** Repair deprecated/ambiguous boundaries.
+- [ ] **KT-FIN-06 — Apply triggered references**
+  - **Action:** Complete every triggered Spring, testing, Testcontainers, HTTP/HC5, and module checklist.
+  - **Evidence:** Reference checklist counts and evidence, or concrete trigger-based N/A.
+  - **Failure:** An unloaded or partial reference blocks the Kotlin verdict.
+- [ ] **KT-FIN-07 — Prove named test behavior**
+  - **Action:** Verify touched tests use bluetape4k assertions and cannot pass without proving the named behavior.
+  - **Evidence:** Assertion/test review and fresh targeted result.
+  - **Failure:** Strengthen the test before progression.
+- [ ] **KT-FIN-08 — Synchronize public documentation**
+  - **Action:** Verify English KDoc, README locales, examples, and diagrams match the public API.
+  - **Evidence:** Source-to-doc mapping and rendered/asset proof when applicable.
+  - **Failure:** Repair drift or supply concrete N/A evidence.
+- [ ] **KT-FIN-09 — Clear diagnostics**
+  - **Action:** Resolve IDE diagnostics, imports, and deprecations; use recorded compile/test fallback only when IDE tooling is unavailable.
+  - **Evidence:** Clean diagnostics or exact fallback commands/results.
+  - **Failure:** Do not compile past unresolved touched-code diagnostics.
+- [ ] **KT-FIN-10 — Run fresh validation**
+  - **Action:** Run targeted compile/tests and `git diff --check`.
+  - **Evidence:** Fresh successful command outputs.
+  - **Failure:** Report the exact gap and keep completion blocked.
+- [ ] **KT-FIN-11 — Converge final scope**
+  - **Action:** Inspect final commit/PR scope and parent findings.
+  - **Evidence:** No unrelated changes and P0=0/P1=0.
+  - **Failure:** Split scope or repair findings before progression.

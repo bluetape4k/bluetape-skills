@@ -1,0 +1,4 @@
+interface:
+  display_name: "bluetape4k Publish Go"
+  short_description: "Release and tag bluetape-go repositories safely."
+  default_prompt: "Use this skill to classify and run a Go-focused bluetape release with fresh milestone, changelog, P0/P1, CI, promotion, immutable tag, GitHub Release, and cleanup evidence."
