@@ -10,6 +10,29 @@ readonly expected_skills=(
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 skills_root="$repo_root/skills"
+workflow_root="$skills_root/bluetape-workflow"
+
+for command in rg python3 uv; do
+  command -v "$command" >/dev/null || { echo "missing required command: $command" >&2; exit 1; }
+done
+
+python3 - "$skills_root/manifest.json" "${expected_skills[@]}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+manifest_path = Path(sys.argv[1])
+expected = sys.argv[2:]
+manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+if manifest.get("schemaVersion") != 1:
+    raise SystemExit("unexpected manifest schemaVersion")
+if manifest.get("distribution") != "canonical-public-bundle":
+    raise SystemExit("unexpected manifest distribution")
+if manifest.get("skills") != expected:
+    raise SystemExit("manifest skill inventory does not match the canonical order")
+if manifest.get("externalSkills") != ["code-review", "self-audit"]:
+    raise SystemExit("unexpected external skill dependency inventory")
+PY
 
 for skill in "${expected_skills[@]}"; do
   skill_file="$skills_root/$skill/SKILL.md"
@@ -37,4 +60,58 @@ if find "$skills_root" -name '.DS_Store' -print -quit | rg -q .; then
   exit 1
 fi
 
-echo "PASS: ${#expected_skills[@]} canonical skills have valid front matter and no private/runtime payload."
+if find "$skills_root" -type f -name 'executable_*' -print -quit | rg -q .; then
+  echo "unrendered chezmoi executable filename found in bundle" >&2
+  exit 1
+fi
+
+readonly workflow_scripts=(
+  audit-token-budget.py bluetape-flow.py validate-contracts.py
+)
+for script in "${workflow_scripts[@]}"; do
+  script_path="$workflow_root/scripts/$script"
+  [[ -x "$script_path" ]] || { echo "missing executable workflow script: $script" >&2; exit 1; }
+done
+
+set +e
+contract_json="$(python3 "$workflow_root/scripts/validate-contracts.py" \
+  --skill-root "$workflow_root" \
+  --skills-root "$skills_root" \
+  --json)"
+contract_status=$?
+set -e
+
+python3 - "$skills_root/manifest.json" "$contract_status" "$contract_json" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+status = int(sys.argv[2])
+result = json.loads(sys.argv[3])
+external = set(manifest["externalSkills"])
+observed_external = set()
+unexpected = []
+for issue in result.get("issues", []):
+    code = issue.get("code")
+    message = issue.get("message", "")
+    dependency = message.rsplit(" ", 1)[-1].removeprefix("$")
+    if code not in {"unknown_skill_reference", "manifest_route_missing"} or dependency not in external:
+        unexpected.append(issue)
+    else:
+        observed_external.add(dependency)
+if unexpected or observed_external != external or status != 1:
+    print(json.dumps({
+        "contract_status": status,
+        "declared_external": sorted(external),
+        "issues": unexpected,
+        "observed_external": sorted(observed_external),
+        "ok": False,
+    }, sort_keys=True), file=sys.stderr)
+    raise SystemExit(status or 1)
+print(json.dumps({"external_skills": sorted(external), "issues": [], "ok": True}, sort_keys=True))
+PY
+
+PYTHONDONTWRITEBYTECODE=1 uv run --with pytest pytest -q "$workflow_root/tests"
+
+echo "PASS: ${#expected_skills[@]} canonical skills, workflow contracts, tests, and public bundle boundaries are valid."

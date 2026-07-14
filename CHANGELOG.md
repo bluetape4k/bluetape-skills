@@ -2,6 +2,23 @@
 
 All notable changes to Bluetape Skills are documented in this file.
 
+## [1.1.0] - 2026-07-14
+
+### Added
+
+- Phase 2 native workflow runtime with guarded run/lane lifecycle commands, topology-based completion, liveness handling, receipt-backed recovery, handoff, and immutable live reports.
+- Workflow manifest 1.1, receipt/topology/liveness contracts, and regression coverage for coordinator lifecycle, recovery, security, locking, scale, and rendered layouts.
+
+### Changed
+
+- Synchronized all 14 canonical Bluetape skills so router, maintenance, publishing, bug-fix, fast-track, full-feature, and self-improvement gates share the current workflow contract.
+- Expanded bundle validation to check the manifest inventory, rendered executable names, declared external companion skills, workflow contracts, and the complete workflow test suite.
+- Updated English and Korean installation, update, runtime, and verification guidance for the 1.1.0 bundle.
+
+### Security
+
+- Hardened owner fencing, filesystem containment, permission checks, stale-lock recovery, receipt verification, and recovery-run provenance.
+
 ## [1.0.0] - 2026-07-11
 
 ### Added
@@ -12,3 +29,4 @@ All notable changes to Bluetape Skills are documented in this file.
 - Validation for canonical inventory, required skill front matter, and forbidden private or secret-like payloads.
 
 [1.0.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.0.0
+[1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0

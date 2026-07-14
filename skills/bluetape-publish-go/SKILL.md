@@ -11,10 +11,14 @@ Use `bluetape-workflow` for Step DoD, first-plan approval, GitHub metadata,
 and side-effect authority; use `bluetape-go-patterns` for Go P0/P1 preflight.
 This skill is for Go modules without Maven/Gradle/BOM/catalog/snapshot trains.
 
-Tag creation/push, GitHub Release, PR merge, milestone/issue close, and remote
-branch deletion are external side effects. Execute only when explicitly
-requested or already included in the approved release scope. Never rewrite a
-remote tag without an explicit old-object/new-object retag plan.
+Tag creation/push, GitHub Release, PR delivery/merge, milestone/issue close, and
+remote branch deletion are external side effects. PR authority, head publish,
+creation, review, and merge-ready reporting use CG-11 through CG-15. Every PR
+merge requires fresh post-report approval through CG-16 before CG-17/18,
+regardless of earlier release scope. Other irreversible actions use CG-X01
+immediately before the exact action and only when explicitly requested or
+included in current approved release scope. Never rewrite a remote tag without
+an explicit old-object/new-object retag plan.
 
 ## Reference Routing
 
@@ -78,11 +82,28 @@ matching changelog without explicitly documenting an approved hygiene backfill.
 
 ## Milestone Close
 
-Before closing: milestone issues=0 except the closing Epic; implementation PRs
-merged; no open PR closes scoped issues; changelog gate satisfied or a history
-PR exists. Update the Epic checklist and closure comment with child issues,
-local/CI evidence, and changelog/tag/release state, then close Epic and
-milestone only when authorized.
+Instantiate these rows when milestone close is selected:
+
+- [ ] **GO-MILE-01 — Verify close prerequisites and authority**
+  - **Action:** Prove milestone issues=0 except the closing Epic, implementation PRs merged, no open PR closes scoped issues, changelog gate satisfied or a history PR exists, and exact current authority exists for the planned Epic update/comment and close targets.
+  - **Evidence:** Live milestone/issue/PR results, changelog state, exact Epic and milestone targets, and authority record.
+  - **Failure:** Stop all milestone mutations until scope, prerequisites, and authority are current.
+- [ ] **GO-MILE-02 — Update and verify the Epic checklist**
+  - **Action:** Update only the authorized Epic checklist with final child-issue state, then read back the live body.
+  - **Evidence:** Epic URL, before/after checklist state, and verified live body.
+  - **Failure:** Repair the Epic body before posting or closing anything else.
+- [ ] **GO-MILE-03 — Post and verify the closure comment**
+  - **Action:** Post the authorized closure comment with child issues, local/CI evidence, and changelog/tag/release state, then read it back live.
+  - **Evidence:** Comment URL/body and verified live issue timeline.
+  - **Failure:** Repair the comment before closing the Epic or milestone.
+- [ ] **GO-MILE-04 — Close and verify the Epic**
+  - **Action:** After a new CG-X01 instance passes for the exact Epic close, close the Epic and read back its live state.
+  - **Evidence:** Exact-action hold, Epic URL, closed state, and close timestamp.
+  - **Failure:** Keep the Epic open/PENDING without current authority; repair any failed close before the milestone.
+- [ ] **GO-MILE-05 — Close and verify the milestone**
+  - **Action:** After a new CG-X01 instance passes for the exact milestone close, close the milestone and read back its live state.
+  - **Evidence:** Exact-action hold, milestone URL, closed state, and close timestamp.
+  - **Failure:** Keep the milestone open/PENDING without current authority; never infer it from the Epic close.
 
 ## Stable Release Summary
 

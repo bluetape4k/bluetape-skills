@@ -26,8 +26,9 @@ Required checks: {checked}/{total}; N/A: {count}; Blocked: {count}
 ### Metadata / CI
 
 - Issue: #{number}, milestone `{milestone}`, assignee `{user}`
-- PR: #{number}, milestone `{milestone}`, assignee `{user}`, merge state `{state}`
+- PR: #{number}, head `{sha}`, milestone `{milestone}`, assignee `{user}`, merge state `{state}`
 - CI: {run/check URL or N/A with concrete scope evidence}
+- Delivery stage: {CG-14 CI/review PENDING / CG-15 merge-ready / CG-16 fresh approval PENDING / CG-18 closeout DONE / no-PR N/A}
 
 ### Changed Files
 
@@ -37,7 +38,14 @@ Required checks: {checked}/{total}; N/A: {count}; Blocked: {count}
 
 {git log ... --oneline}
 
-Final status: DONE / PENDING ({explicit boundary or remaining step}) / BLOCKED ({reason})
+Final status: DONE / PENDING ({explicit gate ID, exact target/head, and remaining step}) / BLOCKED ({reason})
 
 Unchecked required items: {none or checklist IDs}
 ```
+
+At merge-ready, do not claim `X=Y`: CG-16 through CG-18 remain applicable and
+unchecked. Use `PENDING (CG-16 fresh merge approval for PR #{number} at
+{head-sha})`. Report `DONE` only after CG-17 live merge verification and CG-18
+sync/cleanup, or after the no-PR branch records CG-11 through CG-18 N/A.
+The no-PR branch reaches `DONE` only when every other applicable
+router/common/leaf row is PASS or evidence-backed N/A.

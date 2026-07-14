@@ -4,8 +4,14 @@ Use this contract for every bluetape workflow and leaf skill.
 
 ## Status Semantics
 
-- `[ ]` means not proved. It blocks every dependent item.
+- `[ ]` means not proved. It blocks every dependent item but does not by itself
+  mean failure.
 - `[x]` means the required evidence was collected fresh and read.
+- `PENDING` means the gate and target are valid but the workflow is waiting for
+  user input or an external result. It blocks dependents while keeping the
+  overall state `PENDING`, not `BLOCKED`.
+- `FAIL` means an attempted proof failed and must be repaired before dependents
+  run. `BLOCKED` means no safe repair or continuation is currently available.
 - `UNKNOWN`, stale evidence, missing output, or agent assertion without local
   verification is `FAIL`, not a reason to continue.
 - `SKIPPED` is forbidden. Use `N/A` only when the item is genuinely
@@ -31,6 +37,18 @@ Every executable item uses this exact structure:
 Do not combine independent proofs into one checkbox. A checkbox may be checked
 only after its evidence has been produced and read in the current execution.
 
+## Ordering Contract
+
+- Executable rows must appear in dependency order. A later row may depend only
+  on an earlier row; backward references are invalid.
+- Every external side effect needs its own explicit row. Its authority must be
+  established by an earlier row, and the action row must require fresh
+  post-action read-back evidence; neither may be hidden in an unrelated row.
+- Conditional branches must name their prerequisite, rejoin point, and N/A
+  evidence. Document order remains authoritative inside each branch.
+- Normal waiting at an approval, CI, review, or other external boundary is
+  `PENDING`. Do not route around it or invoke repair solely because it waits.
+
 ## Execution Rules
 
 - [ ] **CL-01 — Create before mutation**
@@ -42,16 +60,19 @@ only after its evidence has been produced and read in the current execution.
   - **Evidence:** no unclassified checklist item.
   - **Failure:** treat the item as required and unchecked.
 - [ ] **CL-03 — Respect dependency order**
-  - **Action:** Execute dependent items sequentially.
-  - **Evidence:** timestamps/results show prerequisites completed first.
+  - **Action:** Execute rows top to bottom within the selected branch; enter a
+    conditional branch only after its named prerequisite passes.
+  - **Evidence:** document order, branch selection, and timestamps/results show
+    prerequisites completed first with no backward jump.
   - **Failure:** stop and rerun affected downstream proof after repair.
 - [ ] **CL-04 — Record evidence immediately**
   - **Action:** Attach evidence when checking the item.
   - **Evidence:** command/file/URL/count/result beside the item.
   - **Failure:** leave unchecked; late reconstruction is a repair, not normal flow.
 - [ ] **CL-05 — Fail closed**
-  - **Action:** Leave failed items unchecked and block their downstream branch.
-  - **Evidence:** failure plus stopped/rollback/repair state.
+  - **Action:** Leave PENDING/failed items unchecked and block their downstream
+    branch without converting a normal wait into failure.
+  - **Evidence:** pending reason or failure plus stopped/rollback/repair state.
   - **Failure:** any continued dependent work is invalid and must be reverified.
 - [ ] **CL-06 — Repair skipped or reordered work**
   - **Action:** repair the item and rerun every affected dependent proof.

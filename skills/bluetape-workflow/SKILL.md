@@ -31,16 +31,23 @@ checklist. An unchecked required item blocks every dependent item.
     only triggered references before the first mutation.
   - **Evidence:** loaded skill/reference names.
   - **Failure:** stop before editing.
+- [ ] **WF-04A — Initialize machine-readable evidence when available**
+  - **Action:** Use `scripts/bluetape-flow.py` to snapshot the manifest, workflow
+    type, repository root, and required topology components.
+  - **Evidence:** run id, manifest hash, state root, and registered components.
+  - **Failure:** remain on the documented checklist path and report the missing
+    runtime surface; never write `.bluetape` files directly.
 - [ ] **WF-05 — Execute gates in dependency order**
-  - **Action:** Complete one checklist item and record fresh evidence before its
-    dependent item starts.
+  - **Action:** Follow the physical row order in `common-gates.md` and the leaf;
+    complete one item and record fresh evidence before its dependent starts.
   - **Evidence:** checked item plus command/file/URL/result.
   - **Failure:** mark FAIL/PENDING and block downstream.
 - [ ] **WF-06 — Repair any skipped or weak gate**
   - **Action:** reconstruct the missing checklist item, rerun its proof, and report
     the repair before continuing.
   - **Evidence:** repaired item and fresh proof.
-  - **Failure:** final status is BLOCKED, never DONE.
+  - **Failure:** keep a recoverable wait/repair `PENDING`; use `BLOCKED` only
+    when no safe continuation is available. Never report DONE.
 
 Type D review stays read-only unless the user explicitly expands scope. Type P
 stable release/tag/publish actions still require their irreversible-action gate
@@ -90,6 +97,8 @@ Load only what the current step needs:
 |---|---|
 | Before creating any workflow checklist | `references/checklist-contract.md` |
 | Before any approved mutation | `references/common-gates.md` |
+| Before machine-readable run initialization | `references/workflow-manifest.json` and `references/topology-contract.md` |
+| Before evaluating native sub-agent liveness | `references/liveness-contract.md` |
 | Before native subagent dispatch | `references/model-routing.md`; resolve models from current `AGENTS.md`/installed agent catalog |
 | Module add/move/remove, workflow YAML, shared catalog, Kover, benchmark harness, broad backend matrix, HTTP/Testcontainers growth, or nightly closeout | `references/repository-hazards.md` |
 | Kotlin implementation or Kotlin review verdict | `bluetape-kotlin-patterns` |
@@ -105,11 +114,58 @@ If a required leaf skill is missing or unreadable, stop before mutation and
 report the missing workflow surface. Do not silently reconstruct a large
 workflow from memory.
 
+## Native Coordinator Boundary
+
+Use `scripts/bluetape-flow.py` as the only writer for `.bluetape` run, lane,
+heartbeat, report, and receipt state. Owner authority is a contained 0600
+`--owner-file`; never pass or print its fencing value. Phase 1 snapshots permit
+only `verify`, `rebuild`, and `receipt-diagnose`. They are never migrated in
+place. Phase 2 snapshots use the explicit command contract in
+`references/topology-contract.md`.
+
+Python validates policy and records bounded receipts. It cannot invoke
+`spawn_agent`, `send_message`, `list_agents`, `wait_agent`, or
+`interrupt_agent`. The main session alone performs those native actions and
+then records the actual result as bounded evidence. A helper recommendation is
+not proof that a native tool ran.
+
+Follow this order exactly:
+
+```text
+run-approve receipt -> run-start receipt
+lane-create receipt
+  -> lane-start receipt
+  -> native spawn/send/list/wait action by main session
+  -> startup-ack or observed silence receipt
+  -> evidence-backed heartbeat/lease or liveness-check
+  -> stall-record from liveness decision, or stall-clear from fresh evidence
+  -> probe-sent receipt before send_message/list_agents
+  -> interrupt authority and live interrupt result
+  -> distinct replacement lane with lineage
+  -> main-session rereads evidence
+  -> main session collects git changed paths and validates canonical write scope
+  -> lane-complete -> check-result -> component-evidence
+  -> completion-check -> complete
+```
+
+An empty write scope is read-only. Before `lane-complete`, the main session
+collects actual changed paths from `git status --porcelain=v1 -z` and the branch
+diff, canonicalizes them against the run's pinned `repo_root`, rejects symlink
+or alias escape, and passes the verified path set through `--changed-paths`.
+Any path outside the pinned scope blocks completion without a terminal event.
+Replacement scope uses the same canonical prefix model.
+
+Run `resume-check` before owner transfer. A corrupt chain requires
+`receipt-diagnose` and either remains blocked or starts a distinct recovery run
+from a 0600 quarantined copy; never truncate or continue the damaged receipt.
+After applying new guidance, write a guarded fresh-session handoff and end the
+session. Native dogfood in the apply session is invalid.
+
 ## Type-Specific Minimum Routes
 
 ### Type A - Full Feature
 
-Load `bluetape-full-feature` and follow its 0 -> 10 gate sequence. New module,
+Load `bluetape-full-feature` and follow its 0 -> 11 gate sequence. New module,
 new dependency, broad API, and architectural work require spec and plan review.
 P0/P1 must be zero before implementation and again before PR/merge progression.
 
@@ -117,7 +173,10 @@ P0/P1 must be zero before implementation and again before PR/merge progression.
 
 Load `bluetape-fast-track`. Keep the approved plan, targeted tests, relevant
 language patterns, affected review lenses, P0/P1 convergence, documentation
-parity, PR metadata, and CI evidence. Never merge automatically.
+parity, PR metadata, and CI evidence. PR creation does not require a separate
+approval when the approved plan or current request explicitly names PR creation
+and the repo/base/head refs. Never merge automatically; every merge requires a
+fresh explicit user approval at the merge-ready gate.
 
 ### Type C - Bug Fix
 
@@ -177,9 +236,26 @@ that passes tests, sealed-file validation, and the benchmark acceptance rule.
   fix is small, in-scope, and cheap to revalidate.
 - Re-read current PR reviews and threads after CI turns green; newer unresolved
   feedback reopens the merge gate.
-- Merge, tag, publish, workflow dispatch, release creation, and destructive
-  cleanup happen only when explicitly requested or already approved in the
-  active workflow scope.
+- Evaluate the lesson gate for every task before declaring merge-ready. Create
+  the required committed lesson file when the selected workflow requires one,
+  and create a durable lesson when the work produced reusable learning.
+  Otherwise record an evidence-backed `N/A`; never create filler prose.
+- PR creation may proceed without a separate approval only through CG-11,
+  CG-12, and CG-13 after CG-01 through CG-10 and applicable leaf pre-PR gates
+  pass.
+- The PR path is strictly CG-11 authority -> CG-12 exact-head publication ->
+  CG-13 PR creation/metadata -> CG-14 CI/live review/human artifacts -> CG-15
+  merge-ready report -> CG-16 fresh approval -> CG-17 merge verification ->
+  CG-18 local sync/cleanup.
+- Every merge requires the fresh explicit user approval collected at CG-16
+  after required CI, current reviews and threads, applicable visual or diagram
+  review, the lesson gate, and other human-review artifacts are complete.
+  Earlier plan approval, an initial request to create and merge a PR, standing
+  workflow scope, or permission to create the PR never counts as merge approval.
+  Do not enable or execute auto-merge.
+- Tag, publish, workflow dispatch, release creation, and other non-PR
+  irreversible actions use the separate CG-X01 branch immediately before the
+  action.
 
 ## Reporting Contract
 

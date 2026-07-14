@@ -59,11 +59,36 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
     build/MCP check, sync status, and self-audit.
   - **Evidence:** fresh command results and explicit N/A scope proof.
   - **Failure:** leave unchecked and repair before commit/push.
-- [ ] **E-06 — Close out durable delivery**
-  - **Action:** verify duplicates/aliases/language/capability, commit and push the
-    managed source, then report checked/total and pruning candidates.
-  - **Evidence:** final diff, commit/upstream SHA, clean sync, checklist totals.
-  - **Failure:** final status is PENDING/BLOCKED, never DONE.
+- [ ] **E-06 — Complete durable pre-PR proof**
+  - **Action:** Verify duplicates, aliases, language, capability, source/live
+    parity, and pruning candidates so the parent can run CG-09 and CG-10.
+  - **Evidence:** Final diff, zero parity mismatches, reference results, pruning
+    decision, and every triggered maintenance check PASS or valid N/A.
+  - **Failure:** Keep PR publication blocked until the maintenance proof and
+    common pre-PR gates pass.
+- [ ] **E-07 — Deliver and report through the common PR gates**
+  - **Action:** With a PR, complete CG-11 through CG-15 in order: verify
+    authority, publish the exact head, create or update and verify the PR, pass
+    exact-head CI/current review and human artifacts, then report merge-ready.
+    Without a PR, record CG-11 through CG-18 N/A and render the final
+    no-delivery report.
+  - **Evidence:** With a PR, matching local/remote/PR head, live metadata and
+    final `## DoD Status`, successful checks, current review, applicable human
+    artifacts, phase-aware checklist counts, and exact-head merge-ready report;
+    without a PR, concrete N/A evidence and every other applicable row PASS.
+  - **Failure:** CI/review waits remain PENDING. Do not report merge-ready before
+    CG-15 or treat an earlier approval as merge authority.
+- [ ] **E-08 — Close out only after fresh merge approval**
+  - **Action:** With a PR, after fresh user approval of the current E-07 report,
+    complete CG-16 through CG-18: record approval, merge and verify live state,
+    then sync and clean the merged worktree/branch. Without a PR, record E-08
+    N/A from the common no-PR branch.
+  - **Evidence:** With a PR, fresh approval tied to the exact head, merge
+    result/SHA, integration-branch sync, and cleanup result; without a PR, the
+    same concrete CG-11 through CG-18 N/A evidence used at E-07.
+  - **Failure:** Waiting at CG-16 is PENDING; refusal or invalid authority is
+    BLOCKED. CG-17 failure returns to repair; CG-18 ambiguity remains PENDING
+    with state preserved.
 
 ## Skill / Plugin Diet
 
@@ -105,3 +130,7 @@ the canonical bluetape4k skills unless the user explicitly reintroduces them.
 ## Stop / Escalate
 
 Escalate to `bluetape-full-feature` when maintenance work changes architecture or public behavior. Escalate to `bluetape-bugfix` when maintenance reveals a concrete defect that needs a fix cycle.
+With a PR, the normal pre-merge state is E-07 PASS and CG-16 PENDING; report
+DONE only after E-08 completes CG-16 through CG-18. Without a PR, report DONE
+after CG-11 through CG-18 and E-08 are evidence-backed N/A and every other
+applicable row passes.

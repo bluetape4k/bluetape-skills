@@ -17,6 +17,10 @@
     "bluetape-workflow",
     "bluetape-writer"
   ],
+  "externalSkills": [
+    "code-review",
+    "self-audit"
+  ],
   "excluded": [
     "retired aliases",
     "user memory",
