@@ -15,11 +15,13 @@ The repository is a portable public bundle, not a copy of a maintainer's Codex h
 Install the stable release, validate the bundle, and run the installer:
 
 ```bash
-git clone --branch v1.0.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.1.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
 ```
+
+Validation requires Bash, `rg`, Python 3, and `uv`. It checks the public bundle boundary and workflow contracts, then runs the bundled workflow regression suite in an ephemeral `uv` environment.
 
 The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrite an existing canonical skill. Use `--force` only when you want a timestamped backup of the installed skill before replacement.
 
@@ -31,15 +33,15 @@ The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrit
 
 Restart Codex after installation so the new skills are discovered.
 
-To follow unreleased changes, clone `main` by omitting the `--branch v1.0.0 --depth 1` options. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
+To follow unreleased changes, clone `main` by omitting the `--branch v1.1.0 --depth 1` options. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
 
 ## Update
 
 Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
 
 ```bash
-git clone --branch v1.0.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.0.0
-cd bluetape-skills-v1.0.0
+git clone --branch v1.1.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.1.0
+cd bluetape-skills-v1.1.0
 ./scripts/validate.sh
 ./scripts/install.sh --force
 ```
@@ -73,6 +75,14 @@ Start with `$bluetape-workflow` for a Bluetape ecosystem task. It classifies the
 
 The `skills/manifest.json` file is the machine-readable inventory. Skill folders include their own `SKILL.md` and referenced material, so copy the complete folder rather than only `SKILL.md`.
 
+## Native workflow runtime
+
+Version 1.1.0 adds the Phase 2 native runtime to `$bluetape-workflow`. Manifest 1.1 defines run and lane lifecycles, liveness decisions, topology-based completion, receipt-backed recovery, and bounded evidence. The guarded `bluetape-flow.py` CLI is the only writer for `.bluetape` workflow state.
+
+The CLI records and validates native coordination; it does not replace Codex agent tools. The main session still performs agent spawn, messaging, waiting, and interruption, then records the observed result. Direct writes to `.bluetape` state are unsupported.
+
+`code-review` and `self-audit` are external companion skills referenced by the workflow but intentionally excluded from this canonical Bluetape bundle. Install them separately when using the Code Review route or harness self-audit gate.
+
 ## 7-Tier review gates
 
 Full Feature work reuses the same 7-Tier review engine at `2-R` Spec Review, `3-R` Plan Review, and `6-R` Pre-PR Review. Six independent perspectives—Performance, Stability, Security, Operator/Ops, Developer/API, and User/Caller—find different failures; main-session integration is the seventh tier.
@@ -98,7 +108,7 @@ This repository is a distributable mirror of the maintained canonical skill sour
 
 ## Verification
 
-Run `./scripts/validate.sh` after cloning or updating. It verifies the canonical inventory, required front matter, and the absence of private/runtime payload.
+Run `./scripts/validate.sh` after cloning or updating. It verifies the canonical inventory, required front matter, rendered executable names, external companion declarations, workflow contracts, the workflow regression suite, and the absence of private/runtime payload.
 
 ## License
 

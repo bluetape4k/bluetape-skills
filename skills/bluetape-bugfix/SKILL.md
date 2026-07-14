@@ -64,14 +64,18 @@ sections explain execution; the following checklist is the blocking state.
   - **Action:** Write and index a lesson when the defect exposes a reusable rule, repeated failure mode, or workflow gap.
   - **Evidence:** Lesson path and indexing result, or concrete scope evidence proving a trivial-defect N/A.
   - **Failure:** Do not use an unexplained N/A or leave a required lesson untracked.
-- [ ] **C-07 — Complete PR, review, and CI gates when authorized**
-  - **Action:** Link and verify the PR, converge code review to P0/P1=0, resolve current threads, and wait for required CI evidence before any approved merge.
-  - **Evidence:** Live issue/PR metadata and final `## DoD Status`, review convergence, and successful required checks; or concrete evidence delivery is outside scope.
-  - **Failure:** Keep delivery blocked; pending, stale, missing, or unexplained skipped evidence is not PASS.
-- [ ] **C-08 — Report the bug-fix DoD**
-  - **Action:** Render all Type C rows with reproduction, root cause, RED/GREEN, files/commits, validation, lifecycle risk, lesson, delivery state, and remaining risk.
-  - **Evidence:** `Required checks: X/Y; N/A: N; Blocked: 0` with X=Y and concrete evidence for every checked row.
-  - **Failure:** Do not claim fixed or merged; identify the unchecked row and next repair action.
+- [ ] **C-07 — Complete authorized PR delivery through live CI and review**
+  - **Action:** Complete CG-11 through CG-14: verify exact PR authority, publish the exact head, create or update and link the live PR, converge review to P0/P1=0, resolve current threads, and wait for required CI and human-inspection evidence. If PR delivery is outside scope, record CG-11 through CG-18 N/A with concrete evidence.
+  - **Evidence:** Authority naming repository/base/head/action, live issue/PR metadata, exact head and final `## DoD Status`, review convergence, successful required checks, and applicable human artifacts; or the common no-PR N/A evidence.
+  - **Failure:** Keep the applicable common gate PENDING or FAIL; stale, missing, or unexplained skipped evidence is not PASS.
+- [ ] **C-08 — Report merge readiness or no-delivery completion**
+  - **Action:** With a PR, complete CG-15 by rendering all Type C rows with phase-aware counts, reproduction, root cause, RED/GREEN, files/commits, validation, lifecycle risk, lesson, exact PR/head, remaining risk, and CG-16 through CG-18 unchecked; stop at CG-16. Without a PR, mark CG-15 N/A and pass C-08 with the final no-delivery report.
+  - **Evidence:** Reconciled `Required checks: X/Y; N/A: N; Blocked: 0`; with a PR, a user-visible exact-head merge-ready report and pending IDs; without a PR, concrete CG-11 through CG-18 N/A evidence and every other applicable row PASS.
+  - **Failure:** Do not claim merge-ready, fixed-and-delivered, or DONE; expose the unchecked row and repair action. Waiting at CG-16 is normal PENDING.
+- [ ] **C-09 — Close out only after fresh merge approval**
+  - **Action:** With a PR, after fresh user approval of the current C-08 report, complete CG-16 through CG-18: record approval, merge and verify live state, then sync and clean the merged worktree/branch. Without a PR, record C-09 N/A from the common no-PR branch.
+  - **Evidence:** With a PR, fresh approval tied to the exact head, merge result/SHA, integration-branch sync, and cleanup result; without a PR, the same concrete CG-11 through CG-18 N/A evidence used at C-08.
+  - **Failure:** Waiting at CG-16 is PENDING; refusal or invalid authority is BLOCKED. CG-17 failure returns to repair; CG-18 ambiguity remains PENDING with state preserved.
 
 ### 1. Diagnose
 
@@ -132,7 +136,8 @@ concrete scope evidence proving that no reusable learning exists.
 
 ### 7. PR and Review
 
-When PR creation is approved:
+After CG-11 establishes PR delivery authority from the current request or
+approved plan, publish the exact head through CG-12 and complete CG-13:
 
 - link the issue with `Fixes #N`;
 - mirror issue assignee, milestone, and relevant labels;
@@ -145,12 +150,15 @@ is zero and actionable feedback is resolved or explicitly deferred with reason.
 
 ### 8. CI and Merge Gate
 
-Inspect required checks and the latest review threads. `SUCCESS` passes;
+Complete CG-14 by inspecting required checks and the latest review threads. `SUCCESS` passes;
 `PENDING` waits; `FAILURE` returns to diagnosis. A `SKIPPED` required check is
 not PASS: repair its trigger or record an evidence-backed `N/A` only when the
 checklist contract proves the check inapplicable. New review feedback reopens
-the gate. Merge only when the user explicitly requested merge or the
-already-approved workflow includes it.
+the gate. Then complete CG-15 with the exact PR/head merge-ready report and stop
+at CG-16 for fresh explicit user approval. Earlier bug-fix scope, plan approval,
+PR creation authority, or create-and-merge wording is not merge authority.
+Only after CG-16 passes may CG-17 merge and CG-18 sync/cleanup run. Never enable
+auto-merge.
 
 ## Language-Specific Risk Checks
 
@@ -184,10 +192,15 @@ already-approved workflow includes it.
 
 ## Stop Conditions
 
-Stop with `BLOCKED` rather than guessing when reproduction is not trustworthy,
-the root cause remains unproven, required infrastructure is unavailable, or the
-fix requires a materially broader product/API decision. Otherwise continue the
-fix-test-review loop until all required evidence is PASS.
+Do not guess when reproduction is not trustworthy or root cause remains
+unproven: record the failed proof as `FAIL` and use the defined repair loop.
+Record a valid external wait as `PENDING`. Use `BLOCKED` only when no safe
+repair or continuation exists, or a materially broader product/API decision
+requires new authority. Otherwise continue the fix-test-review loop until all
+required evidence is PASS. With a PR, the normal
+pre-merge state is C-08 PASS and CG-16 PENDING; report DONE only after C-09
+completes CG-16 through CG-18. Without a PR, report DONE after CG-11 through
+CG-18 and C-09 are evidence-backed N/A and every other applicable row passes.
 
 ## Final DoD Additions
 

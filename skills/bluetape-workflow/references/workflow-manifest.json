@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "manifest_version": "1.1.0",
+  "compatible_manifest_versions": ["1.0", "1.1"],
+  "workflow_types": ["A", "B", "C", "D", "E", "P", "F"],
+  "workflow_routes": {
+    "A": ["bluetape-full-feature"],
+    "B": ["bluetape-fast-track"],
+    "C": ["bluetape-bugfix"],
+    "D": ["code-review"],
+    "E": ["bluetape-maintenance"],
+    "P": ["bluetape-publish-jvm", "bluetape-publish-go"],
+    "F": ["bluetape-self-improve"]
+  },
+  "router_checklist_ids": ["WF-01", "WF-02", "WF-03", "WF-04", "WF-04A", "WF-05", "WF-06"],
+  "gate_dependencies": {
+    "WF-01": [],
+    "WF-02": ["WF-01"],
+    "WF-03": ["WF-02"],
+    "WF-04": ["WF-03"],
+    "WF-04A": ["WF-04"],
+    "WF-05": ["WF-04A"],
+    "WF-06": ["WF-05"]
+  },
+  "run_states": ["planned", "approved", "running", "recovering", "completed", "failed", "blocked", "cancelled"],
+  "run_transitions": {
+    "planned": ["approved", "cancelled"],
+    "approved": ["running", "cancelled"],
+    "running": ["recovering", "completed", "failed", "blocked", "cancelled"],
+    "recovering": ["running", "failed", "blocked", "cancelled"],
+    "completed": [],
+    "failed": [],
+    "blocked": [],
+    "cancelled": []
+  },
+  "lane_states": ["pending", "starting", "running", "suspected_stall", "recovering", "replaced", "completed", "failed", "blocked", "cancelled"],
+  "lane_transitions": {
+    "pending": ["starting", "cancelled"],
+    "starting": ["running", "suspected_stall", "failed", "blocked", "cancelled"],
+    "running": ["suspected_stall", "completed", "failed", "blocked", "cancelled"],
+    "suspected_stall": ["running", "recovering", "failed", "blocked", "cancelled"],
+    "recovering": ["replaced", "running", "failed", "blocked", "cancelled"],
+    "replaced": ["completed", "failed", "blocked", "cancelled"],
+    "completed": [],
+    "failed": [],
+    "blocked": [],
+    "cancelled": []
+  },
+  "transition_policy": {
+    "run": {
+      "required_arguments": ["owner_token", "manifest_hash", "from_state", "to_state"],
+      "evidence_by_target": {
+        "approved": ["user_approval"],
+        "running": ["approved_plan_or_recovery_ack"],
+        "recovering": ["recovery_reason"],
+        "completed": ["required_lanes", "topology", "checks", "main_verification"],
+        "failed": ["failure_evidence"],
+        "blocked": ["blocker_evidence"],
+        "cancelled": ["cancellation_reason"]
+      }
+    },
+    "lane": {
+      "required_arguments": ["owner_token", "manifest_hash", "lane_id", "from_state", "to_state"],
+      "evidence_by_target": {
+        "starting": ["assignment"],
+        "running": ["startup_or_recovery_ack"],
+        "suspected_stall": ["liveness_observation"],
+        "recovering": ["probe_result"],
+        "replaced": ["interrupt_result", "replacement_lineage"],
+        "completed": ["completion_evidence"],
+        "failed": ["failure_evidence"],
+        "blocked": ["blocker_evidence"],
+        "cancelled": ["cancellation_reason"]
+      }
+    }
+  },
+  "liveness": {
+    "startup_ack_seconds": 30,
+    "monitor_interval_seconds": 30,
+    "suspected_stall_seconds": 120,
+    "max_silence_lease_seconds": 600,
+    "probe_grace_seconds": 60,
+    "max_replacements": 1,
+    "heartbeat_is_completion_evidence": false
+  },
+  "topology": {
+    "completion_rule": "weakest_required_component",
+    "silent_component_removal_allowed": false,
+    "component_required_fields": ["id", "required", "description", "owner_lane", "required_checks", "dependencies", "evidence_refs", "coverage_state"]
+  },
+  "completion": {
+    "require_terminal_lanes": true,
+    "require_main_verification": true,
+    "require_evidence": true,
+    "allow_unresolved_replacement": false
+  },
+  "resource_limits": {
+    "max_receipt_line_bytes": 65536,
+    "max_input_json_bytes": 1048576,
+    "max_evidence_refs": 8,
+    "max_components": 8,
+    "max_lanes": 64,
+    "max_component_checks": 8,
+    "max_component_dependencies": 8,
+    "max_write_scopes": 32,
+    "max_identifier_chars": 128,
+    "max_evidence_kind_chars": 32,
+    "max_evidence_path_chars": 256,
+    "max_evidence_summary_chars": 256,
+    "max_description_chars": 500,
+    "max_assignment_chars": 500
+  },
+  "receipt": {
+    "event_types": [
+      "run_created", "plan_approved", "run_started", "run_recovery_started",
+      "run_recovery_finished", "run_failed", "run_blocked", "run_cancelled",
+      "run_resumed", "topology_registered", "topology_component_removed",
+      "lane_created", "lane_started", "startup_ack", "heartbeat_observed",
+      "lease_renewed", "stall_suspected", "stall_cleared", "probe_sent",
+      "probe_acknowledged", "agent_interrupted", "lane_reassigned",
+      "replacement_repaired", "replacement_blocked",
+      "replacement_lineage_closed", "lane_recovered", "evidence_attached",
+      "check_passed", "check_failed", "lane_completed", "lane_failed",
+      "lane_blocked", "lane_cancelled", "handoff_recorded",
+      "live_report_recorded", "main_verification", "run_completed",
+      "transaction_committed", "candidate_proposed", "candidate_validated",
+      "candidate_rejected"
+    ],
+    "retention_mode": "report-only",
+    "automatic_delete": false
+  },
+  "token_audit": {
+    "skill_glob": "bluetape-*",
+    "report_fields": ["skill", "bytes", "approx_tokens", "byte_delta", "token_delta", "marked_blocks"],
+    "hard_limit": false
+  }
+}

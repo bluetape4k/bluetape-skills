@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluetape4k.local/schemas/workflow-receipt-event.json",
+  "title": "Bluetape workflow receipt event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "run_id", "sequence", "event_type", "timestamp",
+    "owner_token", "manifest_hash", "previous_checksum", "checksum",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"$ref": "#/$defs/identifier"},
+    "lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+    "agent_id": {"$ref": "#/$defs/nullableIdentifier"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "event_type": {
+      "enum": [
+        "run_created", "plan_approved", "run_started", "run_recovery_started",
+        "run_recovery_finished", "run_failed", "run_blocked", "run_cancelled",
+        "run_resumed", "topology_registered", "topology_component_removed",
+        "lane_created", "lane_started", "startup_ack", "heartbeat_observed",
+        "lease_renewed", "stall_suspected", "stall_cleared", "probe_sent",
+        "probe_acknowledged", "agent_interrupted", "lane_reassigned",
+        "replacement_repaired", "replacement_blocked",
+        "replacement_lineage_closed", "lane_recovered", "evidence_attached",
+        "check_passed", "check_failed", "lane_completed", "lane_failed",
+        "lane_blocked", "lane_cancelled", "handoff_recorded",
+        "live_report_recorded", "main_verification", "run_completed",
+        "transaction_committed", "candidate_proposed", "candidate_validated",
+        "candidate_rejected"
+      ]
+    },
+    "from_state": {"type": ["string", "null"], "maxLength": 32},
+    "to_state": {"type": ["string", "null"], "maxLength": 32},
+    "timestamp": {"$ref": "#/$defs/timestamp"},
+    "owner_token": {"type": "string", "minLength": 1},
+    "manifest_hash": {"$ref": "#/$defs/checksum"},
+    "previous_checksum": {
+      "anyOf": [{"const": ""}, {"$ref": "#/$defs/checksum"}]
+    },
+    "checksum": {"$ref": "#/$defs/checksum"},
+    "evidence_refs": {"$ref": "#/$defs/evidenceRefs"},
+    "reason": {"type": ["string", "null"], "maxLength": 500},
+    "metadata": {"$ref": "#/$defs/eventMetadata"}
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "nullableIdentifier": {
+      "anyOf": [{"type": "null"}, {"$ref": "#/$defs/identifier"}]
+    },
+    "checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$"
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "summary"],
+        "properties": {
+          "kind": {"type": "string", "minLength": 1, "maxLength": 32},
+          "summary": {"type": "string", "maxLength": 256},
+          "path": {"type": "string", "maxLength": 256},
+          "checksum": {"$ref": "#/$defs/checksum"},
+          "exit_status": {"type": "integer"}
+        }
+      }
+    },
+    "topologyComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "required", "description", "owner_lane", "required_checks",
+        "dependencies", "evidence_refs", "coverage_state"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "required": {"type": "boolean"},
+        "description": {"type": "string", "minLength": 1, "maxLength": 500},
+        "owner_lane": {"$ref": "#/$defs/identifier"},
+        "required_checks": {
+          "type": "array", "maxItems": 8,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "dependencies": {
+          "type": "array", "maxItems": 8,
+          "items": {"$ref": "#/$defs/identifier"}
+        },
+        "evidence_refs": {"type": "array", "maxItems": 0},
+        "coverage_state": {"enum": ["missing", "partial", "covered"]}
+      }
+    },
+    "heartbeatIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "heartbeat_observed"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch", "evidence_digest"],
+              "properties": {
+                "owner_epoch": {"type": "integer", "minimum": 1},
+                "evidence_digest": {"$ref": "#/$defs/checksum"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "leaseIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "lease_renewed"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch", "silence_lease_deadline", "evidence_digest"],
+              "properties": {
+                "owner_epoch": {"type": "integer", "minimum": 1},
+                "silence_lease_deadline": {"$ref": "#/$defs/timestamp"},
+                "evidence_digest": {"$ref": "#/$defs/checksum"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "reassignIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "lane_reassigned"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch", "previous_agent_id", "replacement_lane_id", "replacement_count"],
+              "properties": {
+                "owner_epoch": {"type": "integer", "minimum": 1},
+                "previous_agent_id": {"$ref": "#/$defs/nullableIdentifier"},
+                "replacement_lane_id": {"$ref": "#/$defs/identifier"},
+                "replacement_count": {"type": "integer", "minimum": 0},
+                "replacement_agent_id": {"$ref": "#/$defs/identifier"},
+                "replacement_assignment": {"type": "string", "maxLength": 500},
+                "replacement_write_scope": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+                "replacement_fallback": {"type": "string", "maxLength": 500},
+                "replacement_startup_ack_deadline": {"$ref": "#/$defs/timestamp"},
+                "replacement_command_deadline": {"$ref": "#/$defs/timestamp"},
+                "checkpoint_digest": {"$ref": "#/$defs/checksum"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "createIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "lane_created"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": [
+                "owner_epoch", "assignment", "write_scope", "fallback",
+                "startup_ack_deadline", "command_deadline", "parent_lane_id",
+                "replacement_count"
+              ],
+              "properties": {
+                "owner_epoch": {"type": "integer", "minimum": 1},
+                "assignment": {"type": "string", "maxLength": 500},
+                "write_scope": {
+                  "type": "array", "maxItems": 32,
+                  "items": {"type": "string", "minLength": 1, "maxLength": 256}
+                },
+                "fallback": {"type": "string", "maxLength": 500},
+                "startup_ack_deadline": {"$ref": "#/$defs/timestamp"},
+                "command_deadline": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/timestamp"}]},
+                "parent_lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+                "replacement_count": {"type": "integer", "minimum": 0}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "repairIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "replacement_repaired"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch", "original_lane_id", "replacement_lane_id", "checkpoint_digest"],
+              "properties": {
+                "owner_epoch": {"type": "integer", "minimum": 1},
+                "original_lane_id": {"$ref": "#/$defs/identifier"},
+                "replacement_lane_id": {"$ref": "#/$defs/identifier"},
+                "checkpoint_digest": {"$ref": "#/$defs/checksum"}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "mainVerificationIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "main_verification"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch"],
+              "properties": {"owner_epoch": {"type": "integer", "minimum": 1}}
+            }
+          }
+        }
+      ]
+    },
+    "completionIntent": {
+      "allOf": [
+        {"$ref": "#/$defs/transactionIntent"},
+        {
+          "properties": {
+            "event_type": {"const": "run_completed"},
+            "metadata": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_epoch"],
+              "properties": {"owner_epoch": {"type": "integer", "minimum": 1}}
+            }
+          }
+        }
+      ]
+    },
+    "transactionIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type", "timestamp", "owner_epoch", "from_state", "to_state",
+        "lane_id", "agent_id", "reason", "evidence_refs", "metadata"
+      ],
+      "properties": {
+        "event_type": {
+          "enum": [
+            "heartbeat_observed", "lease_renewed", "lane_reassigned",
+            "lane_created", "replacement_repaired", "main_verification",
+            "run_completed"
+          ]
+        },
+        "timestamp": {"$ref": "#/$defs/timestamp"},
+        "owner_epoch": {"type": "integer", "minimum": 1},
+        "from_state": {"type": ["string", "null"], "maxLength": 32},
+        "to_state": {"type": ["string", "null"], "maxLength": 32},
+        "lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "agent_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "reason": {"type": ["string", "null"], "maxLength": 500},
+        "evidence_refs": {"$ref": "#/$defs/evidenceRefs"},
+        "metadata": {"type": "object"}
+      }
+    },
+    "transactionPairs": {
+      "oneOf": [
+        {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"$ref": "#/$defs/heartbeatIntent"}, {"$ref": "#/$defs/leaseIntent"}]},
+        {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"$ref": "#/$defs/reassignIntent"}, {"$ref": "#/$defs/createIntent"}]},
+        {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"$ref": "#/$defs/repairIntent"}, {"$ref": "#/$defs/createIntent"}]},
+        {"type": "array", "minItems": 2, "maxItems": 2, "prefixItems": [{"$ref": "#/$defs/mainVerificationIntent"}, {"$ref": "#/$defs/completionIntent"}]}
+      ]
+    },
+    "eventMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assignment": {"type": "string", "maxLength": 500},
+        "write_scope": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+        "changed_paths": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+        "fallback": {"type": "string", "maxLength": 500},
+        "startup_ack_deadline": {"type": ["string", "null"]},
+        "silence_lease_deadline": {"type": ["string", "null"]},
+        "command_deadline": {"type": ["string", "null"]},
+        "probe_deadline": {"type": ["string", "null"]},
+        "evidence_digest": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "replacement_count": {"type": "integer", "minimum": 0},
+        "previous_agent_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "replacement_agent_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "replacement_assignment": {"type": ["string", "null"], "maxLength": 500},
+        "replacement_write_scope": {"type": "array", "maxItems": 32, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+        "replacement_fallback": {"type": ["string", "null"], "maxLength": 500},
+        "replacement_startup_ack_deadline": {"type": ["string", "null"]},
+        "replacement_command_deadline": {"type": ["string", "null"]},
+        "original_lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "replacement_lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "replacement_terminal_state": {"enum": ["completed", "failed", "blocked", "cancelled", null]},
+        "checkpoint_digest": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "parent_lane_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "new_owner_fingerprint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "owner_epoch": {"type": ["integer", "null"], "minimum": 1},
+        "recovery_original_run_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "recovery_diagnose_checksum": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "recovery_manifest_version": {"type": ["string", "null"], "maxLength": 32},
+        "recovery_manifest_hash": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "recovery_quarantine_path": {"type": ["string", "null"], "maxLength": 256},
+        "recovery_quarantine_hash": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "recovery_first_bad_sequence": {"type": ["integer", "null"], "minimum": 1},
+        "recovery_trusted_sequence": {"type": ["integer", "null"], "minimum": 0},
+        "recovery_trusted_checksum": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "report_kind": {"enum": ["fresh_session_handoff", "live_apply", null]},
+        "report_path": {"type": ["string", "null"], "maxLength": 256},
+        "report_checksum": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "report_receipt_head": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/checksum"}]},
+        "components": {"type": "array", "maxItems": 8, "items": {"$ref": "#/$defs/topologyComponent"}},
+        "intents": {"$ref": "#/$defs/transactionPairs"},
+        "component_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "check_id": {"$ref": "#/$defs/nullableIdentifier"},
+        "coverage_state": {"enum": ["missing", "partial", "covered", null]}
+      }
+    }
+  }
+}

@@ -40,7 +40,7 @@ Closes #{issue-number}
 ## Metadata
 
 - Issue: #{issue-number}, milestone `{milestone}`, assignee `{user}`
-- PR: #{pr-number}, milestone `{milestone}`, assignee `{user}`
+- PR: #{pr-number}, head `{head-sha}`, milestone `{milestone}`, assignee `{user}`
 - CI: {run/check URL or N/A with concrete scope evidence}
 
 ## DoD Status
@@ -52,7 +52,7 @@ Required checks: {checked}/{total}; N/A: {count}; Blocked: {count}
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {fresh command, file, PR, issue, review comment, CI run; N/A requires concrete scope evidence} | {none, repair, rollback, blocker, or next action} |
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {evidence} | {failure handling} |
 
-Final status: PR #{pr-number} pending merge / ready for review / blocked ({reason})
+Final status: PENDING (CG-14 CI/review for PR #{pr-number} at {head-sha}) / PENDING (CG-16 fresh merge approval after CG-15 for PR #{pr-number} at {head-sha}; unchecked: CG-16, CG-17, CG-18) / blocked ({reason})
 
 Unchecked required items: {none or checklist IDs}
 ```

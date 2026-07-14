@@ -76,8 +76,8 @@ edits and the final gate.
 -> 4 implementation -> 4-T tests -> 4-S cleanup when triggered
 -> 4-P performance/stability when triggered -> 5 spec/plan verification
 -> 6 final checklist -> 6-R pre-PR review -> 7 lessons commit
--> 7-P PR -> 7-R PR review -> 8 CI/review gate -> 9 DoD report
--> 10 knowledge capture
+-> 7-P PR -> 7-R PR review -> 8 CI/review gate -> 9 knowledge capture
+-> 10 merge-ready DoD report -> 11 approved merge closeout
 ```
 
 Do not reorder dependent steps or mark a required step N/A merely because the
@@ -126,14 +126,18 @@ progression.
   - **Action:** Commit the lesson before PR creation, using a concise evidence-backed N/A lesson only when genuinely appropriate.
   - **Evidence:** Tracked lesson commit containing context, decision, outcome, proof, misses, and future guard.
   - **Failure:** An untracked, stashed, or evidence-only lesson does not satisfy this gate.
-- [ ] **A-10 — Complete PR, review, and CI gates when authorized**
-  - **Action:** Create and verify the PR metadata/body, rerun review against the live PR, resolve threads, and wait for required CI conclusions.
-  - **Evidence:** Live PR metadata and final `## DoD Status`, latest review convergence, required checks successful, or concrete evidence that external delivery is outside scope.
-  - **Failure:** Keep delivery blocked; pending, stale, missing, or unexplained skipped evidence is not PASS.
-- [ ] **A-11 — Report DoD and capture knowledge**
-  - **Action:** Render every Type A row with counts, evidence, risks, side-effect state, and knowledge/index updates; stop at the explicit merge boundary.
-  - **Evidence:** `Required checks: X/Y; N/A: N; Blocked: 0` with X=Y, complete final report, and knowledge result or valid N/A.
-  - **Failure:** Do not claim DONE or merge automatically; expose the blocking row and repair action.
+- [ ] **A-10 — Complete authorized PR delivery through live CI and review**
+  - **Action:** Complete common gates CG-11 through CG-14: confirm PR authority, publish the exact head, create or update and verify the live PR, rerun review, resolve threads, and wait for required CI conclusions.
+  - **Evidence:** CG-11 authority, matching remote head, live PR metadata and final `## DoD Status`, latest review convergence, required checks successful, and all required human-inspection artifacts complete; or concrete evidence that CG-11 through CG-18 are N/A.
+  - **Failure:** Keep delivery PENDING or FAIL as the common gate requires; stale, missing, or unexplained skipped evidence is not PASS.
+- [ ] **A-11 — Capture knowledge and report merge readiness**
+  - **Action:** Capture durable knowledge. With a PR, complete CG-15 by rendering every Type A row with phase-aware counts, evidence, risks, exact PR/head state, and unchecked CG-16 through CG-18; stop at CG-16. Without a PR, record CG-15 N/A under the common no-PR branch and render the final no-delivery DoD.
+  - **Evidence:** Knowledge/index result or valid N/A plus reconciled `Required checks: X/Y; N/A: N; Blocked: 0`; with a PR, a user-visible merge-ready report tied to the current head and explicit pending IDs; without a PR, concrete CG-11 through CG-18 N/A evidence.
+  - **Failure:** Do not claim DONE or treat an earlier approval as merge authority; expose the blocking row and repair action.
+- [ ] **A-12 — Close out only after fresh merge approval**
+  - **Action:** With a PR, after the user explicitly approves the current merge-ready report, complete CG-16 through CG-18: record the approval, merge and verify live state, then sync and clean local worktrees/branches. Without a PR, record A-12 N/A from the common no-PR branch.
+  - **Evidence:** With a PR, fresh approval tied to the current head, merge result and SHA, clean integration branch sync, and cleanup result; without a PR, the same concrete CG-11 through CG-18 N/A evidence used at A-11.
+  - **Failure:** Waiting at CG-16 is normal PENDING; refusal or invalid authority is BLOCKED. A CG-17 merge failure returns to repair as FAIL. CG-18 ambiguity or incomplete cleanup remains PENDING with state preserved.
 
 ## Step 0 - Worktree
 
@@ -309,11 +313,13 @@ not unblock Step 7-P.
 
 ## Step 7-P - Pull Request
 
-Create the PR only after Step 7 and only when PR creation is in the approved
-scope. Read linked issue metadata first. Assign `debop`, mirror milestone and
-relevant labels, use an English title/body, and use the central PR template.
-The body explains why/what before validation and ends with `## DoD Status`.
-Verify live metadata and body with `gh pr view`; comments are not substitutes.
+Complete CG-11 through CG-13 only after Step 7. PR creation may proceed without a
+separate approval only when the approved plan or current request names the
+repository, base, head, and creation action. Read linked issue metadata first.
+Assign `debop`, mirror milestone and relevant labels, use an English title/body,
+and use the central PR template. The body explains why/what before validation
+and ends with `## DoD Status`. Verify live metadata and body with `gh pr view`;
+comments are not substitutes.
 
 ## Step 7-R - Post-PR Review
 
@@ -324,20 +330,13 @@ non-blocking findings. Refresh the PR body DoD after gate changes.
 
 ## Step 8 - CI and Review Gate
 
-Read required check conclusions from the live PR. `SUCCESS` passes; a genuinely
+Complete CG-14. Read required check conclusions from the live PR. `SUCCESS` passes; a genuinely
 inapplicable check needs evidence-backed N/A under the checklist contract;
 `PENDING` waits and `FAILURE` returns to diagnosis/fix. After CI is green, re-read
 reviews and unresolved threads. New feedback reopens Step 7-R. Do not dismiss a
 zero-job run as a test failure; validate workflow syntax first.
 
-## Step 9 - Final DoD
-
-Use the workflow final-report template. Include all steps, P0/P1 convergence,
-spec/plan acceptance, test commands/results, PR metadata, CI/review evidence,
-commits, changed files, and residual risks. Report PR pending merge and request
-the merge decision. Never run `gh pr merge` automatically.
-
-## Step 10 - Knowledge Capture
+## Step 9 - Knowledge Capture
 
 For significant work, update GNO/indexes and promote durable decisions to the
 repo's spec/plan/lesson/reference surfaces. Use transient OMX notepad/state only
@@ -345,9 +344,31 @@ for session continuity. Update user memory only when explicitly asked. For new
 modules, update the repo/module guidance overlay. If no new durable knowledge
 exists, record N/A with concrete scope evidence.
 
+## Step 10 - Merge-Ready DoD
+
+Complete CG-15 with the workflow final-report template. Include all steps,
+P0/P1 convergence, spec/plan acceptance, test commands/results, PR metadata,
+CI/review and human-inspection evidence, commits, changed files, knowledge
+capture, and residual risks. Tie the report to the exact live PR head, report
+the PR pending merge, and request a fresh merge decision. At this phase, report
+CG-16 through CG-18 as unchecked PENDING IDs rather than claiming X=Y. CG-16
+remains normal `PENDING` until the user replies; never run `gh pr merge`
+automatically. When PR delivery is N/A, record CG-11 through CG-18 N/A and
+render the no-delivery DoD instead of requiring PR/head evidence.
+
+## Step 11 - Approved Merge Closeout
+
+Only after the user explicitly approves the current Step 10 report, complete
+CG-16 through CG-18. Verify the live merge result and merge SHA, sync the local
+integration branch, and delete the merged worktree and local feature branch
+unless the user asked to retain them. A prior plan, implementation approval, PR
+creation authority, or create-and-merge request does not satisfy CG-16.
+
 ## Stop Conditions
 
-Finish only after Step 9 is delivered and Step 10 is PASS/N/A with evidence.
-The normal terminal state is `PENDING - PR ready for explicit merge decision`.
-After an explicitly requested merge, verify live merge state and local sync
-before reporting `DONE`.
+The normal pre-merge terminal state is Step 10 delivered with Step 9 PASS/N/A
+and `PENDING - PR ready for fresh explicit merge decision` at CG-16. Report
+`DONE` only after Step 11 completes CG-16 through CG-18 with live merge, sync,
+and cleanup evidence. When PR delivery is outside scope, report `DONE` after
+Step 9 is PASS/N/A, Step 10 renders the no-delivery DoD, CG-11 through CG-18
+and A-12 are evidence-backed N/A, and every other applicable row passes.

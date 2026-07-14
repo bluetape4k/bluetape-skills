@@ -12,9 +12,12 @@ Step DoD, and side-effect boundaries. Do not use this skill for a one-off
 `perf:` edit without an iterative benchmark target.
 
 This loop may continue autonomously after the plan and benchmark command are
-approved, but it may not push, open a PR, merge, publish, or edit sealed files
-unless that exact side effect is already approved. Defaults keep
-`auto_push=false` and `auto_pr=false`.
+approved, but the loop itself may not push, open a PR, perform a GitHub PR
+merge, publish, or edit sealed files. After the loop stops, remote branch/PR
+delivery may proceed only through CG-11 through CG-15 when the current request
+or approved plan establishes exact repository/base/head/action authority.
+Every GitHub PR merge still requires the fresh post-report approval at CG-16.
+Defaults keep `auto_push=false`, `auto_pr=false`, and `auto_merge=false`.
 
 ## Hard Benchmark Gate
 
@@ -111,13 +114,21 @@ checklist after every iteration; only checked rows permit the next transition.
   - **Evidence:** Baseline/candidate/best, normalized delta, guard results, scoped diff, and explicit accept/reject decision.
   - **Failure:** Reject unmeasured, below-threshold, regressing, or out-of-scope candidates; do not integrate them.
 - [ ] **F-07 — Integrate and checkpoint the iteration**
-  - **Action:** Merge only one accepted winner locally, archive rejected evidence, and atomically record results, decision, files, family, and next stop state.
+  - **Action:** Merge only one accepted winner locally between the isolated self-improve branches, without remote mutation or GitHub PR merge; archive rejected evidence and atomically record results, decision, files, family, and next stop state.
   - **Evidence:** Winner commit or rejection archive, updated raw/event/state files, and valid recovery checkpoint.
   - **Failure:** Keep the improvement branch unchanged and recover state before another iteration.
 - [ ] **F-08 — Stop and report truthfully**
   - **Action:** Evaluate every stop condition, render iteration and final DoD evidence, preserve raw results, add durable learning when substantial, and respect unapproved external side effects.
   - **Evidence:** `Required checks: X/Y; N/A: N; Blocked: 0` for a completed iteration, explicit stop reason, baseline/final/delta history, winner branch/commit, tests, risks, and side-effect state.
-  - **Failure:** Report BLOCKED with the last valid baseline/best; never label unavailable or incomparable measurements as improvement.
+  - **Failure:** Preserve the last valid baseline/best and classify a repairable proof failure as FAIL, a valid external wait as PENDING, and only no safe continuation as BLOCKED; never label unavailable or incomparable measurements as improvement.
+- [ ] **F-09 — Deliver and report through the common PR gates**
+  - **Action:** With a PR, complete CG-11 through CG-15 after F-08: verify authority, publish the exact winner head, create or update and verify the PR, pass exact-head CI/current review and human artifacts, then report merge-ready. Without a PR, record CG-11 through CG-18 N/A and render the final no-delivery report.
+  - **Evidence:** With a PR, matching local/remote/PR head, live metadata and final `## DoD Status`, successful checks, current review, applicable human artifacts, phase-aware counts, and exact-head merge-ready report; without a PR, concrete N/A evidence and every other applicable row PASS.
+  - **Failure:** CI/review waits remain PENDING. Do not publish from an active candidate loop, report merge-ready before CG-15, or treat earlier benchmark/plan approval as merge authority.
+- [ ] **F-10 — Close out only after fresh merge approval**
+  - **Action:** With a PR, after fresh user approval of the current F-09 report, complete CG-16 through CG-18: record approval, merge and verify live state, then sync and clean only proven merged worktrees/branches. Without a PR, record F-10 N/A from the common no-PR branch.
+  - **Evidence:** With a PR, fresh approval tied to the exact head, merge result/SHA, integration-branch sync, and cleanup result; without a PR, the same concrete CG-11 through CG-18 N/A evidence used at F-09.
+  - **Failure:** Waiting at CG-16 is PENDING; refusal or invalid authority is BLOCKED. CG-17 failure returns to repair; CG-18 ambiguity remains PENDING with state preserved.
 
 1. **Recover**: inspect state and registered worktrees. Remove only proven stale
    self-improve worktrees, then prune.
@@ -165,7 +176,9 @@ check allows it. Never integrate an unmeasured “looks faster” change.
 Stop on target reached, plateau window, max iterations, circuit breaker, user
 stop, benchmark trust/parser failure, unrecoverable environment failure, or no
 remaining distinct hypothesis. Do not call an unavailable benchmark an
-improvement; report BLOCKED with the last valid baseline/best.
+improvement. Keep repairable benchmark/parser proof failures as FAIL, valid
+external waits as PENDING, and use BLOCKED only when no safe continuation
+exists; always preserve the last valid baseline/best.
 
 ## Verification and Reporting
 
@@ -181,3 +194,8 @@ risks. PR bodies use the central template and end with `## DoD Status`.
 Add a durable lesson after substantial work. Preserve raw evidence and describe
 local short-window results as comparable snapshots, not universal production
 rankings.
+
+With a PR, the normal pre-merge state is F-09 PASS and CG-16 PENDING; report
+DONE only after F-10 completes CG-16 through CG-18. Without a PR, report DONE
+after CG-11 through CG-18 and F-10 are evidence-backed N/A and every other
+applicable row passes.

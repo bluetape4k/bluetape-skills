@@ -65,14 +65,18 @@ items in order. An unchecked item blocks every dependent item.
   - **Action:** Record a concise lesson and reindex reusable knowledge when the change produced substantial reusable guidance.
   - **Evidence:** Lesson path and indexing result, or concrete scope evidence proving N/A.
   - **Failure:** Do not use a generic “not needed”; supply the artifact or valid N/A evidence.
-- [ ] **B-08 — Complete delivery gates when authorized**
-  - **Action:** Create or update the PR with linked issue metadata and final `## DoD Status`, review the live final diff and threads, and wait for required CI conclusions.
-  - **Evidence:** Live PR metadata/body/review-thread evidence and required checks successful; or concrete evidence that PR delivery is outside the approved scope.
-  - **Failure:** Keep delivery blocked; do not treat `SKIPPED`, pending, stale, or missing checks as success unless the parent contract explicitly proves an allowed N/A.
-- [ ] **B-09 — Report completion**
-  - **Action:** Render the parent final checklist report with every Type B row, counts, commands, commits, risks, and side-effect state.
-  - **Evidence:** `Required checks: X/Y; N/A: N; Blocked: 0` with X=Y and concrete evidence for every checked row.
-  - **Failure:** Do not claim completion; expose the unchecked or blocked row and its next repair action.
+- [ ] **B-08 — Complete authorized PR delivery through live CI and review**
+  - **Action:** Complete CG-11 through CG-14: verify exact PR delivery authority, publish the exact head, create or update and verify the PR with linked issue metadata and final `## DoD Status`, review the live diff and threads, and wait for required CI conclusions. If PR delivery is outside scope, record CG-11 through CG-18 N/A with concrete evidence.
+  - **Evidence:** Authority naming repository/base/head/action, live PR metadata/body/head/review-thread evidence, required checks successful, and applicable human-inspection artifacts complete; or the common no-PR N/A evidence.
+  - **Failure:** Keep the applicable common gate PENDING or FAIL; do not treat pending, stale, missing, or unexplained skipped evidence as success.
+- [ ] **B-09 — Report merge readiness or no-delivery completion**
+  - **Action:** With a PR, complete CG-15 by rendering every Type B row with phase-aware counts, commands, commits, risks, exact PR/head, and CG-16 through CG-18 explicitly unchecked; stop at CG-16. Without a PR, mark the PR-specific CG-15 action N/A and pass B-09 by rendering the final no-delivery report.
+  - **Evidence:** Reconciled `Required checks: X/Y; N/A: N; Blocked: 0`; with a PR, a user-visible exact-head merge-ready report and pending IDs; without a PR, concrete CG-11 through CG-18 N/A evidence and every other applicable row PASS.
+  - **Failure:** Do not claim merge-ready or DONE; expose the unchecked row and its next repair action. Waiting at CG-16 is normal PENDING, not failure.
+- [ ] **B-10 — Close out only after fresh merge approval**
+  - **Action:** With a PR, after fresh user approval of the current B-09 report, complete CG-16 through CG-18: record approval, merge and verify live state, then sync and clean the merged worktree/branch. Without a PR, record B-10 N/A from the common no-PR branch.
+  - **Evidence:** With a PR, fresh approval tied to the exact head, merge result/SHA, integration-branch sync, and cleanup result; without a PR, the same concrete CG-11 through CG-18 N/A evidence used at B-09.
+  - **Failure:** Waiting at CG-16 is PENDING; refusal or invalid authority is BLOCKED. CG-17 failure returns to repair; CG-18 ambiguity remains PENDING with state preserved.
 
 Written spec/plan artifacts trigger B-03 review evidence; omitting the artifact
 is allowed only when the inline scope/task list is sufficient. Implementation
@@ -96,3 +100,7 @@ Stop and reclassify when scope grows beyond Type B, a second architecture
 approach becomes materially plausible, the test shape cannot prove the contract,
 or review finds a broad compatibility/security/data-migration risk. Otherwise
 continue through review and verification until required Step DoD rows pass.
+With a PR, the normal pre-merge state is B-09 PASS and CG-16 PENDING; report
+DONE only after B-10 completes CG-16 through CG-18. Without a PR, report DONE
+after CG-11 through CG-18 and B-10 are evidence-backed N/A and every other
+applicable row passes.
