@@ -2,6 +2,20 @@
 
 All notable changes to Bluetape Skills are documented in this file.
 
+## [1.2.1] - 2026-07-17
+
+### Added
+
+- A fail-closed SVG text normalizer that removes renderer-sensitive text halos
+  and preserves lane and relationship labels in CairoSVG PNG output.
+- Semantic token highlighting for explicit code snippets, with regression
+  coverage for CSS cascade, inline attributes, token styles, and idempotence.
+
+### Changed
+
+- `$bluetape-diagram` now requires `text_hazards=0` and
+  `code_without_highlight=0` before canonical PNG rendering.
+
 ## [1.2.0] - 2026-07-17
 
 ### Added
@@ -41,3 +55,4 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.0.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.0.0
 [1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
+[1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
