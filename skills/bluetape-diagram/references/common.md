@@ -43,6 +43,13 @@ replace one-by-one full-size PNG inspection.
 - Peer cards must use a consistent text alignment model, including icon cards.
 - Automated label bounds are screening evidence; full-size PNG inspection still
   decides whether typography and overall density are readable.
+- Do not put a thick white stroke and `paint-order: stroke` on one text node;
+  CairoSVG can paint the stroke over the fill and erase the glyph. Use a label
+  capsule or separate stroke-only underlay plus fill-only foreground text.
+- Mark real source snippets and pseudocode with `data-code-snippet="<language>"`
+  and use semantic token spans for keywords, types, calls, strings, numbers,
+  comments, and operators. UML members, participant names, and prose remain
+  ordinary monospace text unless they are intentionally presented as code.
 
 ## Icons
 
@@ -130,6 +137,7 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-con
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-geometry-audit.py" --fail-diagonal <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-endpoint-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-mixed-corner-audit.py" <diagram>.svg
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-svg-text-normalize.py" <diagram>.svg
 git diff --check -- <diagram>.svg <diagram>.png
 ```
 
@@ -151,9 +159,9 @@ to review.
   - **Evidence:** Exact paths, source-backed concepts, and scan results.
   - **Failure:** Do not model from an old rendered asset or delete hard-to-route source relationships.
 - [ ] **DIA-COM-02 — Preserve readable text and theme**
-  - **Action:** Apply approved fonts/theme, resize for meaningful text, keep peer alignment, and exclude evidence notes from the art.
-  - **Evidence:** Full-size PNG text/font/alignment inspection.
-  - **Failure:** Clipping, crowding, inconsistent peers, or unreadable shrinkage blocks PASS.
+  - **Action:** Apply approved fonts/theme, remove CairoSVG text hazards, highlight explicit source snippets, resize for meaningful text, keep peer alignment, and exclude evidence notes from the art.
+  - **Evidence:** `text_hazards=0`, `code_without_highlight=0`, and full-size PNG text/font/alignment inspection.
+  - **Failure:** Missing text, unhighlighted explicit code, clipping, crowding, inconsistent peers, or unreadable shrinkage blocks PASS.
 - [ ] **DIA-COM-03 — Use verified infrastructure icons**
   - **Action:** Use catalog/official icons, remove legacy duplicates/defs, and scan related SVGs after icon changes.
   - **Evidence:** Icon source paths and duplicate-pattern scan, or concrete text-only N/A.
