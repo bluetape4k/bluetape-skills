@@ -41,6 +41,8 @@ replace one-by-one full-size PNG inspection.
 - Reject clipped text, text touching card/frame boundaries, and text crowded
   against icons.
 - Peer cards must use a consistent text alignment model, including icon cards.
+- Automated label bounds are screening evidence; full-size PNG inspection still
+  decides whether typography and overall density are readable.
 
 ## Icons
 
@@ -94,10 +96,15 @@ replace one-by-one full-size PNG inspection.
 - Account for arrowhead size before each target bend. Leave enough terminal
   segment for the arrowhead before it reaches the card edge.
 - Separate incoming and outgoing ports for cards with multiple relationships.
+- Do not let different relationships share a collinear connector segment or
+  visual corridor; assign distinct ports and routes.
 - Prefer the shortest semantically correct port pair; use top/bottom or
   same-side routes when they remove crossings or detours.
 - Move labels away from every unrelated line, card, arrowhead, lane title, and
   region border.
+- Keep relationship labels auditable: use an explicit label background `<rect>`
+  or explicit text `x`/`y` coordinates. Recognized labels with unbounded or
+  malformed transform geometry fail closed.
 
 ## Lane, Layer, and Whitespace
 
@@ -156,9 +163,9 @@ to review.
   - **Evidence:** Marker audit counts and zoomed/full-size PNG notes.
   - **Failure:** Dashed, black, mismatched, check-like, or inconsistent heads require repair and related-set scan.
 - [ ] **DIA-COM-05 — Verify connector endpoints and routes**
-  - **Action:** Enforce perpendicular boundary attachment, corner clearance, no card/border intrusion, separated ports, and shortest semantic routes.
-  - **Evidence:** Endpoint/geometry/connector audit results and visual inspection.
-  - **Failure:** Diagonal, floating, corner-adjacent, crossing, or card-hugging routes block PASS.
+  - **Action:** Enforce perpendicular boundary attachment, corner clearance, no card/border intrusion, separated ports, no shared connector segments, label clearance, and shortest semantic routes.
+  - **Evidence:** Endpoint/geometry/connector audit results including relationship names and label/shared-segment counts, plus visual inspection.
+  - **Failure:** Diagonal, floating, corner-adjacent, crossing, card-hugging, shared-corridor, or label-colliding routes block PASS.
 - [ ] **DIA-COM-06 — Verify every bent corner**
   - **Action:** Use rounded orthogonal geometry at every turn with sufficient pre/post bend and arrowhead clearance.
   - **Evidence:** Mixed-corner audit and PNG corner inspection.
@@ -169,7 +176,7 @@ to review.
   - **Failure:** Excess whitespace, cramped lanes, or stale dependent coordinates blocks PASS.
 - [ ] **DIA-COM-08 — Run required local commands**
   - **Action:** Run XML, CairoSVG, connector, geometry, endpoint, mixed-corner, and diff checks as triggered.
-  - **Evidence:** Exact commands, nonzero meaningful counts, and failures=0.
+  - **Evidence:** Exact commands, nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, and failures=0.
   - **Failure:** WEAK/UNAVAILABLE/zero counts require targeted fallback proof; missing output is FAIL.
 - [ ] **DIA-COM-09 — Verify review exposure**
   - **Action:** When a review page exists, prove it links current worktree canonical SVG/PNG outputs.

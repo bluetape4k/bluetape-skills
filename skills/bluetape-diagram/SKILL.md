@@ -48,8 +48,9 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 - Open every touched or high-risk PNG at full size after the final coordinate
   change.
 - Connector-heavy diagrams must have XML parse, marker/color, endpoint,
-  perpendicular attachment, geometry, crossing/card-intrusion, mixed-corner,
-  and full-size PNG evidence.
+  perpendicular attachment, geometry, crossing/card-intrusion,
+  relationship-label clearance, shared-corridor, mixed-corner, and full-size
+  PNG evidence.
 - Audit rows marked `WEAK`, `UNAVAILABLE`, `connectors=0`, `cards=0`,
   `paths=0`, or missing command output are not PASS evidence unless a targeted
   fallback invariant proves the same claim.
@@ -84,7 +85,7 @@ common checklist and every selected kind checklist for each asset separately.
   - **Evidence:** Successful commands and PNG dimensions/path.
   - **Failure:** SVG-only or alternate-renderer success does not advance the asset.
 - [ ] **DIA-05 — Run common and type-specific audits**
-  - **Action:** Run connector/geometry/endpoint/mixed-corner and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
+  - **Action:** Run connector/relationship-label/geometry/endpoint/mixed-corner and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
   - **Evidence:** Counts and failures=0 with no WEAK/UNAVAILABLE/zero-count ambiguity.
   - **Failure:** Repair the asset or prove the same claim with a concrete fallback before visual review.
 - [ ] **DIA-06 — Inspect the full-size PNG**
@@ -109,7 +110,7 @@ Every completion report or PR body must include concrete evidence rows:
 | XML | `xmllint --noout ...` result |
 | Render | CairoSVG command and PNG dimensions |
 | Kind rules | relevant reference files loaded |
-| Connector audits | counts such as `connectors`, `cards`, `q_bends`, `failures=0` |
+| Connector audits | counts such as `connectors`, `cards`, `labels`, `shared_segments`, `label_cards`, `label_labels`, `label_connectors`, `q_bends`, `failures=0` |
 | Type-specific audit | sequence/class/ERD/architecture/chart invariant result |
 | Visual inspection | full-size PNG path and observed pass/fail notes |
 | Review exposure | local review page link check when a review page exists |
