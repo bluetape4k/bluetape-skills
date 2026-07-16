@@ -33,7 +33,7 @@ The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrit
 
 Restart Codex after installation so the new skills are discovered.
 
-To follow unreleased changes, clone `main` by omitting the `--branch v1.2.1 --depth 1` options. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
+To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.2.1 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
 
 ## Update
 
@@ -46,7 +46,7 @@ cd bluetape-skills-v1.2.1
 ./scripts/install.sh --force
 ```
 
-If you intentionally track `main`, update that branch in place:
+If you intentionally track `develop`, update that branch in place:
 
 ```bash
 git pull --ff-only
@@ -105,6 +105,8 @@ This public bundle contains only canonical reusable guidance. It does not includ
 ## Contribution and release policy
 
 This repository is a distributable mirror of the maintained canonical skill source. Open an issue for a correction or proposal; maintainers review it against the source and export it in a later bundle update. Do not rely on retired skill names in new documentation or automation.
+
+Development and maintenance pull requests target the default `develop` branch. The `main` branch accepts reviewed release-promotion pull requests only and remains aligned with the latest stable release until the next promotion. Release tags are signed and immutable.
 
 ## Verification
 

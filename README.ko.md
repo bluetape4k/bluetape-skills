@@ -33,7 +33,7 @@ cd bluetape-skills
 
 설치 뒤에는 Codex를 다시 시작해야 새 skill을 인식합니다.
 
-아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.2.1 --depth 1` 옵션을 빼고 `main`을 복제하세요. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
+아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.2.1 --depth 1` 옵션을 빼고 기본 브랜치인 `develop`을 복제하세요. `main`은 검토를 거친 안정 릴리스 승격에만 사용합니다. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
 
 ## 업데이트
 
@@ -46,7 +46,7 @@ cd bluetape-skills-v1.2.1
 ./scripts/install.sh --force
 ```
 
-의도적으로 `main`을 추적하는 checkout만 현재 브랜치에서 갱신합니다.
+의도적으로 `develop`을 추적하는 checkout만 현재 브랜치에서 갱신합니다.
 
 ```bash
 git pull --ff-only
@@ -105,6 +105,8 @@ Full Feature 작업의 `2-R` Spec Review, `3-R` Plan Review, `6-R` Pre-PR Review
 ## 기여와 릴리스 정책
 
 이 저장소는 관리 중인 canonical skill source를 배포하기 위한 mirror입니다. 수정이나 제안은 issue로 남겨 주세요. 관리자가 source와 함께 검토한 뒤 이후 bundle update에 반영합니다. 새 문서나 자동화에서는 retired skill 이름에 의존하지 마세요.
+
+개발 및 유지보수 pull request는 기본 브랜치인 `develop`을 대상으로 합니다. `main`은 검토를 거친 릴리스 승격 pull request만 받으며, 다음 승격 전까지 최신 안정 릴리스와 같은 상태를 유지합니다. 릴리스 태그는 서명되며 변경하지 않습니다.
 
 ## 검증
 

@@ -2,6 +2,13 @@
 
 All notable changes to Bluetape Skills are documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Adopted `develop` as the default integration branch and reserved `main` for
+  reviewed stable-release promotion only.
+
 ## [1.2.1] - 2026-07-17
 
 ### Added
@@ -56,3 +63,4 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.2.1...develop
