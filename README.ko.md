@@ -15,13 +15,13 @@ Bluetape 개발 워크플로를 위한 설치 가능한 canonical [Codex skill](
 안정 버전을 복제하고 배포본을 검증한 뒤 설치 스크립트를 실행합니다.
 
 ```bash
-git clone --branch v1.1.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.2.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
 ```
 
-검증에는 Bash, `rg`, Python 3, `uv`가 필요합니다. 검증 스크립트는 공개 배포 경계와 workflow contract를 확인한 뒤, 임시 `uv` 환경에서 함께 배포한 workflow 회귀 테스트를 실행합니다.
+검증에는 Bash, `rg`, Python 3, `uv`가 필요합니다. 검증 스크립트는 공개 배포 경계와 workflow contract를 확인한 뒤, 임시 Python 환경에서 함께 배포한 workflow 및 diagram audit 회귀 테스트를 실행합니다.
 
 설치 대상은 `${CODEX_HOME:-~/.codex}/skills`입니다. 동일한 canonical skill이 이미 있으면 설치 스크립트는 덮어쓰지 않고 멈춥니다. 교체가 필요할 때만 `--force`를 사용하세요. 기존 skill은 타임스탬프가 붙은 백업 디렉터리로 먼저 옮깁니다.
 
@@ -33,15 +33,15 @@ cd bluetape-skills
 
 설치 뒤에는 Codex를 다시 시작해야 새 skill을 인식합니다.
 
-아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.1.0 --depth 1` 옵션을 빼고 `main`을 복제하세요. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
+아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.2.0 --depth 1` 옵션을 빼고 `main`을 복제하세요. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
 
 ## 업데이트
 
 릴리스 태그는 변경되지 않습니다. 안정 설치본을 갱신하려면 원하는 새 태그를 별도 디렉터리에 복제하고 검증한 뒤, 기존 skill을 백업하면서 교체하세요.
 
 ```bash
-git clone --branch v1.1.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.1.0
-cd bluetape-skills-v1.1.0
+git clone --branch v1.2.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.2.0
+cd bluetape-skills-v1.2.0
 ./scripts/validate.sh
 ./scripts/install.sh --force
 ```

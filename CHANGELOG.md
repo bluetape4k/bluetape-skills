@@ -2,6 +2,16 @@
 
 All notable changes to Bluetape Skills are documented in this file.
 
+## [1.2.0] - 2026-07-17
+
+### Added
+
+- Automatic `$bluetape-diagram` connector checks for relationship-label collisions and shared connector segments.
+
+### Changed
+
+- Connector audit failures now use `data-from`/`data-to` relationship names when available, apply SVG affine transforms, and keep disconnected path subpaths separate.
+
 ## [1.1.0] - 2026-07-14
 
 ### Added
@@ -30,3 +40,4 @@ All notable changes to Bluetape Skills are documented in this file.
 
 [1.0.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.0.0
 [1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0
+[1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0

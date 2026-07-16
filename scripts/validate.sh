@@ -11,6 +11,7 @@ readonly expected_skills=(
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 skills_root="$repo_root/skills"
 workflow_root="$skills_root/bluetape-workflow"
+diagram_root="$skills_root/bluetape-diagram"
 
 for command in rg python3 uv; do
   command -v "$command" >/dev/null || { echo "missing required command: $command" >&2; exit 1; }
@@ -113,5 +114,8 @@ print(json.dumps({"external_skills": sorted(external), "issues": [], "ok": True}
 PY
 
 PYTHONDONTWRITEBYTECODE=1 uv run --with pytest pytest -q "$workflow_root/tests"
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -v \
+  -s "$diagram_root/tests" \
+  -p 'test_*.py'
 
-echo "PASS: ${#expected_skills[@]} canonical skills, workflow contracts, tests, and public bundle boundaries are valid."
+echo "PASS: ${#expected_skills[@]} canonical skills, workflow contracts, diagram audits, tests, and public bundle boundaries are valid."
