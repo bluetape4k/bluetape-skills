@@ -52,8 +52,11 @@ dependencies BOM.
 
 Pin `catalog/YYYY-MM-DD-NN`; validate consumers through supported catalog
 path/ref properties; resolve without `mavenLocal()`; run affected compile/tests
-and required Nightly/full; publish snapshots in DAG order; record runs and
-metadata. This proves readiness but does not authorize stable release.
+and required Nightly/full. Before candidate-ready, run the complete
+cross-repository publication contract in `publication-pom-gate.md`; the train's
+own no-publication status does not make downstream Maven models N/A. Publish
+snapshots in DAG order; record runs and metadata. This proves readiness but does
+not authorize stable release.
 
 ### Routine Snapshot
 

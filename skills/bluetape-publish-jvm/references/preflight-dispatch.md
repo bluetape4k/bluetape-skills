@@ -27,9 +27,9 @@
   - **Evidence:** Central HTTP/POM proof per internal reference.
   - **Failure:** Wait for public artifacts or correct the reference.
 - [ ] **PRE-07 — Audit generated BOM and POMs**
-  - **Action:** Scan for SNAPSHOTs, missing dependency versions, wrong license, and leaked non-publishable artifacts.
-  - **Evidence:** Generated BOM/POM paths and clean audit output.
-  - **Failure:** Block publication and produce a corrective patch.
+  - **Action:** Scan for SNAPSHOTs, Maven-shaped dependency-version defects, wrong license, and leaked non-publishable artifacts. For a catalog/shared-version train, run the exact cross-repository contract in `publication-pom-gate.md` rather than representative POM sampling.
+  - **Evidence:** Generated BOM/POM paths, complete publisher inventory, structural audit, Maven effective-model output, and clean audit result.
+  - **Failure:** Missing publisher coverage, a versionless dependency-management entry, an unmanaged regular dependency, or a failed Maven model blocks the train and publication.
 - [ ] **PRE-08 — Validate signing and publishing diagnostics**
   - **Action:** Run the repository's declared signing/publishing diagnostics.
   - **Evidence:** Fresh successful diagnostic output.
