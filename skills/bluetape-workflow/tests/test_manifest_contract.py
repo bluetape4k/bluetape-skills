@@ -60,6 +60,12 @@ class ManifestContractTest(unittest.TestCase):
         self.assertIn("required", manifest["topology"]["component_required_fields"])
         self.assertFalse(manifest["token_audit"]["hard_limit"])
 
+    def test_pre_resolution_phase2_snapshot_remains_valid(self):
+        manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        manifest.pop("failure_resolution")
+        self.runtime.validate_manifest(manifest)
+        self.assertIn("candidate_validated", manifest["receipt"]["event_types"])
+
     def test_transition_to_unknown_state_is_rejected(self):
         manifest = json.loads(self.manifest_path.read_text(encoding="utf-8"))
         manifest["run_transitions"]["running"].append("unknown")

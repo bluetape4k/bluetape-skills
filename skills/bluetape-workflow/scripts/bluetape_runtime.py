@@ -204,6 +204,13 @@ _ALLOWED_METADATA_BY_EVENT = {
         "replacement_lane_id",
         "replacement_terminal_state",
     },
+    "candidate_validated": {
+        "candidate_kind",
+        "original_lane_id",
+        "resolution_lane_id",
+        "original_evidence_digest",
+        "resolution_evidence_digest",
+    },
     "run_resumed": {"new_owner_fingerprint"},
     "transaction_committed": {"intents"},
     "handoff_recorded": {
@@ -1082,6 +1089,7 @@ def _validate_event_metadata(
         "replacement_agent_id",
         "original_lane_id",
         "replacement_lane_id",
+        "resolution_lane_id",
         "parent_lane_id",
         "component_id",
         "check_id",
@@ -1091,6 +1099,8 @@ def _validate_event_metadata(
     for field in (
         "evidence_digest",
         "checkpoint_digest",
+        "original_evidence_digest",
+        "resolution_evidence_digest",
         "new_owner_fingerprint",
         "report_checksum",
         "report_receipt_head",
@@ -1104,6 +1114,8 @@ def _validate_event_metadata(
         "cancelled",
     }:
         raise ValueError("replacement terminal state is invalid")
+    if "candidate_kind" in metadata and metadata["candidate_kind"] != "failed_lane_resolution":
+        raise ValueError("candidate kind is invalid")
     if "coverage_state" in metadata and metadata["coverage_state"] not in {
         "missing",
         "partial",
@@ -2022,6 +2034,11 @@ def validate_manifest(manifest):
         raise ValueError("heartbeat cannot be completion evidence")
     if manifest["token_audit"].get("hard_limit") is not False:
         raise ValueError("token audit must remain report-only")
+    failure_resolution = manifest.get("failure_resolution")
+    if failure_resolution is not None and failure_resolution != {
+        "requires_parent": True
+    }:
+        raise ValueError("failure resolution policy is invalid")
     events = manifest["receipt"].get("event_types")
     if not isinstance(events, list) or len(events) != len(set(events)):
         raise ValueError("receipt event types must be a unique list")

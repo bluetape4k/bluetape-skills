@@ -94,6 +94,9 @@
     "require_evidence": true,
     "allow_unresolved_replacement": false
   },
+  "failure_resolution": {
+    "requires_parent": true
+  },
   "resource_limits": {
     "max_receipt_line_bytes": 65536,
     "max_input_json_bytes": 1048576,

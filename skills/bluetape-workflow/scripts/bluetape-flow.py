@@ -49,12 +49,13 @@ SAFE_NEXT_COMMAND = {
     "interrupt-result": "lane-reassign",
     "lane-reassign": "lane-start for the replacement lane",
     "lane-complete": "check-result",
-    "lane-fail": "replacement-close or completion-check",
+    "lane-fail": "lane-resolve or completion-check",
     "lane-block": "replacement-close or completion-check",
     "lane-cancel": "replacement-close or completion-check",
     "replacement-repair": "lane-start for the replacement lane",
     "replacement-block": "completion-check",
     "replacement-close": "completion-check",
+    "lane-resolve": "completion-check",
     "resume": "resume-check",
     "recovery-run-create": "verify the new run",
     "topology-register": "check-result",
@@ -173,6 +174,11 @@ def build_parser():
         command.add_argument("--lane-id", required=True)
         command.add_argument("--replacement-lane-id", required=True)
         command.add_argument("--at", required=True)
+
+    resolution = _run_parser(commands, "lane-resolve", mutation=True, evidence=True)
+    resolution.add_argument("--lane-id", required=True)
+    resolution.add_argument("--resolution-lane-id", required=True)
+    resolution.add_argument("--at", required=True)
 
     resume = _run_parser(commands, "resume", mutation=True, evidence=True)
     resume.add_argument("--new-owner-file", required=True)
@@ -390,6 +396,11 @@ def _dispatch_command(args, state_root, run_dir, command):
     elif operation == "replacement-close":
         coordinator.close_replacement_lineage(
             run_dir, args.lane_id, args.replacement_lane_id, args.owner_file,
+            args.at, evidence,
+        )
+    elif operation == "lane-resolve":
+        coordinator.resolve_failed_lane(
+            run_dir, args.lane_id, args.resolution_lane_id, args.owner_file,
             args.at, evidence,
         )
     elif operation == "topology-register":
