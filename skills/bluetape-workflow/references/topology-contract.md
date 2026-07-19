@@ -26,6 +26,26 @@ run can complete. `complete` atomically records main verification and
 `run_completed` only after `completion-check` has no missing lane, component,
 check, replacement, or main-verification proof.
 
+A terminal `failed` lane remains immutable history. When a later correction or
+rereview lane completes later with independent completion evidence,
+`lane-resolve` appends a `candidate_validated` record whose
+`candidate_kind=failed_lane_resolution` links the failed lane to that
+successful lane. The evidence must bind the receipt digests of both terminal
+lane results. `completion-check` reports `unresolved_failed_lanes` and
+`resolved_failed_lanes` separately; only a replay-validated resolution to a
+completed lane removes the original failure from `missing_lanes`. Failed,
+blocked, cancelled, unknown, self-referential, duplicate, or liveness-only
+resolution claims never satisfy completion. This semantic repair lineage is
+separate from stalled-agent replacement lineage.
+
+New manifest snapshots require the correction/rereview lane to declare the
+failed lane as `parent_lane_id`. Pre-policy Phase 2 snapshots cannot add that
+declaration retroactively, so their compatibility path relies on later
+completion receipt sequence plus exact bindings to both terminal evidence
+digests. In both
+paths the owner supplies the semantic assertion; lane names are never treated
+as proof.
+
 ## Resume and Recovery
 
 Run `resume-check` before `resume`. Transfer creates a fresh contained 0600
@@ -75,6 +95,7 @@ receipt.
 | `replacement-repair` | repair and create transaction | incomplete reservation | child pending |
 | `replacement-block` | `replacement_blocked` | incomplete reservation | original blocked |
 | `replacement-close` | `replacement_lineage_closed` | replacement terminal | original same terminal |
+| `lane-resolve` | `candidate_validated` failure-resolution record | failed original plus later completed correction/rereview | original history retained / `completion-check` |
 | `resume-check` | read-only replay | any Phase 2 run | `resume` or repair |
 | `resume` | `run_resumed` | nonterminal, complete lineage | epoch + 1 |
 | `receipt-diagnose` | read-only trusted-prefix report | any snapshot | block or `recovery-run-create` |
@@ -89,9 +110,30 @@ receipt.
 | `live-report-create` | `live_report_recorded` | completed | immutable live report |
 
 The lifecycle aliases `lane-fail`, `lane-block`, and `lane-cancel` require a
-reason; `probe-ack` uses the same fixed lane transition contract as
-`lane-start` and `startup-ack`. `verify` and `rebuild` are receipt utilities,
-not arbitrary mutation surfaces.
+reason. `lane-resolve` requires `--lane-id`, `--resolution-lane-id`, `--at`,
+and non-liveness `--evidence`. `probe-ack` uses the same fixed lane transition
+contract as `lane-start` and `startup-ack`. `verify` and `rebuild` are receipt
+utilities, not arbitrary mutation surfaces.
+
+The existing `candidate_validated` event type is intentionally used so frozen
+Phase 2 `1.1.0` manifest snapshots can record the repair without weakening
+their receipt whitelist or migrating the run in place. The owner makes the
+semantic correction/rereview assertion; the coordinator enforces the snapshot's
+parent policy when present, later completion, and exact receipt-evidence
+bindings rather than inferring intent from lane names.
+
+To build `lane-resolve --evidence`, compute the canonical SHA-256 digest of
+each terminal lane's `evidence_refs` array and supply both digests as checksum
+fields. The bundled runtime helper uses the same canonical JSON contract:
+
+```python
+from bluetape_runtime import evidence_digest
+
+resolution_evidence = [
+    {"kind": "failed-lane", "summary": "bind failed result", "checksum": evidence_digest(failed_lane["evidence_refs"])},
+    {"kind": "resolution-lane", "summary": "bind successful result", "checksum": evidence_digest(resolution_lane["evidence_refs"])},
+]
+```
 
 ## Fixed JSON Shapes
 

@@ -145,6 +145,8 @@ lane-create receipt
   -> main-session rereads evidence
   -> main session collects git changed paths and validates canonical write scope
   -> lane-complete -> check-result -> component-evidence
+  -> failed review lane, when present -> completed correction/rereview lane
+  -> lane-resolve with independent completion evidence
   -> completion-check -> complete
 ```
 

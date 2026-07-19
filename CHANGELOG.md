@@ -9,6 +9,12 @@ All notable changes to Bluetape Skills are documented in this file.
 - Adopted `develop` as the default integration branch and reserved `main` for
   reviewed stable-release promotion only.
 
+### Fixed
+
+- Allowed append-only coordinator completion after a failed review lane is
+  explicitly linked to a completed correction or exact-head rereview lane,
+  while unresolved and invalid failure-resolution claims remain blocking.
+
 ## [1.2.1] - 2026-07-17
 
 ### Added

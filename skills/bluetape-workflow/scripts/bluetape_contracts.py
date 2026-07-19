@@ -79,6 +79,7 @@ _PHASE2_COMMANDS = {
     "lane-fail", "lane-block", "lane-cancel", "heartbeat", "liveness-check",
     "probe-sent", "interrupt-result", "lane-reassign", "replacement-repair",
     "replacement-block", "replacement-close", "resume-check", "resume",
+    "lane-resolve",
     "receipt-diagnose", "recovery-run-create", "handoff-create",
     "live-report-create", "topology-register", "topology-remove", "check-result",
     "component-evidence", "completion-check", "complete",
