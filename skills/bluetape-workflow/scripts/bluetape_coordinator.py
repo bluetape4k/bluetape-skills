@@ -147,6 +147,7 @@ def empty_coordinator_state(run_metadata):
         "reports": {},
         "main_verified": False,
         "incomplete_replacements": [],
+        "failure_resolutions": {},
         "last_sequence": 0,
         "last_checksum": "",
         "last_event_type": None,
@@ -207,7 +208,9 @@ def _new_lane(event, sequence):
         "last_evidence_digest": metadata.get("evidence_digest"),
         "last_reason": event.get("reason"),
         "liveness_evidence_refs": [],
+        "liveness_evidence_digests": [],
         "last_event_type": event["event_type"],
+        "terminal_sequence": None,
         "updated_at": event["timestamp"],
         "evidence_refs": list(event.get("evidence_refs", [])),
     }
@@ -240,11 +243,17 @@ def _apply_lane_event(state, event, sequence):
     lane["state"] = target
     lane["last_event_type"] = event_type
     lane["updated_at"] = event["timestamp"]
+    if target in TERMINAL_LANE_STATES:
+        lane["terminal_sequence"] = sequence
     metadata = event.get("metadata") or {}
     if event.get("evidence_refs"):
         evidence = list(event["evidence_refs"])
         if event_type in LIVENESS_EVENT_TYPES:
             lane["liveness_evidence_refs"] = evidence
+            digest = _runtime().evidence_digest(evidence)
+            digest_history = lane.setdefault("liveness_evidence_digests", [])
+            if digest not in digest_history:
+                digest_history.append(digest)
             if "evidence_digest" not in metadata:
                 encoded = json.dumps(
                     evidence,
@@ -351,6 +360,7 @@ def _apply_logical_event(state, event, manifest, sequence):
         ):
             _corrupt(sequence, "replacement block identity is invalid")
         original["state"] = "blocked"
+        original["terminal_sequence"] = sequence
         original["last_event_type"] = event_type
         original["updated_at"] = event.get("timestamp")
         original["evidence_refs"] = list(event.get("evidence_refs", []))
@@ -374,9 +384,65 @@ def _apply_logical_event(state, event, manifest, sequence):
         ):
             _corrupt(sequence, "replacement close lineage is invalid")
         original["state"] = terminal_state
+        original["terminal_sequence"] = sequence
         original["last_event_type"] = event_type
         original["updated_at"] = event.get("timestamp")
         original["evidence_refs"] = list(event.get("evidence_refs", []))
+    elif (
+        event_type == "candidate_validated"
+        and (event.get("metadata") or {}).get("candidate_kind")
+        == "failed_lane_resolution"
+    ):
+        _require_evidence(event, sequence)
+        if _is_liveness_evidence(state, event["evidence_refs"]):
+            _corrupt(sequence, "liveness evidence cannot resolve a failed lane")
+        metadata = event.get("metadata") or {}
+        original_id = metadata.get("original_lane_id")
+        resolution_id = metadata.get("resolution_lane_id")
+        original = state["lanes"].get(original_id)
+        resolution = state["lanes"].get(resolution_id)
+        if original is None or original["state"] != "failed":
+            _corrupt(sequence, "failure resolution original lane is invalid")
+        if (
+            event.get("lane_id") != original_id
+            or event.get("agent_id") != original["agent_id"]
+            or event.get("from_state") != "failed"
+            or event.get("to_state") != "failed"
+            or resolution_id == original_id
+            or resolution is None
+            or resolution.get("state") != "completed"
+            or (
+                manifest.get("failure_resolution", {}).get("requires_parent")
+                and resolution.get("parent_lane_id") != original_id
+            )
+            or not isinstance(original.get("terminal_sequence"), int)
+            or not isinstance(resolution.get("terminal_sequence"), int)
+            or resolution["terminal_sequence"] <= original["terminal_sequence"]
+            or original_id in state["failure_resolutions"]
+        ):
+            _corrupt(sequence, "failure resolution lineage is invalid")
+        required_digests = {
+            _runtime().evidence_digest(original.get("evidence_refs", [])),
+            _runtime().evidence_digest(resolution.get("evidence_refs", [])),
+        }
+        supplied_digests = {
+            evidence.get("checksum")
+            for evidence in event["evidence_refs"]
+            if isinstance(evidence, dict)
+        }
+        if (
+            metadata.get("original_evidence_digest") not in required_digests
+            or metadata.get("resolution_evidence_digest") not in required_digests
+            or metadata.get("original_evidence_digest")
+            == metadata.get("resolution_evidence_digest")
+            or not required_digests <= supplied_digests
+        ):
+            _corrupt(sequence, "failure resolution evidence binding is invalid")
+        state["failure_resolutions"][original_id] = {
+            "resolution_lane_id": resolution_id,
+            "resolved_at": event.get("timestamp"),
+            "evidence_refs": list(event.get("evidence_refs", [])),
+        }
     elif event_type == "main_verification":
         _require_evidence(event, sequence)
         state["main_verified"] = True
@@ -1155,13 +1221,19 @@ def require_active_lane_owner(state, lane_id, agent_id):
     return lane
 
 
-def _require_completion_evidence(state, evidence_refs):
-    _require_evidence_refs(evidence_refs)
+def _is_liveness_evidence(state, evidence_refs):
     digest = _runtime().evidence_digest(evidence_refs)
     for lane in state["lanes"].values():
-        liveness_refs = lane.get("liveness_evidence_refs", [])
-        if liveness_refs and _runtime().evidence_digest(liveness_refs) == digest:
-            raise ValueError("liveness evidence cannot satisfy completion evidence")
+        if digest in lane.get("liveness_evidence_digests", []):
+            return True
+    return False
+
+
+def _require_completion_evidence(state, evidence_refs):
+    _require_evidence_refs(evidence_refs)
+    if _is_liveness_evidence(state, evidence_refs):
+        raise ValueError("liveness evidence cannot satisfy completion evidence")
+    digest = _runtime().evidence_digest(evidence_refs)
     return digest
 
 
@@ -1423,16 +1495,29 @@ def evaluate_run_completion(state, manifest):
         for component_id, component in state["topology"].items()
         if component["required"]
     }
+    resolved_failed_lanes = {
+        lane_id
+        for lane_id, resolution in state.get("failure_resolutions", {}).items()
+        if state["lanes"].get(lane_id, {}).get("state") == "failed"
+        and state["lanes"].get(resolution.get("resolution_lane_id"), {}).get("state")
+        == "completed"
+    }
+    unresolved_failed_lanes = {
+        lane_id
+        for lane_id, lane in state["lanes"].items()
+        if lane["state"] == "failed" and lane_id not in resolved_failed_lanes
+    }
     incomplete_lanes = {
         lane_id
         for lane_id, lane in state["lanes"].items()
-        if lane["state"] != "completed"
+        if lane["state"] != "completed" and lane_id not in resolved_failed_lanes
     }
     incomplete_lanes.update(
         component["owner_lane"]
         for component in required_components.values()
         if state["lanes"].get(component["owner_lane"], {}).get("state")
         != "completed"
+        and component["owner_lane"] not in resolved_failed_lanes
     )
     missing_components = set(missing_topology)
     missing_components.update(
@@ -1449,6 +1534,8 @@ def evaluate_run_completion(state, manifest):
     )
     result = {
         "missing_lanes": sorted(incomplete_lanes),
+        "unresolved_failed_lanes": sorted(unresolved_failed_lanes),
+        "resolved_failed_lanes": sorted(resolved_failed_lanes),
         "missing_components": sorted(missing_components),
         "failed_checks": failed_checks,
         "missing_main_verification": not state["main_verified"],
@@ -1464,6 +1551,81 @@ def evaluate_run_completion(state, manifest):
         )
     )
     return result
+
+
+def resolve_failed_lane(
+    run_dir,
+    lane_id,
+    resolution_lane_id,
+    owner_handle,
+    decided_at,
+    evidence_refs,
+):
+    runtime = _runtime()
+    manifest_snapshot = runtime.load_run_manifest_snapshot(run_dir)
+    runtime.validate_identifier(lane_id, "lane id")
+    runtime.validate_identifier(resolution_lane_id, "resolution lane id")
+    parse_timestamp(decided_at)
+    _require_evidence_refs(evidence_refs)
+
+    def decide(state):
+        require_run_owner(state, manifest_snapshot, owner_handle)
+        require_run_state(state, {"running", "recovering"})
+        original = state["lanes"].get(lane_id)
+        resolution = state["lanes"].get(resolution_lane_id)
+        if original is None or original["state"] != "failed":
+            raise CoordinatorConflict("lane is not a failed lane")
+        if lane_id == resolution_lane_id:
+            raise ValueError("failed lane cannot resolve itself")
+        if resolution is None or resolution["state"] != "completed":
+            raise CoordinatorConflict("resolution lane is not completed")
+        if (
+            manifest_snapshot["manifest"]
+            .get("failure_resolution", {})
+            .get("requires_parent")
+            and resolution.get("parent_lane_id") != lane_id
+        ):
+            raise CoordinatorConflict("resolution lane does not declare failed parent")
+        if resolution.get("terminal_sequence", 0) <= original.get(
+            "terminal_sequence", 0
+        ):
+            raise CoordinatorConflict("resolution lane did not complete after failure")
+        if lane_id in state["failure_resolutions"]:
+            raise CoordinatorConflict("failed lane is already resolved")
+        _require_completion_evidence(state, evidence_refs)
+        original_digest = runtime.evidence_digest(original.get("evidence_refs", []))
+        resolution_digest = runtime.evidence_digest(resolution.get("evidence_refs", []))
+        supplied_digests = {
+            evidence.get("checksum")
+            for evidence in evidence_refs
+            if isinstance(evidence, dict)
+        }
+        if {original_digest, resolution_digest} - supplied_digests:
+            raise ValueError(
+                "resolution evidence must bind failed and completed lane evidence"
+            )
+        return [
+            {
+                "event_type": "candidate_validated",
+                "lane_id": lane_id,
+                "agent_id": original["agent_id"],
+                "from_state": "failed",
+                "to_state": "failed",
+                "timestamp": decided_at,
+                "evidence_refs": evidence_refs,
+                "metadata": {
+                    "owner_epoch": state["owner_epoch"],
+                    "candidate_kind": "failed_lane_resolution",
+                    "original_lane_id": lane_id,
+                    "resolution_lane_id": resolution_lane_id,
+                    "original_evidence_digest": original_digest,
+                    "resolution_evidence_digest": resolution_digest,
+                },
+            }
+        ]
+
+    state = runtime.mutate_receipt(run_dir, owner_handle, decide)
+    return state["failure_resolutions"][lane_id]
 
 
 def complete_run(run_dir, owner_handle, evidence_refs):

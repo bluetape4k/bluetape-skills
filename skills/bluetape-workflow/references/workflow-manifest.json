@@ -78,6 +78,9 @@
     "startup_ack_seconds": 30,
     "monitor_interval_seconds": 30,
     "suspected_stall_seconds": 120,
+    "consecutive_wait_timeout_seconds": 300,
+    "absolute_delegation_deadline_seconds": 900,
+    "max_native_wait_seconds": 60,
     "max_silence_lease_seconds": 600,
     "probe_grace_seconds": 60,
     "max_replacements": 1,
@@ -93,6 +96,9 @@
     "require_main_verification": true,
     "require_evidence": true,
     "allow_unresolved_replacement": false
+  },
+  "failure_resolution": {
+    "requires_parent": true
   },
   "resource_limits": {
     "max_receipt_line_bytes": 65536,

@@ -32,8 +32,11 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 ## Execution Contract
 
 1. Read the target README/page and source-backed behavior before drawing.
-2. Work one asset at a time: edit SVG, render PNG, inspect PNG, then continue.
-3. Treat PNG output as authoritative. SVG-only success never closes the task.
+2. Work one asset at a time. Use SVG -> PNG by default. Only a chart that
+   passes the DOM-native eligibility gate in `references/chart.md` may use
+   HTML/CSS -> PNG.
+3. Treat PNG output as authoritative. Source-only success never closes the
+   task.
 4. Convert every user-reported visual defect into a concrete geometry/style
    invariant and record the evidence.
 5. Use the installed generators only as helpers:
@@ -43,12 +46,15 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 
 ## Non-Negotiable Gates
 
-- Render with CairoSVG CLI:
-  `cairosvg <diagram>.svg -o <diagram>.png -s 2`
+- Render SVG sources with CairoSVG CLI:
+  `cairosvg <diagram>.svg -o <diagram>.png -s 2`.
+- Render an eligible DOM-native chart with the deterministic Chromium capture
+  contract in `references/chart.md`; HTML is a source artifact, not the README
+  embed.
 - Open every touched or high-risk PNG at full size after the final coordinate
   change.
 - Reject CairoSVG text hazards and unhighlighted explicit code snippets with
-  `diagram-svg-text-normalize.py` before canonical PNG rendering.
+  `diagram-svg-text-normalize.py` before canonical SVG PNG rendering.
 - Connector-heavy diagrams must have XML parse, marker/color, endpoint,
   perpendicular attachment, geometry, crossing/card-intrusion,
   relationship-label clearance, shared-corridor, mixed-corner, and full-size
@@ -71,21 +77,21 @@ Apply `bluetape-workflow/references/checklist-contract.md`. Complete the
 common checklist and every selected kind checklist for each asset separately.
 
 - [ ] **DIA-01 — Pin asset scope and source model**
-  - **Action:** Record the canonical SVG/PNG paths, target README/page, implementing source/config, reader question, related-set scan, and diagram kind.
+  - **Action:** Record the canonical source/PNG paths, target README/page, implementing source/config, reader question, related-set scan, diagram kind, and selected render pipeline.
   - **Evidence:** Source/asset ledger and trigger-to-reference map.
   - **Failure:** Remove or defer assets without a source-backed reader purpose.
 - [ ] **DIA-02 — Load common and kind rules**
   - **Action:** Read `common.md` and only the matching architecture/class/ERD/sequence/chart references; keep common open for user-reported geometry/style defects.
   - **Evidence:** Exact loaded reference list and applicable conditional rules.
   - **Failure:** Do not edit from generic diagram conventions.
-- [ ] **DIA-03 — Complete one SVG edit**
-  - **Action:** Edit exactly one asset, preserving source-backed concepts and converting reported defects into explicit invariants.
-  - **Evidence:** Scoped SVG diff and invariant list.
+- [ ] **DIA-03 — Complete one source edit**
+  - **Action:** Edit exactly one asset in the selected source format, preserving source-backed concepts and converting reported defects into explicit invariants.
+  - **Evidence:** Scoped SVG diff, or eligible chart HTML/CSS plus its single data source, and the invariant list.
   - **Failure:** Stop batch progression until this asset completes the full loop.
-- [ ] **DIA-04 — Parse and render the authoritative PNG**
-  - **Action:** Validate XML and render with the required CairoSVG CLI at scale 2.
-  - **Evidence:** Successful commands and PNG dimensions/path.
-  - **Failure:** SVG-only or alternate-renderer success does not advance the asset.
+- [ ] **DIA-04 — Validate source and render the authoritative PNG**
+  - **Action:** For SVG, validate XML and render with CairoSVG at scale 2. For an eligible DOM-native chart, validate source/data and use the deterministic Chromium capture contract from `chart.md`.
+  - **Evidence:** Selected pipeline, successful commands, renderer version, and PNG dimensions/path.
+  - **Failure:** Source-only success, an unapproved renderer, or a chart that bypasses the eligibility gate does not advance the asset.
 - [ ] **DIA-05 — Run common and type-specific audits**
   - **Action:** Run raster-text/code-highlight, connector/relationship-label/geometry/endpoint/mixed-corner, and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
   - **Evidence:** Counts and failures=0 with no WEAK/UNAVAILABLE/zero-count ambiguity.
@@ -95,7 +101,7 @@ common checklist and every selected kind checklist for each asset separately.
   - **Evidence:** Full-size PNG path and observed pass/fail notes.
   - **Failure:** PNG contradiction overrides scripts; return to DIA-03.
 - [ ] **DIA-07 — Verify exposure and diff hygiene**
-  - **Action:** Check canonical embeds/review-page links, related asset parity, and `git diff --check` for SVG/PNG/page changes.
+  - **Action:** Check canonical embeds/review-page links, related asset parity, and `git diff --check` for source/PNG/page changes.
   - **Evidence:** Link/embed results, canonical paths, and clean diff check.
   - **Failure:** Broken exposure, stale paths, or unrelated artifacts blocks completion.
 - [ ] **DIA-08 — Render the evidence ledger**
@@ -107,12 +113,12 @@ Every completion report or PR body must include concrete evidence rows:
 
 | Gate | Evidence |
 | --- | --- |
-| Scope | asset path and related-set scan result |
+| Scope | source/PNG paths, selected pipeline, and related-set scan result |
 | Source | README/source files read or documented exception |
-| XML | `xmllint --noout ...` result |
-| Render | CairoSVG command and PNG dimensions |
+| Source validation | XML result for SVG, or HTML/data validation for an eligible chart |
+| Render | CairoSVG or deterministic Chromium command, renderer version, and PNG dimensions |
 | Kind rules | relevant reference files loaded |
-| Raster text | `text_hazards=0`, `code_without_highlight=0` |
+| Raster text | SVG `text_hazards=0` or HTML-branch N/A, plus applicable `code_without_highlight=0` |
 | Connector audits | counts such as `connectors`, `cards`, `labels`, `shared_segments`, `label_cards`, `label_labels`, `label_connectors`, `q_bends`, `failures=0` |
 | Type-specific audit | sequence/class/ERD/architecture/chart invariant result |
 | Visual inspection | full-size PNG path and observed pass/fail notes |
@@ -124,5 +130,8 @@ the claim falsifiable.
 
 ## Output
 
-Produce the requested SVG/PNG/chart assets in the target repository's canonical
-path. Keep image text concise, source-relevant, and reader-facing only.
+Produce the requested source/PNG/chart assets in the target repository's
+canonical path. Keep SVG as the default source; retain HTML/CSS only for an
+eligible DOM-native chart. README and Markdown pages embed the generated PNG,
+not the HTML source. Keep image text concise, source-relevant, and reader-facing
+only.

@@ -73,12 +73,14 @@ _TOKEN_END = re.compile(
 )
 
 _PHASE2_COMMANDS = {
+    "mutation-check",
     "run-approve", "run-start", "run-recovery-start", "run-recovery-finish",
     "run-fail", "run-block", "run-cancel", "lane-create", "lane-start",
     "startup-ack", "stall-record", "stall-clear", "probe-ack", "lane-complete",
     "lane-fail", "lane-block", "lane-cancel", "heartbeat", "liveness-check",
     "probe-sent", "interrupt-result", "lane-reassign", "replacement-repair",
     "replacement-block", "replacement-close", "resume-check", "resume",
+    "lane-resolve",
     "receipt-diagnose", "recovery-run-create", "handoff-create",
     "live-report-create", "topology-register", "topology-remove", "check-result",
     "component-evidence", "completion-check", "complete",

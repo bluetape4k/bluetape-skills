@@ -204,6 +204,13 @@ _ALLOWED_METADATA_BY_EVENT = {
         "replacement_lane_id",
         "replacement_terminal_state",
     },
+    "candidate_validated": {
+        "candidate_kind",
+        "original_lane_id",
+        "resolution_lane_id",
+        "original_evidence_digest",
+        "resolution_evidence_digest",
+    },
     "run_resumed": {"new_owner_fingerprint"},
     "transaction_committed": {"intents"},
     "handoff_recorded": {
@@ -1091,6 +1098,8 @@ def _validate_event_metadata(
     for field in (
         "evidence_digest",
         "checkpoint_digest",
+        "original_evidence_digest",
+        "resolution_evidence_digest",
         "new_owner_fingerprint",
         "report_checksum",
         "report_receipt_head",
@@ -1104,6 +1113,8 @@ def _validate_event_metadata(
         "cancelled",
     }:
         raise ValueError("replacement terminal state is invalid")
+    if "candidate_kind" in metadata and metadata["candidate_kind"] != "failed_lane_resolution":
+        raise ValueError("candidate kind is invalid")
     if "coverage_state" in metadata and metadata["coverage_state"] not in {
         "missing",
         "partial",
@@ -1785,6 +1796,7 @@ def initialize_run(
     workflow_type,
     repo_root,
     component_ids,
+    session_id=None,
     owner_token=None,
     owner_file=None,
     manifest_path=None,
@@ -1803,6 +1815,8 @@ def initialize_run(
         raise ValueError("unknown workflow type")
     if not isinstance(component_ids, list) or not component_ids:
         raise ValueError("at least one component id is required")
+    if session_id is not None:
+        validate_identifier(session_id, "session id")
     if recovery_provenance is not None:
         if family != "1.1" or not isinstance(recovery_provenance, dict):
             raise ValueError("recovery provenance requires manifest 1.1 metadata")
@@ -1898,6 +1912,8 @@ def initialize_run(
             "repo_root": str(repo_path),
             "component_ids": ordered_components,
         }
+        if session_id is not None:
+            run_metadata["session_id"] = session_id
         if family == "1.1":
             run_metadata.update(
                 {
@@ -2022,6 +2038,11 @@ def validate_manifest(manifest):
         raise ValueError("heartbeat cannot be completion evidence")
     if manifest["token_audit"].get("hard_limit") is not False:
         raise ValueError("token audit must remain report-only")
+    failure_resolution = manifest.get("failure_resolution")
+    if failure_resolution is not None and failure_resolution != {
+        "requires_parent": True
+    }:
+        raise ValueError("failure resolution policy is invalid")
     events = manifest["receipt"].get("event_types")
     if not isinstance(events, list) or len(events) != len(set(events)):
         raise ValueError("receipt event types must be a unique list")

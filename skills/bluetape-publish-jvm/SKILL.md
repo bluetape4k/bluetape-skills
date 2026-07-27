@@ -25,6 +25,7 @@ Load only what the selected phase needs:
 | --- | --- |
 | any stable release or consumer closeout | `references/release-checklist.md` |
 | repo classification, DAG, catalog/snapshot/stable flow, train class | `references/topology-and-flows.md` |
+| catalog train or shared catalog/version authority change | `references/publication-pom-gate.md` |
 | preflight, workflow input, dispatch hold, Maven/POM verification | `references/preflight-dispatch.md` |
 | drafting or validating a GitHub Release | `references/release-notes.md` |
 
@@ -74,9 +75,9 @@ state; reference rows remain required subchecks.
   - **Evidence:** Live URLs/results, selected execution list/batches, edge rationale, and disposition of excluded or retained versions.
   - **Failure:** Block the train on open release work, missing topology, cycles, or superseded targets.
 - [ ] **PUB-03 — Prove the exact candidate state**
-  - **Action:** Validate local dependency/catalog state, required Nightly/full checks, and matching-state snapshots in DAG order.
-  - **Evidence:** Exact SHAs/catalog ref, commands, run URLs, metadata timestamps, and snapshot artifact matrix.
-  - **Failure:** Do not promote a candidate whose snapshots, source, or public metadata differ from the intended stable state.
+  - **Action:** Validate local dependency/catalog state, cross-repository generated POMs when the catalog can affect publishers, required Nightly/full checks, and matching-state snapshots in DAG order.
+  - **Evidence:** Exact SHAs/catalog ref, publication-POM gate output, commands, run URLs, metadata timestamps, and snapshot artifact matrix.
+  - **Failure:** Do not promote a candidate whose generated Maven models, snapshots, source, or public metadata differ from the intended state.
 - [ ] **PUB-04 — Pass stable preflight**
   - **Action:** Complete every applicable row in `references/preflight-dispatch.md`, including generated POM/BOM, license, signing, artifact, changelog, and workflow-schema checks.
   - **Evidence:** Preflight checklist at X=Y with Blocked=0 and explicit evidence-backed N/A rows only.
@@ -137,6 +138,9 @@ catalog state. Run heavyweight integration validation sequentially.
 - Maven Central 404 blocks downstream release even if Central Portal accepted.
 - Stable BOM/POM containing `-SNAPSHOT`, missing versions, or leaked
   example/benchmark/workshop/experimental artifacts blocks publication.
+- A catalog train is not Maven-N/A merely because it publishes no artifact.
+  If it can affect a library publisher, apply `references/publication-pom-gate.md`
+  to every publisher; representative POMs and Gradle resolution alone are partial.
 - An immutable bad publication is never overwritten or retagged; use the
   smallest corrective patch and refresh every consumer target.
 - `./gradlew help --refresh-dependencies` proves resolution only, not consumer

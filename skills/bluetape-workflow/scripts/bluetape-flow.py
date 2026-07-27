@@ -18,12 +18,13 @@ EXIT_UNSUPPORTED_BY_RUN_MANIFEST = 7
 MAX_INPUT_BYTES = 1024 * 1024
 
 READ_ONLY_COMMANDS = {
-    "state-root", "verify", "receipt-diagnose", "resume-check",
+    "state-root", "mutation-check", "verify", "receipt-diagnose", "resume-check",
     "completion-check", "liveness-check",
 }
 PHASE1_COMMANDS = {"verify", "rebuild", "receipt-diagnose"}
 SAFE_NEXT_COMMAND = {
     "state-root": "init or an explicit run command",
+    "mutation-check": "the requested mutation or workflow bootstrap",
     "init": "run-approve",
     "verify": "rebuild or the manifest-supported inspection command",
     "rebuild": "verify",
@@ -49,12 +50,13 @@ SAFE_NEXT_COMMAND = {
     "interrupt-result": "lane-reassign",
     "lane-reassign": "lane-start for the replacement lane",
     "lane-complete": "check-result",
-    "lane-fail": "replacement-close or completion-check",
+    "lane-fail": "lane-resolve or completion-check",
     "lane-block": "replacement-close or completion-check",
     "lane-cancel": "replacement-close or completion-check",
     "replacement-repair": "lane-start for the replacement lane",
     "replacement-block": "completion-check",
     "replacement-close": "completion-check",
+    "lane-resolve": "completion-check",
     "resume": "resume-check",
     "recovery-run-create": "verify the new run",
     "topology-register": "check-result",
@@ -62,7 +64,10 @@ SAFE_NEXT_COMMAND = {
     "check-result": "component-evidence",
     "component-evidence": "completion-check",
     "complete": "live-report-create after separately approved live apply",
-    "handoff-create": "stop and continue in a fresh session",
+    "handoff-create": (
+        "keep this process open; launch and verify a separate Codex process "
+        "in the same workspace"
+    ),
     "live-report-create": "preserve the immutable report",
 }
 
@@ -136,10 +141,27 @@ def build_parser():
     init_parser.add_argument("--repo-root", required=True)
     init_parser.add_argument("--owner-file", required=True)
     init_parser.add_argument("--component", action="append", required=True)
+    init_parser.add_argument("--session-id", required=True)
+    mutation_check = _command_parser(commands, "mutation-check")
+    mutation_check.add_argument("--session-id", required=True)
+    mutation_check.add_argument(
+        "--allow-state",
+        action="append",
+        choices=("running", "recovering"),
+        default=None,
+    )
+    mutation_check.add_argument("--target", action="append", required=True)
     for name in ("verify", "rebuild", "receipt-diagnose", "resume-check", "completion-check"):
         _run_parser(commands, name)
 
-    for name in ("run-approve", "run-start", "run-recovery-finish"):
+    for name in ("run-approve", "run-start"):
+        command = _run_parser(commands, name, mutation=True)
+        evidence_group = command.add_mutually_exclusive_group(required=True)
+        evidence_group.add_argument("--evidence")
+        evidence_group.add_argument("--evidence-summary")
+        command.add_argument("--evidence-kind", default="approval")
+        command.add_argument("--at")
+    for name in ("run-recovery-finish",):
         command = _run_parser(commands, name, mutation=True, evidence=True)
         command.add_argument("--at")
     for name in ("run-recovery-start", "run-fail", "run-block", "run-cancel"):
@@ -173,6 +195,11 @@ def build_parser():
         command.add_argument("--lane-id", required=True)
         command.add_argument("--replacement-lane-id", required=True)
         command.add_argument("--at", required=True)
+
+    resolution = _run_parser(commands, "lane-resolve", mutation=True, evidence=True)
+    resolution.add_argument("--lane-id", required=True)
+    resolution.add_argument("--resolution-lane-id", required=True)
+    resolution.add_argument("--at", required=True)
 
     resume = _run_parser(commands, "resume", mutation=True, evidence=True)
     resume.add_argument("--new-owner-file", required=True)
@@ -208,7 +235,79 @@ def _json_file(path, expected_type=None):
 
 
 def _evidence(args):
-    return _json_file(args.evidence, list)
+    evidence_path = getattr(args, "evidence", None)
+    if evidence_path:
+        return _json_file(evidence_path, list)
+    summary = getattr(args, "evidence_summary", None)
+    if summary:
+        kind = getattr(args, "evidence_kind", "approval")
+        runtime.validate_identifier(kind, "evidence kind")
+        limits = runtime.RESOURCE_LIMITS
+        if len(summary) > limits["max_evidence_summary_chars"]:
+            raise ValueError("evidence summary is too long")
+        return [{"kind": kind, "summary": summary}]
+    raise ValueError("evidence is required")
+
+
+def _mutation_check(state_root, session_id, targets, allowed_states):
+    runtime.validate_identifier(session_id, "session id")
+    allowed_states = frozenset(allowed_states or ("running",))
+    target_paths = [Path(target).expanduser().resolve(strict=False) for target in targets]
+    matches = []
+    runs_root = Path(state_root) / "runs"
+    if runs_root.is_dir():
+        for run_dir in sorted(runs_root.iterdir()):
+            if not run_dir.is_dir() or run_dir.is_symlink():
+                continue
+            manifest_path = run_dir / "manifest.json"
+            if manifest_path.is_symlink():
+                continue
+            try:
+                untrusted_manifest = json.loads(
+                    manifest_path.read_text(encoding="utf-8")
+                )
+            except (OSError, TypeError, json.JSONDecodeError):
+                continue
+            untrusted_metadata = (
+                untrusted_manifest.get("_run", {})
+                if isinstance(untrusted_manifest, dict)
+                else {}
+            )
+            if (
+                not isinstance(untrusted_metadata, dict)
+                or untrusted_metadata.get("session_id") != session_id
+            ):
+                continue
+            try:
+                manifest, state = coordinator.load_coordinator_state(run_dir)
+            except (
+                OSError,
+                ValueError,
+                runtime.IncompatibleManifest,
+                runtime.ReceiptCorrupt,
+                coordinator.CoordinatorCorrupt,
+            ):
+                continue
+            metadata = manifest.get("run") or {}
+            if (
+                metadata.get("session_id") != session_id
+                or state.get("run_state") not in allowed_states
+            ):
+                continue
+            repo_root = Path(metadata.get("repo_root", "")).resolve(strict=False)
+            try:
+                for target in target_paths:
+                    target.relative_to(repo_root)
+            except ValueError:
+                continue
+            matches.append((run_dir.name, repo_root, state))
+    if len(matches) != 1:
+        raise coordinator.CoordinatorConflict(
+            "mutation requires exactly one workflow receipt in an allowed state "
+            "bound to this session and target scope"
+        )
+    run_id, repo_root, state = matches[0]
+    return run_id, repo_root, state
 
 
 def _require_fields(value, required, optional=()):
@@ -392,6 +491,11 @@ def _dispatch_command(args, state_root, run_dir, command):
             run_dir, args.lane_id, args.replacement_lane_id, args.owner_file,
             args.at, evidence,
         )
+    elif operation == "lane-resolve":
+        coordinator.resolve_failed_lane(
+            run_dir, args.lane_id, args.resolution_lane_id, args.owner_file,
+            args.at, evidence,
+        )
     elif operation == "topology-register":
         components = _json_file(args.input, list)
         coordinator.register_topology(run_dir, args.owner_file, components, evidence)
@@ -456,6 +560,18 @@ def run(args):
     )
     if args.operation == "state-root":
         return _success("state-root", state_root)
+    if args.operation == "mutation-check":
+        run_id, repo_root, state = _mutation_check(
+            state_root, args.session_id, args.target, args.allow_state
+        )
+        return _state_success(
+            "mutation-check",
+            state_root,
+            run_id,
+            state,
+            repo_root=str(repo_root),
+            target_count=len(args.target),
+        )
     if args.operation == "init":
         initialized = runtime.initialize_run(
             state_root,
@@ -463,6 +579,7 @@ def run(args):
             repo_root=args.repo_root,
             component_ids=args.component,
             owner_file=args.owner_file,
+            session_id=args.session_id,
         )
         return _success(
             "init", state_root, run_id=initialized["run_id"],

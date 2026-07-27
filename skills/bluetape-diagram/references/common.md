@@ -18,19 +18,35 @@ visual, blog image, or site visual.
 
 ## One-Asset Loop
 
-1. Edit one SVG.
-2. Validate XML.
-3. Render the matching PNG with CairoSVG CLI.
-4. Inspect the full-size PNG.
-5. Run type-specific audits and fallback invariants.
-6. Record evidence before moving to the next asset.
+SVG is the default and remains mandatory for architecture, class/UML, ERD,
+sequence, connector-heavy, topology, and coordinate-driven visuals. Only a
+chart that passes the explicit DOM-native eligibility gate in `chart.md` may
+use HTML/CSS as its source.
+
+1. Select and record one approved source pipeline.
+2. Edit one source asset.
+3. Validate the source: XML for SVG, or HTML plus its data contract for an
+   eligible DOM-native chart.
+4. Render the matching PNG with CairoSVG or the chart-specific deterministic
+   Chromium capture contract.
+5. Inspect the full-size PNG.
+6. Run type-specific audits and fallback invariants.
+7. Record evidence before moving to the next asset.
 
 Batch scripts and contact sheets are allowed only as pattern scans. They do not
 replace one-by-one full-size PNG inspection.
 
 ## Fonts, Theme, and Text
 
-- Use `Architects Daughter` and `Comic Mono` for diagram/chart text.
+- For English diagrams, use `Architects Daughter` for titles and headings, and
+  `Comic Mono` for body labels, annotations, and technical identifiers.
+- For Korean diagrams, use `goorm Sans` for Korean reader-facing text and
+  `goorm Sans Code` for code, commands, and technical identifiers. When one
+  text node mixes code and Hangul, keep `goorm Sans` as the fallback after
+  `goorm Sans Code`.
+- For bilingual blog posts, create separate Korean and English SVG/PNG assets
+  whenever a diagram contains reader-facing text. Do not reuse a localized
+  raster across locales; keep technical identifiers unchanged in both assets.
 - In light themes, make cards visibly distinct from the canvas.
 - Final footer/caption text must be reader-facing only; do not put evidence,
   generation notes, or validation logs inside the art.
@@ -43,7 +59,7 @@ replace one-by-one full-size PNG inspection.
 - Peer cards must use a consistent text alignment model, including icon cards.
 - Automated label bounds are screening evidence; full-size PNG inspection still
   decides whether typography and overall density are readable.
-- Do not put a thick white stroke and `paint-order: stroke` on one text node;
+- In SVG, do not put a thick white stroke and `paint-order: stroke` on one text node;
   CairoSVG can paint the stroke over the fill and erase the glyph. Use a label
   capsule or separate stroke-only underlay plus fill-only foreground text.
 - Mark real source snippets and pseudocode with `data-code-snippet="<language>"`
@@ -127,8 +143,9 @@ replace one-by-one full-size PNG inspection.
 
 ## Required Local Commands
 
-Use available repo-local wrappers when present. Otherwise use these direct
-checks for connector-heavy SVGs:
+Use available repo-local wrappers when present. The commands below are the SVG
+path and remain required for connector-heavy SVGs. An eligible DOM-native chart
+uses the separate validation and capture commands required by `chart.md`.
 
 ```bash
 xmllint --noout <diagram>.svg
@@ -159,8 +176,8 @@ to review.
   - **Evidence:** Exact paths, source-backed concepts, and scan results.
   - **Failure:** Do not model from an old rendered asset or delete hard-to-route source relationships.
 - [ ] **DIA-COM-02 — Preserve readable text and theme**
-  - **Action:** Apply approved fonts/theme, remove CairoSVG text hazards, highlight explicit source snippets, resize for meaningful text, keep peer alignment, and exclude evidence notes from the art.
-  - **Evidence:** `text_hazards=0`, `code_without_highlight=0`, and full-size PNG text/font/alignment inspection.
+  - **Action:** Apply approved fonts/theme, remove CairoSVG text hazards on the SVG path, highlight explicit source snippets, resize for meaningful text, keep peer alignment, and exclude evidence notes from the art.
+  - **Evidence:** SVG `text_hazards=0` when applicable, `code_without_highlight=0`, and full-size PNG text/font/alignment inspection.
   - **Failure:** Missing text, unhighlighted explicit code, clipping, crowding, inconsistent peers, or unreadable shrinkage blocks PASS.
 - [ ] **DIA-COM-03 — Use verified infrastructure icons**
   - **Action:** Use catalog/official icons, remove legacy duplicates/defs, and scan related SVGs after icon changes.
@@ -183,8 +200,8 @@ to review.
   - **Evidence:** Before/after dimensions/gaps and full-size PNG inspection.
   - **Failure:** Excess whitespace, cramped lanes, or stale dependent coordinates blocks PASS.
 - [ ] **DIA-COM-08 — Run required local commands**
-  - **Action:** Run XML, CairoSVG, connector, geometry, endpoint, mixed-corner, and diff checks as triggered.
-  - **Evidence:** Exact commands, nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, and failures=0.
+  - **Action:** Run the selected pipeline's source validation, render, and diff checks; add XML, CairoSVG, connector, geometry, endpoint, and mixed-corner checks when triggered.
+  - **Evidence:** Exact selected-pipeline commands; for connector-heavy SVGs also include nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, and failures=0.
   - **Failure:** WEAK/UNAVAILABLE/zero counts require targeted fallback proof; missing output is FAIL.
 - [ ] **DIA-COM-09 — Verify review exposure**
   - **Action:** When a review page exists, prove it links current worktree canonical SVG/PNG outputs.

@@ -1,3 +1,4 @@
+import hashlib
 import json
 import subprocess
 import sys
@@ -7,6 +8,16 @@ from pathlib import Path
 
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
+
+
+def evidence_digest(evidence):
+    encoded = json.dumps(
+        evidence,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def resolve_flow(skill_root):
@@ -20,18 +31,21 @@ def resolve_flow(skill_root):
 FLOW = resolve_flow(SKILL_ROOT)
 
 COMMANDS = {
+    "mutation-check",
     "run-approve", "run-start", "run-recovery-start", "run-recovery-finish",
     "run-fail", "run-block", "run-cancel", "lane-create", "lane-start",
     "startup-ack", "stall-record", "stall-clear", "probe-ack", "lane-complete",
     "lane-fail", "lane-block", "lane-cancel", "heartbeat", "liveness-check",
     "probe-sent", "interrupt-result", "lane-reassign", "replacement-repair",
     "replacement-block", "replacement-close", "resume-check", "resume",
+    "lane-resolve",
     "receipt-diagnose", "recovery-run-create", "handoff-create",
     "live-report-create", "topology-register", "topology-remove", "check-result",
     "component-evidence", "completion-check", "complete",
 }
 READ_ONLY_COMMANDS = {
-    "resume-check", "receipt-diagnose", "liveness-check", "completion-check",
+    "mutation-check", "resume-check", "receipt-diagnose", "liveness-check",
+    "completion-check",
 }
 COMMAND_CONTRACT = {
     command: {
@@ -83,10 +97,128 @@ class FlowCliTest(unittest.TestCase):
         payload, completed = self.invoke(
             "init", "--workflow-type", "A", "--repo-root", self.repo,
             "--owner-file", self.owner, "--component", "runtime",
+            "--session-id", "session-1",
         )
         owner_payload = json.loads(self.owner.read_text(encoding="utf-8"))
         self.assertNotIn(owner_payload["token"], completed.stdout)
         return payload["run_id"]
+
+    def test_mutation_check_requires_same_session_running_receipt_and_scope(self):
+        run_id = self.init()
+
+        blocked, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", blocked["error"])
+
+        common = ("--run-id", run_id, "--owner-file", self.owner)
+        self.invoke(
+            "run-approve",
+            *common,
+            "--evidence-summary", "User approved the displayed plan.",
+        )
+        approved_only, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", approved_only["error"])
+        self.invoke(
+            "run-start",
+            *common,
+            "--evidence-summary", "Approved execution started.",
+        )
+
+        allowed, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo / "new-file.txt",
+        )
+        self.assertEqual(run_id, allowed["run_id"])
+        self.assertEqual(str(self.repo.resolve()), allowed["repo_root"])
+
+        evidence = self.write_json(
+            "recovery-start.json",
+            [{"kind": "recovery", "summary": "Recovery started."}],
+        )
+        self.invoke(
+            "run-recovery-start",
+            *common,
+            "--evidence", evidence,
+            "--reason", "exercise recovering authorization",
+        )
+        recovering_default, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", recovering_default["error"])
+        recovering_allowed, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--allow-state", "running",
+            "--allow-state", "recovering",
+            "--target", self.repo,
+        )
+        self.assertEqual("recovering", recovering_allowed["run_state"])
+        recovery_finish = self.write_json(
+            "recovery-finish.json",
+            [{"kind": "recovery", "summary": "Recovery finished."}],
+        )
+        self.invoke(
+            "run-recovery-finish",
+            *common,
+            "--evidence", recovery_finish,
+        )
+
+        for session_id, target in (
+            ("session-2", self.repo),
+            ("session-1", Path(self.temp.name) / "outside"),
+        ):
+            with self.subTest(session_id=session_id, target=target):
+                denied, _ = self.invoke(
+                    "mutation-check",
+                    "--session-id", session_id,
+                    "--target", target,
+                    expected=5,
+                )
+                self.assertEqual("coordinator_conflict", denied["error"])
+
+        second_owner = self.state / "handles" / "second.owner"
+        second, _ = self.invoke(
+            "init",
+            "--workflow-type", "E",
+            "--repo-root", self.repo,
+            "--owner-file", second_owner,
+            "--component", "guard",
+            "--session-id", "session-1",
+        )
+        second_common = (
+            "--run-id", second["run_id"],
+            "--owner-file", second_owner,
+        )
+        self.invoke(
+            "run-approve",
+            *second_common,
+            "--evidence-summary", "Second plan approved.",
+        )
+        self.invoke(
+            "run-start",
+            *second_common,
+            "--evidence-summary", "Second plan started.",
+        )
+        ambiguous, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", ambiguous["error"])
 
     def test_help_lists_every_phase2_command(self):
         completed = subprocess.run(
@@ -116,6 +248,17 @@ class FlowCliTest(unittest.TestCase):
                 self.assertIn("Capability:", help_text)
                 self.assertIn("Safe next:", help_text)
                 self.assertIn("In-place migration is unavailable.", help_text)
+
+        completed = subprocess.run(
+            [sys.executable, str(FLOW), "handoff-create", "--help"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        handoff_help = " ".join(completed.stdout.split())
+        self.assertIn("keep this process open", handoff_help)
+        self.assertIn("launch and verify a separate Codex process", handoff_help)
+        self.assertNotIn("stop and continue in a fresh session", handoff_help)
 
         completed = subprocess.run(
             [sys.executable, str(FLOW), "--help"],
@@ -191,6 +334,94 @@ class FlowCliTest(unittest.TestCase):
         self.assertEqual("completed", live["run_state"])
         error, _ = self.invoke("complete", *common, "--evidence", main_evidence, expected=5)
         self.assertEqual("coordinator_conflict", error["error"])
+
+    def test_lane_resolve_cli_links_completed_rereview_and_updates_completion_check(self):
+        run_id = self.init()
+        evidence_value = [
+            {"kind": "review", "summary": "exact-head review evidence"}
+        ]
+        evidence = self.write_json("resolution-evidence.json", evidence_value)
+        failure_value = [{"kind": "review", "summary": "P1 finding"}]
+        failure_evidence = self.write_json("failure-evidence.json", failure_value)
+        completion_value = [
+            {"kind": "review", "summary": "exact-head rereview passed"}
+        ]
+        completion_evidence = self.write_json(
+            "completion-evidence.json", completion_value
+        )
+        binding = self.write_json(
+            "resolution-binding.json",
+            [
+                {
+                    "kind": "failed-lane",
+                    "summary": "bind failed lane result",
+                    "checksum": evidence_digest(failure_value),
+                },
+                {
+                    "kind": "resolution-lane",
+                    "summary": "bind completed resolution result",
+                    "checksum": evidence_digest(completion_value),
+                },
+            ],
+        )
+        changed = self.write_json("resolution-changed.json", [])
+        common = ("--run-id", run_id, "--owner-file", self.owner)
+        self.invoke(
+            "run-approve", *common, "--evidence", evidence,
+            "--at", "2026-07-14T01:00:00Z",
+        )
+        self.invoke(
+            "run-start", *common, "--evidence", evidence,
+            "--at", "2026-07-14T01:00:01Z",
+        )
+        for lane_id, agent_id in (("review", "review-agent"), ("rereview", "rereview-agent")):
+            lane_value = {
+                "lane_id": lane_id,
+                "agent_id": agent_id,
+                "assignment": "Complete " + lane_id,
+                "write_scope": [],
+                "fallback": "main session",
+                "observed_at": "2026-07-14T01:00:02Z",
+                "startup_ack_deadline": "2026-07-14T01:00:30Z",
+                "command_deadline": "2026-07-14T01:10:00Z",
+            }
+            if lane_id == "rereview":
+                lane_value["parent_lane_id"] = "review"
+            lane = self.write_json(lane_id + ".json", lane_value)
+            self.invoke(
+                "lane-create", *common, "--input", lane, "--evidence", evidence,
+            )
+            for command, at in (
+                ("lane-start", "2026-07-14T01:00:03Z"),
+                ("startup-ack", "2026-07-14T01:00:04Z"),
+            ):
+                self.invoke(
+                    command, *common, "--lane-id", lane_id,
+                    "--agent-id", agent_id, "--at", at, "--evidence", evidence,
+                )
+        self.invoke(
+            "lane-fail", *common, "--lane-id", "review",
+            "--agent-id", "review-agent", "--at", "2026-07-14T01:01:00Z",
+            "--reason", "P1 finding", "--evidence", failure_evidence,
+        )
+        self.invoke(
+            "lane-complete", *common, "--lane-id", "rereview",
+            "--agent-id", "rereview-agent", "--at", "2026-07-14T01:02:00Z",
+            "--changed-paths", changed, "--evidence", completion_evidence,
+        )
+
+        blocked, _ = self.invoke("completion-check", "--run-id", run_id)
+        self.assertEqual(["review"], blocked["unresolved_failed_lanes"])
+        self.assertEqual([], blocked["resolved_failed_lanes"])
+        self.invoke(
+            "lane-resolve", *common, "--lane-id", "review",
+            "--resolution-lane-id", "rereview", "--at", "2026-07-14T01:03:00Z",
+            "--evidence", binding,
+        )
+        resolved, _ = self.invoke("completion-check", "--run-id", run_id)
+        self.assertEqual([], resolved["unresolved_failed_lanes"])
+        self.assertEqual(["review"], resolved["resolved_failed_lanes"])
+        self.assertNotIn("review", resolved["missing_lanes"])
 
     def test_corruption_and_contract_errors_have_stable_exit_codes(self):
         run_id = self.init()

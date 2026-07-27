@@ -15,9 +15,9 @@ checklist.
   - **Evidence:** Milestone open issues=0 and every other live item closed or explicitly dispositioned.
   - **Failure:** Keep release blocked until live work is resolved or removed from approved scope.
 - [ ] **REL-03 — Prove the snapshot train**
-  - **Action:** Test the complete upstream-to-downstream topology with the same catalog/dependency state using local resolution, compile/tests, required Nightly/full, and snapshots.
-  - **Evidence:** Exact SHAs, catalog state, commands, run URLs, metadata timestamps, and complete snapshot artifact matrix.
-  - **Failure:** Do not promote mismatched, incomplete, or unverifiable snapshot evidence.
+  - **Action:** Test the complete upstream-to-downstream topology with the same catalog/dependency state using local resolution, compile/tests, cross-repository publication POM validation when applicable, required Nightly/full, and snapshots.
+  - **Evidence:** Exact SHAs, catalog state, publication-POM gate output, commands, run URLs, metadata timestamps, and complete snapshot artifact matrix.
+  - **Failure:** Do not promote mismatched, incomplete, Maven-invalid, or unverifiable snapshot evidence.
 - [ ] **REL-04 — Validate stable batches**
   - **Action:** Confirm every DAG prerequisite is public, shared catalog mutation is absent, and downstream stable consumers wait for Central HTTP 200.
   - **Evidence:** Acyclic batch plan and public prerequisite URLs/statuses.

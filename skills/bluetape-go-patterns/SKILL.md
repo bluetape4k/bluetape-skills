@@ -21,6 +21,13 @@ example/diagram evidence.
 - Design Go-native narrow APIs; do not mechanically port Kotlin extensions.
 - Prefer the standard library and repo helpers. New dependencies need explicit
   comparative evidence and approval.
+- Logging is mandatory for production components with operational behavior.
+  Record lifecycle transitions, external IO failures, retries/fallbacks, and
+  terminal failures through caller-owned `log/slog`, an injected logger, or an
+  explicit hook. Pure deterministic helpers are exempt.
+- Never use `fmt.Print*`, `log.Print*`, or direct stdout/stderr writes as
+  operational logging. Use stable low-cardinality fields and never log secrets,
+  credentials, tokens, or raw provider payloads.
 - Specify success, failure, zero-value/nil, cancellation, timeout, cleanup, and
   error contracts where applicable.
 - Concurrent/shared-state claims require bounded stress evidence and
@@ -112,7 +119,7 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
   - **Evidence:** Spec/plan mapping with source-parity classification and real call-site anchors.
   - **Failure:** Reject mechanical ports, broad wrappers, or unowned lifecycle behavior.
 - [ ] **GO-03 — Implement with ownership and compatibility**
-  - **Action:** Use standard/repo helpers, `%w`, deterministic cleanup/timeouts/shutdown, caller-owned keys/logging, and synchronized per-run state.
+  - **Action:** Use standard/repo helpers, `%w`, deterministic cleanup/timeouts/shutdown, caller-owned keys, mandatory operational logging, and synchronized per-run state.
   - **Evidence:** Scoped diff mapped to the approved contract and explicit raw/dependency rationale.
   - **Failure:** Record P0/P1 and block progression on unsafe or ambiguous ownership.
 - [ ] **GO-04 — Prove normal and failure behavior**
