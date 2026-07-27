@@ -19,19 +19,29 @@ never substitutes for the PR mainline.
   - **Failure:** STOP before editing.
 - [ ] **CG-02 — Query historical/current evidence**
   - **Action:** Query current GNO GitHub/docs for workflow, issue, PR, release,
-    module, or guidance work; use direct live evidence when an index is stale.
-  - **Evidence:** Queries and decisive results or documented unavailability.
+    module, or guidance work. If the initial query returns no decisive result,
+    reformulate it with useful narrower terms, query another relevant collection,
+    then use direct live evidence when the index remains stale or incomplete.
+  - **Evidence:** Initial and fallback queries, collections searched, and decisive
+    results or direct-source evidence with documented index unavailability.
   - **Failure:** STOP decisions that depend on missing history/current state.
 - [ ] **CG-03 — Protect user work and boundaries**
   - **Action:** Identify repo/worktree/base/upstream and exclude unrelated dirty
-    changes from the task.
-  - **Evidence:** Status, worktree, base, upstream, and scoped files.
-  - **Failure:** Preserve safely or BLOCK; never discard user work.
+    changes from the task. Before any repository mutation, use an isolated
+    worktree on a non-integration branch. Fail closed on the integration/default
+    branch except for explicitly authorized integration sync or merge commands.
+  - **Evidence:** Status, isolated worktree, feature branch, base, upstream,
+    scoped files, and exact authority for any integration sync or merge.
+  - **Failure:** Preserve safely or BLOCK; never discard user work or mutate the
+    integration/default branch for ordinary implementation.
 - [ ] **CG-04 — Apply policy and audience boundaries**
-  - **Action:** Apply language/locale rules and preserve permission, sandbox,
+  - **Action:** Resolve workspace, repository-category, and repo-local
+    language/locale rules before mutation, then preserve permission, sandbox,
     network, hook-trust, update, and vendor-surface boundaries unless explicitly
     included with rollback.
-  - **Evidence:** Touched surfaces, language/locale decision, and policy scope.
+  - **Evidence:** Governing `AGENTS.md` paths, touched surfaces, selected
+    language/locale including any category or repo-local exception, and policy
+    scope.
   - **Failure:** Repair language drift or revert unauthorized policy changes.
 
 ### Stage 2 - Implementation and Verification

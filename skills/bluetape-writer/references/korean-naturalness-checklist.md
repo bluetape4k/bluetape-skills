@@ -65,6 +65,28 @@ Do not claim importance when the article can show it:
 - Keep Korean prose natural, but keep public API names, class names, method names, configuration keys, and CLI flags exact.
 - Keep light humor close to the engineering pain. Remove jokes that obscure a claim.
 
+### Match the register to the artifact
+
+Natural Korean is not automatically conversational Korean. In a technical
+article, architecture note, or report, prefer terminology commonly used in
+technical publications when it expresses the same meaning more precisely.
+Do not replace a precise technical term with an everyday paraphrase merely to
+make the sentence sound friendlier.
+
+| Avoid in technical articles and reports | Prefer | Selection note |
+|---|---|---|
+| `값싼 검사`, `비용이 적게 드는 검사` | `저비용 검사` | Use for checks designed to minimize execution cost. |
+| `비싼 작업` | `고비용 작업`, `고비용 처리` | Select by whether the sentence names a work unit or a processing stage. |
+| `일찍 거절한다` | `조기 거부한다` | Use for fail-fast input or request rejection. |
+| `막으려는 문제` | `방지 대상` | Name the risk or failure mode directly when possible. |
+| `정책이 갈라진다` | `정책이 분산된다`, `정책 불일치가 발생한다` | Do not conflate distribution with disagreement. |
+| `결과가 엇갈린다` | `결과가 불일치한다` | Use when outputs violate an expected consistency relation. |
+| `계약을 하나로 모은다` | `계약을 단일화한다` | Use when multiple contracts become one authoritative contract. |
+
+Prefer a concrete phrase over an abstract Sino-Korean noun when the formal term
+would hide the actor or action. Publication-grade wording is a precision rule,
+not a request to make every sentence heavier.
+
 ## Humor And Korean Sentence Sense
 
 Natural Korean comes before wit. If a sentence is funny only after translating
@@ -126,9 +148,9 @@ For English blog posts or bilingual localization:
   - **Evidence:** Sentence-level review using the avoid/prefer tables.
   - **Failure:** Keep the paragraph blocked until it reads naturally in Korean technical conversation.
 - [ ] **KO-04 — Verify technical vocabulary and sentence sense**
-  - **Action:** Keep identifiers exact, concepts consistently named, verbs concrete, and subject/predicate/noun dimensions compatible.
-  - **Evidence:** Terminology and semantic-dimension pass.
-  - **Failure:** Repair ambiguous term rotation or unnatural predicate pairing.
+  - **Action:** Keep identifiers exact, concepts consistently named, verbs concrete, subject/predicate/noun dimensions compatible, and terminology appropriate for the artifact's technical register.
+  - **Evidence:** Terminology, register, and semantic-dimension pass, including a check for casual paraphrases where established technical terms are clearer.
+  - **Failure:** Repair ambiguous term rotation, conversational wording in technical articles or reports, or unnatural predicate pairing.
 - [ ] **KO-05 — Bound humor and personal voice**
   - **Action:** Keep only familiar Korean engineering idioms that clarify a real failure mode and preserve accepted user wording.
   - **Evidence:** Humor/voice review with no invented metaphor or obscured claim.

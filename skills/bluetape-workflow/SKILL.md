@@ -33,7 +33,9 @@ checklist. An unchecked required item blocks every dependent item.
   - **Failure:** stop before editing.
 - [ ] **WF-04A — Initialize machine-readable evidence when available**
   - **Action:** Use `scripts/bluetape-flow.py` to snapshot the manifest, workflow
-    type, repository root, and required topology components.
+    type, repository root, current `CODEX_THREAD_ID`, and required topology
+    components. Pass `--session-id "${CODEX_THREAD_ID:?}"`; a receipt from
+    another or unidentified session never authorizes mutation.
   - **Evidence:** run id, manifest hash, state root, and registered components.
   - **Failure:** remain on the documented checklist path and report the missing
     runtime surface; never write `.bluetape` files directly.
@@ -132,6 +134,7 @@ not proof that a native tool ran.
 Follow this order exactly:
 
 ```text
+init --session-id "$CODEX_THREAD_ID"
 run-approve receipt -> run-start receipt
 lane-create receipt
   -> lane-start receipt
@@ -149,6 +152,12 @@ lane-create receipt
   -> lane-resolve with independent completion evidence
   -> completion-check -> complete
 ```
+
+`run-approve` and `run-start` accept a bounded inline `--evidence-summary` so
+the fail-closed hook can bootstrap approval without permitting arbitrary
+pre-approval evidence-file writes. Before a mutation under the bluetape
+workspace, `mutation-check` must find exactly one verified `running` receipt
+bound to the current session and covering every target path.
 
 An empty write scope is read-only. Before `lane-complete`, the main session
 collects actual changed paths from `git status --porcelain=v1 -z` and the branch

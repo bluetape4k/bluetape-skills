@@ -1,5 +1,5 @@
-import json
 import hashlib
+import json
 import subprocess
 import sys
 import tempfile
@@ -31,6 +31,7 @@ def resolve_flow(skill_root):
 FLOW = resolve_flow(SKILL_ROOT)
 
 COMMANDS = {
+    "mutation-check",
     "run-approve", "run-start", "run-recovery-start", "run-recovery-finish",
     "run-fail", "run-block", "run-cancel", "lane-create", "lane-start",
     "startup-ack", "stall-record", "stall-clear", "probe-ack", "lane-complete",
@@ -43,7 +44,8 @@ COMMANDS = {
     "component-evidence", "completion-check", "complete",
 }
 READ_ONLY_COMMANDS = {
-    "resume-check", "receipt-diagnose", "liveness-check", "completion-check",
+    "mutation-check", "resume-check", "receipt-diagnose", "liveness-check",
+    "completion-check",
 }
 COMMAND_CONTRACT = {
     command: {
@@ -95,10 +97,128 @@ class FlowCliTest(unittest.TestCase):
         payload, completed = self.invoke(
             "init", "--workflow-type", "A", "--repo-root", self.repo,
             "--owner-file", self.owner, "--component", "runtime",
+            "--session-id", "session-1",
         )
         owner_payload = json.loads(self.owner.read_text(encoding="utf-8"))
         self.assertNotIn(owner_payload["token"], completed.stdout)
         return payload["run_id"]
+
+    def test_mutation_check_requires_same_session_running_receipt_and_scope(self):
+        run_id = self.init()
+
+        blocked, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", blocked["error"])
+
+        common = ("--run-id", run_id, "--owner-file", self.owner)
+        self.invoke(
+            "run-approve",
+            *common,
+            "--evidence-summary", "User approved the displayed plan.",
+        )
+        approved_only, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", approved_only["error"])
+        self.invoke(
+            "run-start",
+            *common,
+            "--evidence-summary", "Approved execution started.",
+        )
+
+        allowed, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo / "new-file.txt",
+        )
+        self.assertEqual(run_id, allowed["run_id"])
+        self.assertEqual(str(self.repo.resolve()), allowed["repo_root"])
+
+        evidence = self.write_json(
+            "recovery-start.json",
+            [{"kind": "recovery", "summary": "Recovery started."}],
+        )
+        self.invoke(
+            "run-recovery-start",
+            *common,
+            "--evidence", evidence,
+            "--reason", "exercise recovering authorization",
+        )
+        recovering_default, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", recovering_default["error"])
+        recovering_allowed, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--allow-state", "running",
+            "--allow-state", "recovering",
+            "--target", self.repo,
+        )
+        self.assertEqual("recovering", recovering_allowed["run_state"])
+        recovery_finish = self.write_json(
+            "recovery-finish.json",
+            [{"kind": "recovery", "summary": "Recovery finished."}],
+        )
+        self.invoke(
+            "run-recovery-finish",
+            *common,
+            "--evidence", recovery_finish,
+        )
+
+        for session_id, target in (
+            ("session-2", self.repo),
+            ("session-1", Path(self.temp.name) / "outside"),
+        ):
+            with self.subTest(session_id=session_id, target=target):
+                denied, _ = self.invoke(
+                    "mutation-check",
+                    "--session-id", session_id,
+                    "--target", target,
+                    expected=5,
+                )
+                self.assertEqual("coordinator_conflict", denied["error"])
+
+        second_owner = self.state / "handles" / "second.owner"
+        second, _ = self.invoke(
+            "init",
+            "--workflow-type", "E",
+            "--repo-root", self.repo,
+            "--owner-file", second_owner,
+            "--component", "guard",
+            "--session-id", "session-1",
+        )
+        second_common = (
+            "--run-id", second["run_id"],
+            "--owner-file", second_owner,
+        )
+        self.invoke(
+            "run-approve",
+            *second_common,
+            "--evidence-summary", "Second plan approved.",
+        )
+        self.invoke(
+            "run-start",
+            *second_common,
+            "--evidence-summary", "Second plan started.",
+        )
+        ambiguous, _ = self.invoke(
+            "mutation-check",
+            "--session-id", "session-1",
+            "--target", self.repo,
+            expected=5,
+        )
+        self.assertEqual("coordinator_conflict", ambiguous["error"])
 
     def test_help_lists_every_phase2_command(self):
         completed = subprocess.run(
@@ -128,6 +248,17 @@ class FlowCliTest(unittest.TestCase):
                 self.assertIn("Capability:", help_text)
                 self.assertIn("Safe next:", help_text)
                 self.assertIn("In-place migration is unavailable.", help_text)
+
+        completed = subprocess.run(
+            [sys.executable, str(FLOW), "handoff-create", "--help"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        handoff_help = " ".join(completed.stdout.split())
+        self.assertIn("keep this process open", handoff_help)
+        self.assertIn("launch and verify a separate Codex process", handoff_help)
+        self.assertNotIn("stop and continue in a fresh session", handoff_help)
 
         completed = subprocess.run(
             [sys.executable, str(FLOW), "--help"],
@@ -209,10 +340,7 @@ class FlowCliTest(unittest.TestCase):
         evidence_value = [
             {"kind": "review", "summary": "exact-head review evidence"}
         ]
-        evidence = self.write_json(
-            "resolution-evidence.json",
-            evidence_value,
-        )
+        evidence = self.write_json("resolution-evidence.json", evidence_value)
         failure_value = [{"kind": "review", "summary": "P1 finding"}]
         failure_evidence = self.write_json("failure-evidence.json", failure_value)
         completion_value = [

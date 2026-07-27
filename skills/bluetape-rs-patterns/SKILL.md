@@ -14,6 +14,13 @@ Cargo, SQL, testing, and P0/P1 rules.
 - Keep APIs Rust-native with explicit ownership, narrow traits, typed
   config/builders, and small crate/module boundaries.
 - Use Rust 2024 unless a documented compatibility constraint applies.
+- Logging is mandatory for production components with operational behavior.
+  Record lifecycle transitions, external IO failures, retries/fallbacks, and
+  terminal failures through the repo-established `tracing` facade or a
+  caller-owned observability hook. Pure deterministic helpers are exempt.
+- Never use `println!`, `eprintln!`, or `dbg!` as operational logging. Libraries
+  must not install a global subscriber. Use stable low-cardinality fields and
+  never log secrets, credentials, tokens, or raw provider payloads.
 - Public APIs need English Rustdoc and success/error/boundary/feature tests.
 - Match sibling `lib.rs`/README style. Keep `lib.rs` focused; roadmap, issue
   history, long guides, and non-goal lists belong in README/spec/plan docs.
@@ -80,6 +87,8 @@ choosing documentation placement.
   join/abort policy.
 - Prefer ownership transfer; use locks/atomics/channels only with an explicit
   lifecycle and contention model.
+- Keep tracing caller-owned and avoid adding a new logging dependency when the
+  repository already exposes an observability facade or hook.
 - For SQL, start with inspectable AST/dialect renderer plus adapter. Do not claim
   ORM behavior before relations, migrations, transactions, and lifecycle exist.
 
@@ -98,7 +107,7 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
   - **Evidence:** Spec/plan mapping to success, error, boundary, feature, type-level, lifecycle, and contention proof.
   - **Failure:** Reject panicking caller paths, JVM-shaped APIs, or unowned runtime state.
 - [ ] **RS-03 — Implement safe Rust-native behavior**
-  - **Action:** Preserve typed errors, isolate unavoidable unsafe, use explicit async shutdown/join/abort, favor ownership transfer, and separate SQL text from values.
+  - **Action:** Preserve typed errors, isolate unavoidable unsafe, use explicit async shutdown/join/abort, apply mandatory caller-owned operational logging, favor ownership transfer, and separate SQL text from values.
   - **Evidence:** Scoped diff with invariants, cleanup paths, bind semantics, and dependency/tool rationale.
   - **Failure:** Record P0/P1 for unsoundness, leaks, lost causes, injection risk, or ambiguous lifecycle.
 - [ ] **RS-04 — Prove behavior and type contracts**
