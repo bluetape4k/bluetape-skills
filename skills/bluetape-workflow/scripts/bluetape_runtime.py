@@ -1089,7 +1089,6 @@ def _validate_event_metadata(
         "replacement_agent_id",
         "original_lane_id",
         "replacement_lane_id",
-        "resolution_lane_id",
         "parent_lane_id",
         "component_id",
         "check_id",
@@ -1797,6 +1796,7 @@ def initialize_run(
     workflow_type,
     repo_root,
     component_ids,
+    session_id=None,
     owner_token=None,
     owner_file=None,
     manifest_path=None,
@@ -1815,6 +1815,8 @@ def initialize_run(
         raise ValueError("unknown workflow type")
     if not isinstance(component_ids, list) or not component_ids:
         raise ValueError("at least one component id is required")
+    if session_id is not None:
+        validate_identifier(session_id, "session id")
     if recovery_provenance is not None:
         if family != "1.1" or not isinstance(recovery_provenance, dict):
             raise ValueError("recovery provenance requires manifest 1.1 metadata")
@@ -1910,6 +1912,8 @@ def initialize_run(
             "repo_root": str(repo_path),
             "component_ids": ordered_components,
         }
+        if session_id is not None:
+            run_metadata["session_id"] = session_id
         if family == "1.1":
             run_metadata.update(
                 {

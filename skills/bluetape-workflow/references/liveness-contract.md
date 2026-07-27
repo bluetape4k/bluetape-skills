@@ -1,15 +1,36 @@
 # Liveness Contract
 
-Observe active native sub-agents every 30 seconds. Silence becomes a suspected
-stall after 120 seconds unless the lane holds a renewable silence lease. One
-lease may cover at most 600 seconds and every renewal must carry fresh bounded
-evidence and a reason. The 600-second value caps one lease, not useful work.
+In Codex App and plain Codex sessions without an independent wall-clock
+supervisor, never call blocking `wait_agent`. Use non-blocking `list_agents` at
+useful checkpoints while the main session continues productive work. Native
+delegation must not become the user-visible critical path. Treat 90 seconds
+without fresh material evidence as a stall, call `interrupt_agent`, and reclaim
+the lane. Review-only agents have a five-minute total deadline; implementation
+agents have a 15-minute total deadline.
+
+Only an attached tmux/OMX session or another OS-timeboxed process may enable
+blocking native waits. `CODEX_SUBAGENT_WATCHDOG_SUPERVISED=1` is reserved for a
+launcher that actually supplies independent wall-clock supervision. In that
+lane, observe active native sub-agents every 30 seconds. Silence becomes a
+suspected stall after 120 seconds unless the lane holds a renewable silence
+lease. One lease may cover at most 600 seconds and every renewal must carry
+fresh bounded evidence and a reason. The 600-second value caps one lease, not
+useful work.
 
 After suspected stall, allow a 60-second probe grace period. A lane may be
 replaced at most once, and replacement requires the prior writer to be
 interrupted or confirmed terminal plus recorded lineage. If safe recovery is
 not available, the main session owns the fallback and preserves the last known
 evidence.
+
+In an externally supervised lane, every native `wait_agent` call is bounded to
+30-60 seconds. Five consecutive minutes of timed-out waits without mailbox
+activity force `interrupt_agent` and main-session takeover. A native delegation
+has an absolute 15-minute deadline even when heartbeat traffic continues;
+long-running tests or CI must run as separately polled processes with fresh
+execution evidence. The managed watchdog hook denies unsupervised waits and,
+when supervised, enforces these ceilings and denies further waits after either
+deadline.
 
 A heartbeat proves only liveness. It is never progress, changed-path, check,
 component, main-verification, or completion evidence.

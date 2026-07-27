@@ -70,6 +70,11 @@ Do not load cache or personal-voice references for unrelated posts.
 
 ## Locale and Series Contract
 
+- Keep this skill and its instructional references in English. For user-facing
+  research, specifications, plans, code reviews, and lessons, write Korean
+  prose by default; retain English only for code, commands, APIs, identifiers,
+  URLs, and exact source excerpts. Public GitHub issue and pull-request
+  artifacts remain English unless the user explicitly requests localization.
 - Korean routes are Korean-first. Unless the user explicitly scopes
   Korean-only, a bilingual article is incomplete until matching English routes
   exist and build.
@@ -77,7 +82,11 @@ Do not load cache or personal-voice references for unrelated posts.
   technical claims, numbers, source links, asset references, and bottom series
   navigation aligned.
 - Public GitHub artifacts and pushed commits remain English under workspace
-  policy. Diagram labels remain English unless localization is materially useful.
+  policy.
+- For bilingual blog posts, any diagram with reader-facing text must have
+  separate Korean and English SVG/PNG assets. Korean assets use Korean labels,
+  English assets use English labels, and technical identifiers remain unchanged.
+  A text-free hero image may remain shared across locales.
 - Apply user wording corrections exactly when they improve naturalness or
   technical precision.
 
@@ -87,9 +96,17 @@ Do not load cache or personal-voice references for unrelated posts.
   capability list.
 - Specific evidence beats importance claims. Concrete verbs beat noun-heavy
   translation. Repeat the same technical term for the same concept.
-- Natural Korean is mandatory; humor is optional. Use familiar engineering
-  idioms only when they clarify a concrete failure mode, then return to the
-  technical explanation.
+- Natural Korean is mandatory, but natural does not mean conversational.
+  Match the artifact: technical articles and reports prefer established
+  technical-register terms over casual paraphrases. For example, use
+  `저비용 검사`, `고비용 처리`, `조기 거부`, `방지 대상`,
+  `정책 불일치`, and `계약 단일화` when those terms preserve the intended
+  meaning. Humor is optional.
+- Do not apply the preferred terms mechanically. Choose `고비용 작업` or
+  `고비용 처리` by context, and distinguish a distributed policy from an
+  actual policy mismatch.
+- Use familiar engineering idioms only when they clarify a concrete failure
+  mode, then return to the technical explanation.
 - Reject English sentence skeletons, writer-diary openings, vague impression
   verbs, invented metaphors, marketing praise, and filler conclusions.
 - Check subject/predicate and semantic dimension: impact scope is small/large,

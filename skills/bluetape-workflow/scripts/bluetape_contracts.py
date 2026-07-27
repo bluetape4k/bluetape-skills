@@ -73,6 +73,7 @@ _TOKEN_END = re.compile(
 )
 
 _PHASE2_COMMANDS = {
+    "mutation-check",
     "run-approve", "run-start", "run-recovery-start", "run-recovery-finish",
     "run-fail", "run-block", "run-cancel", "lane-create", "lane-start",
     "startup-ack", "stall-record", "stall-clear", "probe-ack", "lane-complete",

@@ -42,9 +42,8 @@ New manifest snapshots require the correction/rereview lane to declare the
 failed lane as `parent_lane_id`. Pre-policy Phase 2 snapshots cannot add that
 declaration retroactively, so their compatibility path relies on later
 completion receipt sequence plus exact bindings to both terminal evidence
-digests. In both
-paths the owner supplies the semantic assertion; lane names are never treated
-as proof.
+digests. In both paths the owner supplies the semantic assertion; lane names
+are never treated as proof.
 
 ## Resume and Recovery
 

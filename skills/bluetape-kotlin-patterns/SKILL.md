@@ -59,8 +59,14 @@ check(state == State.READY) { "state must be READY" }
 
 ## Logging, Coroutines, and Lifecycle
 
-- Use established `KLogging()` patterns; use `KLoggingChannel()` for
-  coroutine-heavy components. Prefer lazy messages and `log.warn(e) { ... }`.
+- Logging is mandatory for production components with operational behavior.
+  Record lifecycle transitions, external IO failures, retries/fallbacks, and
+  terminal failures through established `KLogging()` patterns; use
+  `KLoggingChannel()` for coroutine-heavy components. Pure deterministic
+  helpers are exempt.
+- Never use `println`, `System.out`, or `System.err` as operational logging.
+  Prefer lazy messages and stable low-cardinality context such as
+  `log.warn(e) { ... }`; never log secrets, credentials, tokens, or raw payloads.
 - Rethrow `CancellationException` before broad exception handling. Do not wrap
   suspend calls or suspend close paths in `runCatching`.
 - If cleanup must run after cancellation, isolate only cleanup in
@@ -143,7 +149,7 @@ Apply `bluetape-workflow/references/checklist-contract.md`. Complete
   - **Evidence:** Symbol-impact and reuse anchors plus rationale for every raw fallback.
   - **Failure:** Do not implement or review from memory or stale artifacts.
 - [ ] **KT-03 — Enforce Kotlin contracts**
-  - **Action:** Check validation/exception compatibility, cancellation/blocking/concurrency/resource ownership, API modeling, Exposed boundaries, and public documentation rules.
+  - **Action:** Check validation/exception compatibility, mandatory operational logging, cancellation/blocking/concurrency/resource ownership, API modeling, Exposed boundaries, and public documentation rules.
   - **Evidence:** Per-trigger findings tied to current file/line evidence.
   - **Failure:** Classify violations P0/P1/P2/P3 and block progression on P0/P1.
 - [ ] **KT-04 — Prove behavior with Kotlin validation**

@@ -14,6 +14,13 @@ packaging, async, testing, and P0/P1 review rules.
 - Keep APIs Python-native; do not port Kotlin/Go/Rust package shapes.
 - Target Python 3.13+ unless a documented compatibility constraint says
   otherwise.
+- Logging is mandatory for production components with operational behavior.
+  Record lifecycle transitions, external IO failures, retries/fallbacks, and
+  terminal failures through stdlib `logging` with a module logger or injected
+  adapter. Pure deterministic helpers are exempt.
+- Never use `print`, direct stdout/stderr writes, or root logger configuration
+  as library operational logging. Use stable low-cardinality context and never
+  log secrets, credentials, tokens, or raw provider payloads.
 - Keep the `bluetape` meta distribution thin (`bluetape-core` by default),
   `bluetape-core` stdlib-only, logging stdlib-first, and heavier integrations in
   focused distributions/extras.
@@ -99,7 +106,7 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
   - **Evidence:** Spec/plan mapping to tests for success, failure, boundary, typing/protocol, and lifecycle behavior.
   - **Failure:** Reject ambiguous sentinels, broad ports, or unowned async/resources.
 - [ ] **PY-03 — Implement with isolation and cleanup**
-  - **Action:** Use modern typing, explicit exceptions, cancellation rethrow, context managers/finally, caller-owned logging, deterministic helpers, and lazy optional imports.
+  - **Action:** Use modern typing, explicit exceptions, cancellation rethrow, context managers/finally, mandatory caller-owned operational logging, deterministic helpers, and lazy optional imports.
   - **Evidence:** Scoped diff with every owned resource/token/task cleanup path and dependency rationale.
   - **Failure:** Record P0/P1 for leaks, swallowed cancellation, global state, secrets, or optional-integration leakage.
 - [ ] **PY-04 — Prove behavior and isolation**
