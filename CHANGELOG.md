@@ -4,16 +4,34 @@ All notable changes to Bluetape Skills are documented in this file.
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-07-27
+
+### Added
+
+- Added reusable workflow lessons for repository-practice discovery, hook
+  target resolution, receipt lifecycle recovery, public-bundle test
+  portability, and completion-gate discipline.
+- Added operational logging requirements to the Go, Kotlin, Python, and Rust
+  implementation patterns.
+
 ### Changed
 
 - Adopted `develop` as the default integration branch and reserved `main` for
   reviewed stable-release promotion only.
+- Expanded `$bluetape-diagram` guidance for DOM-native HTML/CSS charts,
+  deterministic capture, bilingual fonts, and localized visual assets.
+- Strengthened `$bluetape-workflow` worktree isolation, GNO fallback,
+  delegation deadlines, run-command contracts, and failure-resolution rules.
+- Clarified `$bluetape-writer` language selection, audience register, and
+  Korean naturalness checks.
 
 ### Fixed
 
 - Allowed append-only coordinator completion after a failed review lane is
   explicitly linked to a completed correction or exact-head rereview lane,
   while unresolved and invalid failure-resolution claims remain blocking.
+- Made source-only workflow contract tests skip explicitly when private
+  `AGENTS.md` and external companion skills are absent from the public bundle.
 
 ## [1.2.1] - 2026-07-17
 
@@ -69,4 +87,5 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.2.1...develop
+[1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.2.2...develop
