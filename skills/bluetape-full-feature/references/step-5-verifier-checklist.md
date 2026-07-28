@@ -29,7 +29,7 @@ Confirm that the implementation still matches the approved spec and plan. This g
   - **Evidence:** Changed-file review and scoped diff result.
   - **Failure:** Remove, split, or approve scope expansion before continuing.
 - [ ] **A-VER-04 — Synchronize public documentation**
-  - **Action:** Verify public API changes have English KDoc and applicable multilingual README/examples/diagrams.
+  - **Action:** Verify public API changes have Korean KDoc and applicable multilingual README/examples/diagrams.
   - **Evidence:** API-to-doc mapping or concrete source-backed N/A.
   - **Failure:** Repair public documentation drift before review.
 - [ ] **A-VER-05 — Prove planned risks in tests**

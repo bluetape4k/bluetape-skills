@@ -141,7 +141,7 @@ Focus:
 2. Resolve conflicts between lanes.
 3. Cover documentation, release readiness, and evidence integrity.
 4. Confirm README.md and localized README updates when user-facing behavior changes.
-5. Confirm public API KDoc/Rustdoc is English and matches actual source names.
+5. Confirm new or meaningfully updated public and internal KDoc is Korean and matches actual source names.
 6. Confirm CHANGELOG/release-note/migration impact is assigned or explicitly N/A.
 7. Confirm module registration, CI/Nightly, coverage, lessons, PR body, and verification artifacts are sufficient and current.
 
