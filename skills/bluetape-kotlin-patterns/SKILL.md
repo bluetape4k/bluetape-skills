@@ -93,8 +93,10 @@ check(state == State.READY) { "state must be READY" }
   wrappers or bean mutation.
 - Wrap two or more same-typed domain parameters in a named value object, or use
   named arguments when a wrapper would be disproportionate.
-- Public durable contracts need English KDoc, realistic examples, direct
-  tests, and README/API entries together.
+- Public durable contracts need Korean KDoc, realistic examples, direct tests,
+  and README/API entries together. Non-obvious internal contracts also need
+  Korean KDoc. Preserve code, identifiers, commands, API names, URLs, and exact
+  error text in their original form.
 - Data classes implement `Serializable` and define `serialVersionUID`. When a
   data-class constructor requires validation, prevent generated construction
   paths from bypassing it.
@@ -124,9 +126,11 @@ check(state == State.READY) { "state must be READY" }
 
 ## Documentation and Contribution Surface
 
-- Public KDoc, CHANGELOG, release notes, issues, PRs, and pushed commits are
-  English. Keep `README.md` and existing localized README files equivalent when
-  behavior or examples change.
+- Every new or meaningfully updated public or internal KDoc is Korean-first.
+  Do not translate untouched legacy KDoc solely to satisfy this forward-applying
+  rule. CHANGELOG, release notes, issues, PRs, and pushed commits remain English.
+  Keep `README.md` and existing localized README files equivalent when behavior
+  or examples change.
 - Grep actual classes, functions, and capabilities before accepting public
   documentation claims.
 - Load `bluetape-diagram` for README diagrams or benchmark charts.

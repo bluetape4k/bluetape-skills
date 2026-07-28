@@ -10,7 +10,7 @@ Use these checks during Step 3-R critic integration.
 4. Test tasks cover success, failure, edge, concurrency, coroutine, lifecycle, and backend-capability paths when relevant.
 5. Verification commands are concrete and targeted.
 6. README.md and existing localized README files are covered when public behavior changes.
-7. English KDoc, GitHub PR/issue text, changelog, or release notes are covered when contributor-facing artifacts change.
+7. Korean KDoc plus English GitHub PR/issue text, changelog, or release notes are covered when contributor-facing artifacts change.
 8. New modules include settings registration, BOM constraints when publishable, CI/Nightly scope, test resources, and coverage aggregation checks.
 9. Spring Boot auto-configuration tasks include conditional class/property guards and registration ordering checks.
 10. Exposed tasks include deprecated import avoidance and receiver-shadowing checks.

@@ -31,7 +31,7 @@ Use immediately before a Kotlin completion claim or review verdict.
   - **Evidence:** Assertion/test review and fresh targeted result.
   - **Failure:** Strengthen the test before progression.
 - [ ] **KT-FIN-08 — Synchronize public documentation**
-  - **Action:** Verify English KDoc, README locales, examples, and diagrams match the public API.
+  - **Action:** Verify new or meaningfully updated public and internal KDoc is Korean, and README locales, examples, and diagrams match the public API.
   - **Evidence:** Source-to-doc mapping and rendered/asset proof when applicable.
   - **Failure:** Repair drift or supply concrete N/A evidence.
 - [ ] **KT-FIN-09 — Clear diagnostics**
