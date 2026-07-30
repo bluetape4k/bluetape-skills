@@ -24,6 +24,7 @@ Then read only the matching kind files:
 | ERD, schema, table relationship view | `references/erd.md` |
 | sequence, request/response, retry, branch, lifecycle, time flow | `references/sequence.md` |
 | chart, benchmark, README metric visual | `references/chart.md` |
+| reader-explorable business workflow, journey, decision/process map, operational flow | `references/workflow.md` |
 
 If a user-reported defect is about connectors, markers, arrowheads, labels,
 icons, lane whitespace, rendered PNG parity, or review pages, keep
@@ -32,9 +33,16 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 ## Execution Contract
 
 1. Read the target README/page and source-backed behavior before drawing.
-2. Work one asset at a time. Use SVG -> PNG by default. Only a chart that
-   passes the DOM-native eligibility gate in `references/chart.md` may use
-   HTML/CSS -> PNG.
+2. Work one asset at a time and choose the pipeline by information shape:
+   - Use SVG -> PNG for precise static structure, topology, time order, and
+     relationships: architecture/component, class/UML, ERD, sequence, and
+     static connector-driven flow.
+   - Use HTML/CSS/JavaScript -> PNG for a DOM-native chart or reader-explorable
+     business workflow whose value comes from filters, branch/state
+     comparison, narrative panels, or another multi-view experience. Theme and
+     locale support alone do not qualify an asset for HTML.
+   - Do not force one universal pipeline. Apply the eligibility gate in
+     `references/chart.md` or `references/workflow.md`.
 3. Treat PNG output as authoritative. Source-only success never closes the
    task.
 4. Convert every user-reported visual defect into a concrete geometry/style
@@ -48,9 +56,9 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 
 - Render SVG sources with CairoSVG CLI:
   `cairosvg <diagram>.svg -o <diagram>.png -s 2`.
-- Render an eligible DOM-native chart with the deterministic Chromium capture
-  contract in `references/chart.md`; HTML is a source artifact, not the README
-  embed.
+- Render an eligible DOM-native chart or business workflow with the
+  deterministic Chromium capture contract in its kind reference; HTML is a
+  linked companion/source artifact, not the README embed.
 - Open every touched or high-risk PNG at full size after the final coordinate
   change.
 - Reject CairoSVG text hazards and unhighlighted explicit code snippets with
@@ -81,17 +89,17 @@ common checklist and every selected kind checklist for each asset separately.
   - **Evidence:** Source/asset ledger and trigger-to-reference map.
   - **Failure:** Remove or defer assets without a source-backed reader purpose.
 - [ ] **DIA-02 — Load common and kind rules**
-  - **Action:** Read `common.md` and only the matching architecture/class/ERD/sequence/chart references; keep common open for user-reported geometry/style defects.
+  - **Action:** Read `common.md` and only the matching architecture/class/ERD/sequence/chart/workflow references; keep common open for user-reported geometry/style defects.
   - **Evidence:** Exact loaded reference list and applicable conditional rules.
   - **Failure:** Do not edit from generic diagram conventions.
 - [ ] **DIA-03 — Complete one source edit**
   - **Action:** Edit exactly one asset in the selected source format, preserving source-backed concepts and converting reported defects into explicit invariants.
-  - **Evidence:** Scoped SVG diff, or eligible chart HTML/CSS plus its single data source, and the invariant list.
+  - **Evidence:** Scoped SVG diff, or eligible DOM-native chart/workflow HTML/CSS plus its single structured data source, and the invariant list.
   - **Failure:** Stop batch progression until this asset completes the full loop.
 - [ ] **DIA-04 — Validate source and render the authoritative PNG**
-  - **Action:** For SVG, validate XML and render with CairoSVG at scale 2. For an eligible DOM-native chart, validate source/data and use the deterministic Chromium capture contract from `chart.md`.
+  - **Action:** For SVG, validate XML and render with CairoSVG at scale 2. For an eligible DOM-native chart or workflow, validate source/data and use the deterministic Chromium capture contract from its kind reference.
   - **Evidence:** Selected pipeline, successful commands, renderer version, and PNG dimensions/path.
-  - **Failure:** Source-only success, an unapproved renderer, or a chart that bypasses the eligibility gate does not advance the asset.
+  - **Failure:** Source-only success, an unapproved renderer, or an asset that bypasses its eligibility gate does not advance.
 - [ ] **DIA-05 — Run common and type-specific audits**
   - **Action:** Run raster-text/code-highlight, connector/relationship-label/geometry/endpoint/mixed-corner, and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
   - **Evidence:** Counts and failures=0 with no WEAK/UNAVAILABLE/zero-count ambiguity.
@@ -115,7 +123,7 @@ Every completion report or PR body must include concrete evidence rows:
 | --- | --- |
 | Scope | source/PNG paths, selected pipeline, and related-set scan result |
 | Source | README/source files read or documented exception |
-| Source validation | XML result for SVG, or HTML/data validation for an eligible chart |
+| Source validation | XML result for SVG, or HTML/data validation for an eligible DOM-native chart/workflow |
 | Render | CairoSVG or deterministic Chromium command, renderer version, and PNG dimensions |
 | Kind rules | relevant reference files loaded |
 | Raster text | SVG `text_hazards=0` or HTML-branch N/A, plus applicable `code_without_highlight=0` |
@@ -131,7 +139,8 @@ the claim falsifiable.
 ## Output
 
 Produce the requested source/PNG/chart assets in the target repository's
-canonical path. Keep SVG as the default source; retain HTML/CSS only for an
-eligible DOM-native chart. README and Markdown pages embed the generated PNG,
-not the HTML source. Keep image text concise, source-relevant, and reader-facing
-only.
+canonical path. Keep SVG for static structural/connector-driven assets; retain
+HTML/CSS/JavaScript for an eligible DOM-native chart or reader-explorable
+business workflow. README and Markdown pages embed the generated PNG and may
+link to the matching HTML companion; they do not embed the HTML source. Keep
+image text concise, source-relevant, and reader-facing only.
