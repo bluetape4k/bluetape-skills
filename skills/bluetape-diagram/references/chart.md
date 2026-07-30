@@ -22,10 +22,12 @@ layout.
 | --- | --- |
 | simple bar, progress, scorecard, comparison panel, heatmap table, or repeated benchmark card | line, area, scatter, radar, multi-axis, curve, or coordinate-precise plot |
 | values map directly to flex/grid layout, percentages, widths, heights, colors, or repeated DOM cards | paths, points, axes, ticks, interpolation, or exact plot coordinates drive meaning |
-| the chart has no semantic connectors, arrowheads, routed edges, or diagram topology | architecture, class/UML, ERD, sequence, flow, topology, or connector-heavy content |
+| the chart has no semantic connectors, arrowheads, routed edges, or diagram topology | architecture, class/UML, ERD, sequence, static technical flow, topology, or connector-heavy content |
 
 When any condition is ambiguous, use SVG. Do not replace an SVG technical
 diagram with HTML/CSS merely because browser capture is available.
+Reader-explorable business workflows are governed by `workflow.md`; do not
+reclassify them as charts to bypass the workflow eligibility gate.
 
 HTML/CSS chart source rules:
 

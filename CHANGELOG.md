@@ -4,6 +4,20 @@ All notable changes to Bluetape Skills are documented in this file.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-31
+
+### Changed
+
+- Simplified the canonical workflow contracts for GPT-5.6 by assigning shared
+  semantics to one owner and keeping leaf skills focused on type-specific
+  deltas.
+- Updated `$bluetape-diagram` with a reusable workflow reference and clearer
+  validation boundaries for deterministic public diagrams.
+- Strengthened `$bluetape-writer` Korean register and naturalness guidance
+  without retaining article-specific examples in the reusable reference.
+- Kept new and meaningfully updated Kotlin guidance Korean-first across the
+  canonical Kotlin and full-feature skill surfaces.
+
 ## [1.2.2] - 2026-07-27
 
 ### Added
@@ -88,4 +102,5 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.2.2...develop
+[1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.0...develop

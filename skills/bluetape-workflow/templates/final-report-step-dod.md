@@ -43,9 +43,5 @@ Final status: DONE / PENDING ({explicit gate ID, exact target/head, and remainin
 Unchecked required items: {none or checklist IDs}
 ```
 
-At merge-ready, do not claim `X=Y`: CG-16 through CG-18 remain applicable and
-unchecked. Use `PENDING (CG-16 fresh merge approval for PR #{number} at
-{head-sha})`. Report `DONE` only after CG-17 live merge verification and CG-18
-sync/cleanup, or after the no-PR branch records CG-11 through CG-18 N/A.
-The no-PR branch reaches `DONE` only when every other applicable
-router/common/leaf row is PASS or evidence-backed N/A.
+Render `Final status` and unchecked IDs from `common-gates.md` and the
+instantiated checklist. This template defines shape only.

@@ -18,16 +18,28 @@ visual, blog image, or site visual.
 
 ## One-Asset Loop
 
-SVG is the default and remains mandatory for architecture, class/UML, ERD,
-sequence, connector-heavy, topology, and coordinate-driven visuals. Only a
-chart that passes the explicit DOM-native eligibility gate in `chart.md` may
-use HTML/CSS as its source.
+Choose the pipeline by the information model, not by a universal preference.
+
+| Reader need / asset shape | Canonical source pipeline |
+| --- | --- |
+| precise static structure, topology, time order, or relationship contract | SVG -> PNG |
+| architecture/component, class/UML, ERD, sequence, static state/flow, connector-heavy technical diagram | SVG -> PNG |
+| coordinate-driven chart where axes, points, paths, or interpolation carry meaning | SVG -> PNG |
+| DOM-native chart/dashboard built from repeated cards, grid/flex, tables, bars, scores, or filters | HTML/CSS/JavaScript -> PNG |
+| reader-explorable business workflow, journey, decision/process map, or operational flow with branch/state comparison and explanatory panels | HTML/CSS/JavaScript -> PNG |
+| small static business flow whose connector topology is the whole message | SVG -> PNG |
+
+Dark/light support or localization alone does not justify HTML. Use HTML when
+the reader benefits from multiple views, filters, branch/state exploration, or
+narrative composition. Reject a single universal pipeline: structural diagrams
+remain SVG, while eligible charts and business workflows follow `chart.md` or
+`workflow.md`.
 
 1. Select and record one approved source pipeline.
 2. Edit one source asset.
 3. Validate the source: XML for SVG, or HTML plus its data contract for an
-   eligible DOM-native chart.
-4. Render the matching PNG with CairoSVG or the chart-specific deterministic
+   eligible DOM-native chart/workflow.
+4. Render the matching PNG with CairoSVG or the kind-specific deterministic
    Chromium capture contract.
 5. Inspect the full-size PNG.
 6. Run type-specific audits and fallback invariants.
@@ -47,6 +59,13 @@ replace one-by-one full-size PNG inspection.
 - For bilingual blog posts, create separate Korean and English SVG/PNG assets
   whenever a diagram contains reader-facing text. Do not reuse a localized
   raster across locales; keep technical identifiers unchanged in both assets.
+- For bilingual HTML companions, keep English and Korean in separate,
+  source-equivalent files and link them bidirectionally. Follow the repository
+  naming contract; new bluetape4k companions default to English `*.html` and
+  Korean `*.ko.html`.
+- When HTML is the canonical visual companion, support `auto`, `light`, and
+  `dark` themes. Export theme-specific PNG fallbacks from the HTML instead of
+  maintaining hand-edited duplicate raster content.
 - In light themes, make cards visibly distinct from the canvas.
 - Final footer/caption text must be reader-facing only; do not put evidence,
   generation notes, or validation logs inside the art.
@@ -145,7 +164,8 @@ replace one-by-one full-size PNG inspection.
 
 Use available repo-local wrappers when present. The commands below are the SVG
 path and remain required for connector-heavy SVGs. An eligible DOM-native chart
-uses the separate validation and capture commands required by `chart.md`.
+or business workflow uses the separate validation and capture commands required
+by its kind reference.
 
 ```bash
 xmllint --noout <diagram>.svg

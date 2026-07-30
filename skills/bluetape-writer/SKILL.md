@@ -1,9 +1,38 @@
 ---
 name: bluetape-writer
-description: Use when writing, reviewing, localizing, or validating README files, technical documentation, articles, Korean technical prose, or bilingual public content in the bluetape ecosystem.
+description: Use when writing, reviewing, localizing, or validating software technical documentation in the bluetape ecosystem, including README, KDoc, design, plan, review, lesson, operations, release, technical article, and diagram prose.
 ---
 
 # Bluetape Writer
+
+## Scope Boundary
+
+This skill is exclusively for software technical documentation. Its
+naturalness rules mean established Korean software technical register, not
+generic conversational Korean, essay style, or advertising copy.
+
+In scope:
+
+- README, KDoc, API and module documentation;
+- specifications, designs, implementation plans, code reviews, lessons, and
+  operations or release documents;
+- technical blog posts, workshop explanations, bilingual technical articles,
+  and reader-facing diagram or interactive-visualization text.
+
+Out of scope:
+
+- essays, general-interest articles, personal reflections without a software
+  engineering purpose, marketing copy, brand copy, and promotional landing-page
+  prose;
+- product UI microcopy whose primary concern is interaction design rather than
+  technical explanation;
+- legal, policy, financial, or business writing that requires its own domain
+  terminology contract.
+
+For a mixed artifact, apply this skill only to the software technical sections
+and route the remaining prose to a more appropriate writing or design surface.
+Do not broaden this skill's vocabulary rules to make nontechnical Korean sound
+formal.
 
 ## Parent Contract
 
@@ -32,7 +61,12 @@ authorize publication side effects.
 
 Do not load cache or personal-voice references for unrelated posts.
 
-## Ordered Workflow
+## Article Workflow
+
+Use this sequence only for technical posts, series, or site routes. For README,
+KDoc, design, plan, review, lesson, operations, release, or diagram prose, use
+the parent Type E workflow plus the triggered reference and validation rows;
+do not require post, series, hero, locale-publication, or site-build steps.
 
 1. Confirm single post/series, Korean-only/English-only/bilingual scope, source
    repositories, branch, benchmark evidence, and visual needs.
@@ -92,6 +126,9 @@ Do not load cache or personal-voice references for unrelated posts.
 
 ## Korean Technical Voice
 
+- This is a software technical register, not a general Korean writing style.
+  Do not rewrite technical prose as an essay, conversational explanation, or
+  promotional narrative in the name of naturalness.
 - Practical engineer-to-engineer prose; explain the reader's problem before a
   capability list.
 - Specific evidence beats importance claims. Concrete verbs beat noun-heavy
@@ -109,6 +146,8 @@ Do not load cache or personal-voice references for unrelated posts.
   mode, then return to the technical explanation.
 - Reject English sentence skeletons, writer-diary openings, vague impression
   verbs, invented metaphors, marketing praise, and filler conclusions.
+- Translate `mental model` as `사고방식` in Korean software technical prose.
+  Do not use the literal `정신 모형` or the structural term `사고 구조`.
 - Check subject/predicate and semantic dimension: impact scope is small/large,
   not short/long. Prefer `X 우선` for “X First” headings.
 - A strong section follows: reader problem -> smallest useful code/result ->
@@ -137,7 +176,13 @@ Do not load cache or personal-voice references for unrelated posts.
 
 ## Validation and Completion
 
-## Mandatory Article Checklist
+## Technical Article Checklist
+
+Apply this checklist to technical blog posts and article routes. For README,
+KDoc, specification, design, plan, review, lesson, operations, release, or
+diagram prose, use the parent Type E checklist plus every triggered reference;
+mark article-only route, locale, hero, and series-navigation rows N/A with
+concrete scope evidence.
 
 Apply `bluetape-workflow/references/checklist-contract.md`.
 

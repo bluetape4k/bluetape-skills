@@ -1,161 +1,139 @@
 # Korean Naturalness Checklist
 
-Use this for Korean bluetape4k blog drafts that read like translated prose, generic AI prose, or marketing copy. The goal is natural technical writing, not detector evasion.
+Use this for Korean software technical documentation in the bluetape
+ecosystem. It owns naturalness and register checks, not repository-specific
+facts or an ever-growing terminology dictionary.
 
 ## Preservation Rules
 
-- Preserve facts, numbers, dates, commands, source links, benchmark values, identifiers, product names, and direct quotes.
-- Preserve the article genre. Do not turn an engineering note into an essay, press release, or sales page.
-- Change only what improves clarity, rhythm, or Korean naturalness.
-- Prefer small local edits over rewriting a whole section.
-- If the evidence is uncertain, keep the uncertainty explicit. Do not make cautious claims sound stronger than the source supports.
+- Preserve facts, numbers, dates, commands, links, benchmark values,
+  identifiers, product names, quotes, genre, and uncertainty.
+- Verify factual claims against the intended repository ref before polishing
+  prose. A style pass must not preserve stale technical claims.
+- Prefer small local edits. Do not rewrite correct prose merely to impose one
+  voice.
+- Apply the pass to titles, frontmatter, tables, captions, alt text, link text,
+  and reader-facing diagram labels as well as body paragraphs.
 
-## Core Principle
+## Natural Korean Technical Prose
 
-Specific beats generic. Facts beat significance claims. Direct beats over-hedged prose.
-
-- Replace "중요합니다" with why it matters in this code path.
-- Replace "효율적입니다" with the measured result, removed step, or simpler failure mode.
-- Replace "다양한 장점을 제공합니다" with the two or three concrete advantages that the article actually proves.
-
-## Korean Translationese
-
-Prefer natural Korean technical phrasing:
+Specific beats generic. Facts beat significance claims. Direct verbs beat
+nominalized or over-hedged prose.
 
 | Avoid | Prefer |
 |---|---|
 | `~를 통해` | `~로`, `~해서`, or the concrete verb |
-| `~에 있어서` | `~에서`, `~할 때`, `여기서` |
+| `~에 있어서` | `~에서`, `~할 때` |
 | `~되어진다` | `~된다`, or active voice |
-| `가지고 있다` | `있다`, `제공한다`, `담고 있다` only when concrete |
+| `가지고 있다` | `있다`, `제공한다`, or a concrete state |
 | `~에 의해 생성된` | `~가 만든`, `~에서 만든` |
-| `~할 수 있을 것으로 보인다` | `~할 수 있다`, `~로 보인다`, or state the evidence |
-| `~할 필요가 있다` | `~해야 한다`, or explain the condition |
+| `~할 수 있을 것으로 보인다` | `~할 수 있다`, or state the uncertainty |
+| `중요하다`, `강력하다`, `효율적이다` | the behavior, measurement, or failure avoided |
 
-## LLM-Like Structure
+- Avoid mechanical `첫째/둘째/셋째`, broad virtue triplets, repeated
+  transitions, and vague future-outlook endings.
+- Remove anonymous authority such as `업계에서는` or `많은 개발자가` unless
+  a named source supports it.
+- Use concrete verbs such as `읽고`, `저장하고`, `무효화하고`,
+  `재시도하고`, and `측정한다`.
+- Keep identical concepts under identical names. Do not rotate terminology for
+  stylistic variety.
+- Vary sentence length naturally; split sentences carrying multiple ideas and
+  merge choppy fragments.
 
-Revise formulaic structure when it adds no clarity:
+## Register And Terminology
 
-- Avoid mechanical `첫째/둘째/셋째` unless the sequence is genuinely ordered.
-- Avoid triplets that list three broad virtues, such as "빠르고, 유연하고, 안정적인".
-- Avoid "A뿐만 아니라 B도" when "A와 B" is enough.
-- Avoid "X부터 Y까지" unless X and Y are real endpoints of a range.
-- Avoid ending with a vague future outlook. End with the concrete operational lesson or the next article link.
+Natural does not mean casual. Match the artifact:
 
-## Hollow Emphasis
+- KDoc and technical articles use precise established terminology.
+- Plans, reviews, and lessons may be direct, but should not become chatty.
+- Personal retrospectives may use limited humor when it clarifies the
+  engineering pain.
+- Preserve API names, identifiers, configuration keys, CLI flags, source
+  excerpts, and official product names exactly.
+- Translate general English prose when a precise Korean technical term exists;
+  do not translate code tokens or invent literal Korean expansions.
 
-Do not claim importance when the article can show it:
+Choose the term that names the software state or operation precisely:
 
-- Replace `주목할 만하다`, `시사하는 바가 크다`, `혁신적이다`, `강력하다`, `포괄적이다` with concrete behavior.
-- Replace anonymous authority such as "업계에서는", "많은 개발자가" with a named source, project evidence, or deletion.
-- Remove promotional phrases that do not add information.
-
-## Rhythm And Flow
-
-- Vary sentence length, but do not force drama.
-- Keep paragraph openings concrete. Avoid repeated `또한`, `따라서`, `즉`, `나아가`.
-- Prefer short transitions: `그래서`, `문제는`, `반대로`, `실제로`, `이제`.
-- Split long sentences when they carry more than one idea.
-- Merge tiny sentences when they create a choppy checklist feel.
-
-## Technical Voice
-
-- Use concrete verbs: `읽고`, `저장하고`, `무효화하고`, `재시도하고`, `측정합니다`.
-- Keep identical concepts under identical names. Do not rotate `캐시`, `저장소`, `계층`, `구성요소` if they refer to different or same things ambiguously.
-- Keep Korean prose natural, but keep public API names, class names, method names, configuration keys, and CLI flags exact.
-- Keep light humor close to the engineering pain. Remove jokes that obscure a claim.
-
-### Match the register to the artifact
-
-Natural Korean is not automatically conversational Korean. In a technical
-article, architecture note, or report, prefer terminology commonly used in
-technical publications when it expresses the same meaning more precisely.
-Do not replace a precise technical term with an everyday paraphrase merely to
-make the sentence sound friendlier.
-
-| Avoid in technical articles and reports | Prefer | Selection note |
-|---|---|---|
-| `값싼 검사`, `비용이 적게 드는 검사` | `저비용 검사` | Use for checks designed to minimize execution cost. |
-| `비싼 작업` | `고비용 작업`, `고비용 처리` | Select by whether the sentence names a work unit or a processing stage. |
-| `일찍 거절한다` | `조기 거부한다` | Use for fail-fast input or request rejection. |
-| `막으려는 문제` | `방지 대상` | Name the risk or failure mode directly when possible. |
-| `정책이 갈라진다` | `정책이 분산된다`, `정책 불일치가 발생한다` | Do not conflate distribution with disagreement. |
-| `결과가 엇갈린다` | `결과가 불일치한다` | Use when outputs violate an expected consistency relation. |
-| `계약을 하나로 모은다` | `계약을 단일화한다` | Use when multiple contracts become one authoritative contract. |
-
-Prefer a concrete phrase over an abstract Sino-Korean noun when the formal term
-would hide the actor or action. Publication-grade wording is a precision rule,
-not a request to make every sentence heavier.
-
-## Humor And Korean Sentence Sense
-
-Natural Korean comes before wit. If a sentence is funny only after translating
-it back to English, rewrite it.
-
-- Prefer Korean engineering idioms developers actually use: `삽질했다`, `똥
-  치우기`, `뚜껑이 열린다`, `장애가 터진다`, `엄격하게 검증한다`.
-- Do not create new metaphors just to be playful. If the phrase sounds clever
-  but unfamiliar in Korean technical writing, delete it or make it direct.
-- Check the sentence owner. Blog prose should explain the library or user
-  problem, not the writer's private impression.
-- Check noun and predicate compatibility. Ranges are `작다/크다`, not
-  `짧다/길다`; code is `조심히 다뤄야 한다`, not `진지하다`; validation
-  `검증한다`, not `겨냥한다`.
-- Keep humor proportional to the failure mode. Cache inconsistency is dangerous,
-  not merely `귀찮다`; routing validation is `엄격하다`, not `빡빡하다`.
-
-Recent accepted corrections:
-
-| Avoid | Prefer |
+| Avoid when imprecise | Prefer when the meaning matches |
 |---|---|
-| `버그도 성실해집니다` | `버그가 여러 곳에서 발호합니다` |
-| `중복 header도 그냥 넘기지 않습니다` | `중복 header도 그냥 넘기면 안 됩니다` |
-| `입력 경계를 넣어두면 덜 미끄러집니다` | `입력 경계를 넣어두면 추가 작업이 줄고 완성도가 높아집니다` |
-| `테스트도 이 위험을 그대로 겨냥합니다` | `테스트도 이 위험을 검증합니다` |
-| `PATCH ... 빡빡하게 처리합니다` | `PATCH ... 엄격하게 처리합니다` |
-| `이 예제 값들은 장식이 아닙니다` | `이 예제의 실행 결과 값들은 실제 수행한 결과입니다` |
-| `이런 검증은 조금 귀찮습니다. 하지만` | `이런 검증은 조금 귀찮습니다만,` |
+| `값을 바꾼다` | `값을 변경한다` |
+| `결과를 돌려준다` | `결과를 반환한다` |
+| `쓰기를 막는다` | `쓰기를 차단한다` |
+| `결과가 엇갈린다` | `결과가 불일치한다` |
+| `계약을 하나로 모은다` | `계약을 단일화한다` |
+| `authority boundary` -> `권위 경계` | `책임 경계`, `상태 변경 경계` |
+| `source of truth` -> `진실의 원천` | `기준 데이터 원본`, `SSOT` when useful |
 
-## English Localization Pass
+Use established Korean loanwords consistently, for example `스냅숏`,
+`아웃박스`, `페이로드`, `메트릭`, `트랜잭션`, and `커넥션 풀`. Preserve exact
+English only when it is an identifier or official name.
 
-For English blog posts or bilingual localization:
+## Technical Claim Boundaries
 
-- Scan for clusters of AI-preferred English words such as `delve`, `tapestry`, `landscape`, `nuanced`, `multifaceted`, `pivotal`, `crucial`, `foster`, `underscore`, `showcase`, `leverage`, `intricate`, `comprehensive`, `robust`, `seamless`, `groundbreaking`.
-- Do not ban these words mechanically. Replace them when several cluster in a paragraph or when a simpler word is more precise.
-- Prefer `use`, `show`, `explain`, `support`, `key`, `solid`, `field`, and direct technical nouns when they fit.
+Prose must distinguish adjacent contracts instead of flattening them:
 
-## Final Pass
+- request acceptance, queue insertion, durable write, and drain completion;
+- execution order, shared transaction, idempotency, and exactly-once effects;
+- structural parsing, authentication, cryptographic verification, and caller
+  trust responsibilities;
+- common interface support, optional capabilities, backend overrides, and
+  unsupported behavior;
+- application-owned, framework-owned, and shared-resource lifecycles;
+- current implementation, released-tag behavior, proposed design, and roadmap.
 
-- Does every paragraph either advance the technical explanation, provide evidence, or guide the reader through the source?
-- Are claims supported by code, docs, benchmark numbers, commands, or links?
-- Could a Korean engineer say this sentence naturally in a technical conversation?
-- Does the humor use a Korean expression developers would actually say?
-- Is every subject, predicate, and noun pairing natural in Korean?
-- Did the edit preserve meaning and avoid over-polishing the author's voice?
+When these distinctions matter, name the actual boundary and evidence. Do not
+turn a source-backed checklist into domain-specific prose rules here; record
+one-off findings in the task lesson.
+
+## Humor And Voice
+
+- Keep humor only when Korean engineers would naturally use it and the failure
+  remains clear.
+- Remove invented metaphors, translated jokes, and promotional phrasing.
+- Prefer a direct failure description over `딱 좋다`, `빡빡하다`, `귀찮다`,
+  or a clever but unfamiliar expression.
+- Preserve accepted author voice unless it obscures meaning or changes the
+  artifact's register.
+
+## English Localization
+
+For English counterparts, remove clusters of generic AI-preferred wording such
+as `delve`, `tapestry`, `multifaceted`, `pivotal`, `robust`, `seamless`, and
+`groundbreaking` when a simpler technical word is more precise. Do not ban
+individual words mechanically.
 
 ## Blocking Naturalness Checklist
 
 - [ ] **KO-01 — Freeze meaning-bearing evidence**
-  - **Action:** Preserve facts, numbers, dates, commands, links, benchmark values, identifiers, names, quotes, genre, and uncertainty.
-  - **Evidence:** Before/after fact ledger with no unexplained semantic changes.
-  - **Failure:** Revert meaning-changing edits before style work.
-- [ ] **KO-02 — Replace generic and promotional claims**
-  - **Action:** Replace hollow importance/efficiency/benefit language with concrete behavior or evidence and remove anonymous authority.
-  - **Evidence:** Claim-level prose review tied to source evidence.
-  - **Failure:** Delete or qualify unsupported emphasis.
+  - **Action:** Preserve facts, identifiers, links, genre, and uncertainty.
+  - **Evidence:** before/after fact ledger with no unexplained semantic change.
+  - **Failure:** revert meaning-changing edits.
+- [ ] **KO-02 — Replace hollow claims**
+  - **Action:** Replace generic importance, efficiency, and benefit language
+    with behavior or evidence.
+  - **Evidence:** claim-level review tied to current sources.
+  - **Failure:** delete or qualify unsupported emphasis.
 - [ ] **KO-03 — Remove translationese and formulaic structure**
-  - **Action:** Repair English sentence skeletons, mechanical triplets/transitions, vague outlooks, and unnecessary nominalization.
-  - **Evidence:** Sentence-level review using the avoid/prefer tables.
-  - **Failure:** Keep the paragraph blocked until it reads naturally in Korean technical conversation.
-- [ ] **KO-04 — Verify technical vocabulary and sentence sense**
-  - **Action:** Keep identifiers exact, concepts consistently named, verbs concrete, subject/predicate/noun dimensions compatible, and terminology appropriate for the artifact's technical register.
-  - **Evidence:** Terminology, register, and semantic-dimension pass, including a check for casual paraphrases where established technical terms are clearer.
-  - **Failure:** Repair ambiguous term rotation, conversational wording in technical articles or reports, or unnatural predicate pairing.
-- [ ] **KO-05 — Bound humor and personal voice**
-  - **Action:** Keep only familiar Korean engineering idioms that clarify a real failure mode and preserve accepted user wording.
-  - **Evidence:** Humor/voice review with no invented metaphor or obscured claim.
-  - **Failure:** Make the sentence direct or remove the joke.
-- [ ] **KO-06 — Pass paragraph and localization checks**
-  - **Action:** Ensure every paragraph advances explanation/evidence/navigation and, for English, remove clustered AI-preferred wording without mechanical bans.
-  - **Evidence:** Final primary and localized prose review.
-  - **Failure:** Do not approve filler, over-polish, or literal idiom translation.
+  - **Action:** Repair English sentence skeletons, mechanical lists,
+    transitions, and nominalization.
+  - **Evidence:** sentence-level naturalness review.
+  - **Failure:** keep the paragraph blocked.
+- [ ] **KO-04 — Verify register and terminology**
+  - **Action:** Keep identifiers exact, terms consistent, and predicates
+    compatible with their subjects.
+  - **Evidence:** terminology and artifact-register pass.
+  - **Failure:** repair ambiguous or casual phrasing.
+- [ ] **KO-05 — Bound humor and voice**
+  - **Action:** Keep only familiar, clarifying Korean engineering idioms.
+  - **Evidence:** no invented metaphor or obscured claim.
+  - **Failure:** make the sentence direct.
+- [ ] **KO-06 — Verify every reader-facing surface**
+  - **Action:** Review body, metadata, tables, links, captions, alt text, and
+    diagram labels; verify paired locale links at the intended ref.
+  - **Evidence:** final content and link review.
+  - **Failure:** do not approve partial localization or stale facts.
+
+Promote a new global rule only when multiple independent tasks demonstrate the
+same reusable failure. Otherwise keep the finding in the task lesson.
