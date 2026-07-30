@@ -52,7 +52,7 @@ Required checks: {checked}/{total}; N/A: {count}; Blocked: {count}
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {fresh command, file, PR, issue, review comment, CI run; N/A requires concrete scope evidence} | {none, repair, rollback, blocker, or next action} |
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {evidence} | {failure handling} |
 
-Final status: PENDING (CG-14 CI/review for PR #{pr-number} at {head-sha}) / PENDING (CG-16 fresh merge approval after CG-15 for PR #{pr-number} at {head-sha}; unchecked: CG-16, CG-17, CG-18) / blocked ({reason})
+Final status: {status derived from the current common gate and exact PR head}
 
 Unchecked required items: {none or checklist IDs}
 ```

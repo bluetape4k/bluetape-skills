@@ -63,14 +63,10 @@ actions in the main session. Type F uses `test-engineer`, `executor`,
 
 ## Lane Lifecycle
 
-1. State lane count, scopes, command limits, and stop condition.
-2. Use fresh gate-scoped agents; do not reuse unrelated completed work.
-3. Continue main-session local verification while lanes run.
-4. Wait in bounded intervals. Close or replace an unresponsive lane rather
-   than making it the critical-path owner.
-5. Rerun only affected lenses after fixes.
-6. If a required role is unavailable, perform a main-session local equivalent
-   and record the missing role; never silently substitute an invented label.
+`liveness-contract.md` owns dispatch, ACK, heartbeat, stall, replacement, and
+completion sequencing. This file adds only routing constraints: use fresh
+gate-scoped agents, rerun only affected lenses after fixes, and never substitute
+an invented role label.
 
 Heavy Testcontainers, real database, native, JNI, and emulator checks remain
 sequential regardless of lane count.

@@ -32,10 +32,8 @@ checklist. An unchecked required item blocks every dependent item.
   - **Evidence:** loaded skill/reference names.
   - **Failure:** stop before editing.
 - [ ] **WF-04A — Initialize machine-readable evidence when available**
-  - **Action:** Use `scripts/bluetape-flow.py` to snapshot the manifest, workflow
-    type, repository root, current `CODEX_THREAD_ID`, and required topology
-    components. Pass `--session-id "${CODEX_THREAD_ID:?}"`; a receipt from
-    another or unidentified session never authorizes mutation.
+  - **Action:** Initialize `scripts/bluetape-flow.py` with the current
+    `CODEX_THREAD_ID`, repository root, workflow type, and components.
   - **Evidence:** run id, manifest hash, state root, and registered components.
   - **Failure:** remain on the documented checklist path and report the missing
     runtime surface; never write `.bluetape` files directly.
@@ -120,120 +118,39 @@ workflow from memory.
 
 Use `scripts/bluetape-flow.py` as the only writer for `.bluetape` run, lane,
 heartbeat, report, and receipt state. Owner authority is a contained 0600
-`--owner-file`; never pass or print its fencing value. Phase 1 snapshots permit
-only `verify`, `rebuild`, and `receipt-diagnose`. They are never migrated in
-place. Phase 2 snapshots use the explicit command contract in
-`references/topology-contract.md`.
+`--owner-file`; never pass or print its fencing value.
 
 Python validates policy and records bounded receipts. It cannot invoke
 `spawn_agent`, `send_message`, `list_agents`, `wait_agent`, or
 `interrupt_agent`. The main session alone performs those native actions and
-then records the actual result as bounded evidence. A helper recommendation is
-not proof that a native tool ran.
+then records observed results. Follow `references/topology-contract.md` for
+state transitions and `references/liveness-contract.md` for native-agent
+lifecycle; do not duplicate those protocols here. A helper recommendation is
+not execution evidence.
 
-Follow this order exactly:
-
-```text
-init --session-id "$CODEX_THREAD_ID"
-run-approve receipt -> run-start receipt
-lane-create receipt
-  -> lane-start receipt
-  -> native spawn/send/list/wait action by main session
-  -> startup-ack or observed silence receipt
-  -> evidence-backed heartbeat/lease or liveness-check
-  -> stall-record from liveness decision, or stall-clear from fresh evidence
-  -> probe-sent receipt before send_message/list_agents
-  -> interrupt authority and live interrupt result
-  -> distinct replacement lane with lineage
-  -> main-session rereads evidence
-  -> main session collects git changed paths and validates canonical write scope
-  -> lane-complete -> check-result -> component-evidence
-  -> failed review lane, when present -> completed correction/rereview lane
-  -> lane-resolve with independent completion evidence
-  -> completion-check -> complete
-```
-
-`run-approve` and `run-start` accept a bounded inline `--evidence-summary` so
-the fail-closed hook can bootstrap approval without permitting arbitrary
-pre-approval evidence-file writes. Before a mutation under the bluetape
-workspace, `mutation-check` must find exactly one verified `running` receipt
-bound to the current session and covering every target path.
-
-An empty write scope is read-only. Before `lane-complete`, the main session
-collects actual changed paths from `git status --porcelain=v1 -z` and the branch
-diff, canonicalizes them against the run's pinned `repo_root`, rejects symlink
-or alias escape, and passes the verified path set through `--changed-paths`.
-Any path outside the pinned scope blocks completion without a terminal event.
-Replacement scope uses the same canonical prefix model.
-
-Run `resume-check` before owner transfer. A corrupt chain requires
-`receipt-diagnose` and either remains blocked or starts a distinct recovery run
-from a 0600 quarantined copy; never truncate or continue the damaged receipt.
-After applying new guidance, write a guarded fresh-session handoff and end the
-session. Native dogfood in the apply session is invalid.
+Before mutation, `mutation-check` must identify exactly one verified running
+receipt bound to the current session and covering every target path. An empty
+write scope is read-only. Collect `git status --porcelain=v1 -z` plus the branch
+diff and validate canonical changed paths before `lane-complete`. Diagnose
+corrupt receipt chains rather than truncating or continuing them. After
+applying guidance, write a fresh-session handoff and validate it in a separate
+Codex process.
 
 ## Type-Specific Minimum Routes
 
-### Type A - Full Feature
+Load the canonical leaf and follow its type-specific gates. The router adds only
+these invariants:
 
-Load `bluetape-full-feature` and follow its 0 -> 11 gate sequence. New module,
-new dependency, broad API, and architectural work require spec and plan review.
-P0/P1 must be zero before implementation and again before PR/merge progression.
-
-### Type B - Fast Track
-
-Load `bluetape-fast-track`. Keep the approved plan, targeted tests, relevant
-language patterns, affected review lenses, P0/P1 convergence, documentation
-parity, PR metadata, and CI evidence. PR creation does not require a separate
-approval when the approved plan or current request explicitly names PR creation
-and the repo/base/head refs. Never merge automatically; every merge requires a
-fresh explicit user approval at the merge-ready gate.
-
-### Type C - Bug Fix
-
-Load `bluetape-bugfix`. Reproduce first, identify root cause, lock the
-regression with a failing test, make the smallest fix, run targeted validation,
-and update affected docs. Do not convert a failed reproduction into speculative
-editing.
-
-### Type D - Code Review
-
-Do not edit. Reopen the current diff/files and report findings first, ordered by
-P0/P1/P2/P3 with file/line evidence. Use the smallest triggered lenses:
-
-- standard: code correctness/API plus test evidence;
-- security-sensitive, concurrency/async, DB, external IO, public API, or >=300
-  changed lines: add the matching independent security, performance,
-  stability/Ops, developer/API, or user/caller lenses;
-- architecture or module-scale review: use all relevant lenses and a main
-  integration verdict.
-
-Independently verify plausible P0/P1 findings. Review completion means known
-P0/P1 findings are resolved or the verdict is explicitly blocked; it never
-means silently omitting blockers.
-
-### Type E - Maintenance
-
-Load `bluetape-maintenance`. Keep production behavior unchanged. Guidance,
-skill, hook, helper, config, or Codex/OMX changes must update the managed source
-first, apply live, prove source/live parity, run `$self-audit`, and commit/push
-the durable source when persistence is requested.
-
-### Type P - Publish
-
-Load `bluetape-publish-go` for Go module releases; otherwise load
-`bluetape-publish-jvm`. Refresh the release checklist before mutation and pin the
-target version, latest observed external version, target authority, consumer
-scope, topology, and dispatch-hold evidence. Ask before any stable dispatch,
-tag creation/rewrite, release creation, publication, or milestone closure not
-already explicitly requested.
-
-### Type F - Self Improve
-
-Load `bluetape-self-improve`. Require objective, primary metric, benchmark
-command, fresh baseline, sealed files, threshold, and stop condition before an
-experiment. One measurable hypothesis per candidate; integrate only a winner
-that passes tests, sealed-file validation, and the benchmark acceptance rule.
+- Type D remains read-only and reports findings by severity with file/line
+  evidence.
+- Type C reproduces and locks a regression before the smallest fix.
+- Type E preserves production behavior, reconciles managed source with live
+  state, and runs `$self-audit`.
+- Type P pins release authority and external version evidence before any
+  irreversible action.
+- Type F requires a repeatable baseline, acceptance threshold, and stop
+  condition.
+- Types A and B reach zero known P0/P1 findings before PR progression.
 
 ## Step Progression and Review
 
@@ -251,33 +168,14 @@ that passes tests, sealed-file validation, and the benchmark acceptance rule.
   the required committed lesson file when the selected workflow requires one,
   and create a durable lesson when the work produced reusable learning.
   Otherwise record an evidence-backed `N/A`; never create filler prose.
-- PR creation may proceed without a separate approval only through CG-11,
-  CG-12, and CG-13 after CG-01 through CG-10 and applicable leaf pre-PR gates
-  pass.
-- The PR path is strictly CG-11 authority -> CG-12 exact-head publication ->
-  CG-13 PR creation/metadata -> CG-14 CI/live review/human artifacts -> CG-15
-  merge-ready report -> CG-16 fresh approval -> CG-17 merge verification ->
-  CG-18 local sync/cleanup.
-- Every merge requires the fresh explicit user approval collected at CG-16
-  after required CI, current reviews and threads, applicable visual or diagram
-  review, the lesson gate, and other human-review artifacts are complete.
-  Earlier plan approval, an initial request to create and merge a PR, standing
-  workflow scope, or permission to create the PR never counts as merge approval.
-  Do not enable or execute auto-merge.
-- Tag, publish, workflow dispatch, release creation, and other non-PR
-  irreversible actions use the separate CG-X01 branch immediately before the
-  action.
+- Use the CG-11 through CG-18 PR path from `common-gates.md`; do not restate or
+  weaken it in a leaf. CG-16 fresh merge approval is not transferable from plan
+  or PR-creation approval. Non-PR irreversible actions use CG-X01.
 
 ## Reporting Contract
 
-Every required item is maintained as a checkbox during execution and gets one
-final row. `SKIPPED` is not a status; use `N/A` only under the checklist
-contract. Report `Required checks: {checked}/{total}; N/A: {count};
-Blocked: {count}`.
-
-| Check | Action | Status | Evidence | Failure / Next Action |
-|---|---|---|---|---|
-| {id} - {name} | action performed | PASS / FAIL / PENDING / N/A | fresh command/file/URL/result; N/A requires concrete scope evidence | none, repair, rollback, blocker, or next action |
+Use `references/checklist-contract.md` for status semantics and
+`templates/final-report-step-dod.md` for output shape. `SKIPPED` is invalid.
 
 Final reports include:
 
@@ -290,9 +188,8 @@ Final reports include:
 - merge/local-sync state;
 - final status: done, pending explicit boundary, or blocked.
 
-For PRs, verify the live body with `gh pr view <number> --json body`. Fix it if
-empty or if its final Markdown `##` heading is not `## DoD Status` before
-commenting, reviewing, merging, or reporting completion.
+For PRs, use `templates/pr-body-step-dod.md` and verify the live body before
+reporting completion.
 
 ## Stop Conditions
 
