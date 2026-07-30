@@ -2,6 +2,18 @@
 
 Use this contract for every bluetape workflow and leaf skill.
 
+## Ownership
+
+- The router owns classification and leaf selection.
+- This file owns status, item shape, ordering, counting, and anti-skip semantics.
+- `common-gates.md` owns shared executable gates.
+- Leaf skills own only type-specific actions, evidence, failures, and explicit
+  exceptions.
+- Templates own output shape; scripts and schemas own machine contracts.
+
+A normative rule has one canonical owner. Other surfaces reference its ID or
+file instead of paraphrasing it.
+
 ## Status Semantics
 
 - `[ ]` means not proved. It blocks every dependent item but does not by itself

@@ -11,7 +11,8 @@ description: Use when bluetape4k work changes README, KDoc, docs, AGENTS.md, wor
 
 Use this skill only for maintenance that does not change production behavior.
 
-Route blog/article work to `bluetape-writer`, diagram/chart work to `bluetape-diagram`, release work to `bluetape-publish-jvm`, Kotlin code changes to `bluetape-kotlin-patterns` plus the matching Type A/B/C workflow, Go code changes to `bluetape-go-patterns`, Rust code changes to `bluetape-rs-patterns`, and Python code changes to `bluetape-py-patterns`.
+Route writing, diagrams, publishing, and production-code changes to their
+canonical support skill or Type A/B/C workflow.
 
 ## Required Shape
 
@@ -27,9 +28,7 @@ Route blog/article work to `bluetape-writer`, diagram/chart work to `bluetape-di
 - Keep agent-facing guidance in concise English.
 - Run `git diff --check` and a targeted `rg` reference check before claiming completion.
 - For documentation-only changes, verify content and links; do not run heavyweight CI unless rendered docs or branch protection require it.
-- Follow the central `bluetape-workflow` Step DoD report format for final reports.
-- If maintenance work creates a PR, the PR body must end with the Step DoD status table.
-- Templates: `bluetape-workflow/templates/final-report-step-dod.md` and `bluetape-workflow/templates/pr-body-step-dod.md`.
+- Use the parent workflow's final-report and PR-body templates.
 
 ## Mandatory Type E Checklist
 
@@ -67,28 +66,16 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
   - **Failure:** Keep PR publication blocked until the maintenance proof and
     common pre-PR gates pass.
 - [ ] **E-07 — Deliver and report through the common PR gates**
-  - **Action:** With a PR, complete CG-11 through CG-15 in order: verify
-    authority, publish the exact head, create or update and verify the PR, pass
-    exact-head CI/current review and human artifacts, then report merge-ready.
-    Without a PR, record CG-11 through CG-18 N/A and render the final
-    no-delivery report.
-  - **Evidence:** With a PR, matching local/remote/PR head, live metadata and
-    final `## DoD Status`, successful checks, current review, applicable human
-    artifacts, phase-aware checklist counts, and exact-head merge-ready report;
-    without a PR, concrete N/A evidence and every other applicable row PASS.
-  - **Failure:** CI/review waits remain PENDING. Do not report merge-ready before
-    CG-15 or treat an earlier approval as merge authority.
+  - **Action:** Execute CG-11 through CG-15, or the common no-PR branch, without
+    redefining those gates.
+  - **Evidence:** Parent-gate receipts plus the maintenance proof from E-06.
+  - **Failure:** preserve the parent gate's PENDING/FAIL state.
 - [ ] **E-08 — Close out only after fresh merge approval**
-  - **Action:** With a PR, after fresh user approval of the current E-07 report,
-    complete CG-16 through CG-18: record approval, merge and verify live state,
-    then sync and clean the merged worktree/branch. Without a PR, record E-08
-    N/A from the common no-PR branch.
-  - **Evidence:** With a PR, fresh approval tied to the exact head, merge
-    result/SHA, integration-branch sync, and cleanup result; without a PR, the
-    same concrete CG-11 through CG-18 N/A evidence used at E-07.
-  - **Failure:** Waiting at CG-16 is PENDING; refusal or invalid authority is
-    BLOCKED. CG-17 failure returns to repair; CG-18 ambiguity remains PENDING
-    with state preserved.
+  - **Action:** After E-07, follow CG-16 through CG-18 or record the common
+    no-PR N/A branch.
+  - **Evidence:** Parent-gate receipts for approval, merge verification, sync,
+    and cleanup.
+  - **Failure:** preserve the parent gate's PENDING/FAIL state.
 
 ## Skill / Plugin Diet
 
@@ -99,9 +86,6 @@ read `references/skill-taxonomy.md` before editing the catalog.
 - Keep first-party or high-use plugins enabled only when they add capability not already covered by local skills.
 - Disable duplicate plugin skill families when local canonical skills already exist.
 - Archive local skills only when they are deprecated, duplicated by a canonical skill, or outside the user's active workflow.
-- Retain a compatibility alias only while a verified installed caller or
-  demonstrated current user habit depends on it; map historical documents to
-  canonical names instead of recreating aliases for them.
 - Do not archive `.system`, OpenAI docs, GitHub, Browser, or active bluetape4k skills without an explicit replacement.
 - After pruning, recount live `~/.codex/skills` descriptions and record whether the Codex skill-budget warning is expected to persist.
 
@@ -130,7 +114,4 @@ the canonical bluetape4k skills unless the user explicitly reintroduces them.
 ## Stop / Escalate
 
 Escalate to `bluetape-full-feature` when maintenance work changes architecture or public behavior. Escalate to `bluetape-bugfix` when maintenance reveals a concrete defect that needs a fix cycle.
-With a PR, the normal pre-merge state is E-07 PASS and CG-16 PENDING; report
-DONE only after E-08 completes CG-16 through CG-18. Without a PR, report DONE
-after CG-11 through CG-18 and E-08 are evidence-backed N/A and every other
-applicable row passes.
+The parent common gates define merge-ready, DONE, and no-PR terminal states.
