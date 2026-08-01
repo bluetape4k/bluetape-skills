@@ -152,6 +152,16 @@ state transitions and `references/liveness-contract.md` for native-agent
 lifecycle; do not duplicate those protocols here. A helper recommendation is
 not execution evidence.
 
+### Native subagent model policy
+
+For every native subagent dispatched under this workflow, set the model request
+to `gpt-5.6-luna` with reasoning effort `max`, while keeping the installed
+canonical `agent_type` and its lens. This workflow-local override takes
+precedence over role defaults in `AGENTS.md`; do not silently fall back to
+another model or effort. If the current runtime or agent catalog cannot honor
+the pair, keep the lane `PENDING`, record the capability mismatch, and obtain
+an explicit fallback before dispatch.
+
 Before mutation, `mutation-check` must identify exactly one verified running
 receipt bound to the current session and covering every target path. An empty
 write scope is read-only. Collect `git status --porcelain=v1 -z` plus the branch
