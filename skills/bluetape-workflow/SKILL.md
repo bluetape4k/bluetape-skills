@@ -32,11 +32,35 @@ checklist. An unchecked required item blocks every dependent item.
   - **Evidence:** loaded skill/reference names.
   - **Failure:** stop before editing.
 - [ ] **WF-04A — Initialize machine-readable evidence when available**
-  - **Action:** Initialize `scripts/bluetape-flow.py` with the current
-    `CODEX_THREAD_ID`, repository root, workflow type, and components.
+  - **Action:** Resolve `bluetape-flow.py` using the Helper resolution contract,
+    then initialize it with the current `CODEX_THREAD_ID`, repository root,
+    workflow type, and components.
   - **Evidence:** run id, manifest hash, state root, and registered components.
   - **Failure:** remain on the documented checklist path and report the missing
     runtime surface; never write `.bluetape` files directly.
+
+### Helper resolution contract
+
+`bluetape-flow.py` is shipped with `$bluetape-workflow`; it is not normally a
+repository-local script. Resolve the executable before runtime initialization
+in this order:
+
+1. `${CODEX_HOME:-$HOME/.codex}/skills/bluetape-workflow/scripts/bluetape-flow.py`
+   — the live installed skill.
+2. `$HOME/work/bluetape4k/bluetape-skills/skills/bluetape-workflow/scripts/bluetape-flow.py`
+   — the workspace checkout of the public skill bundle.
+3. `$HOME/.local/share/chezmoi/private_dot_codex/private_skills/bluetape-workflow/scripts/executable_bluetape-flow.py`
+   — the managed source; inspect or update it through the source/apply chain,
+   not as the live runtime path.
+4. `<repo-root>/scripts/bluetape-flow.py` — only when the repository explicitly
+   vendors the helper.
+
+The workspace root `$HOME/work/bluetape4k/scripts` is not a canonical location
+for the current bundle. Do not report the runtime surface as missing after
+checking only the target repository. Record the resolved path and prove it with
+`python3 <resolved-path> --help` or the read-only `state-root` command. Report
+the runtime surface as missing only after every applicable candidate has been
+checked.
 - [ ] **WF-05 — Execute gates in dependency order**
   - **Action:** Follow the physical row order in `common-gates.md` and the leaf;
     complete one item and record fresh evidence before its dependent starts.
