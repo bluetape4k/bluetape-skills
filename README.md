@@ -81,6 +81,12 @@ Version 1.1.0 adds the Phase 2 native runtime to `$bluetape-workflow`. Manifest 
 
 The CLI records and validates native coordination; it does not replace Codex agent tools. The main session still performs agent spawn, messaging, waiting, and interruption, then records the observed result. Direct writes to `.bluetape` state are unsupported.
 
+State-root discovery is scope-aware: work started inside a Git repository uses
+`<repo-worktree>/.bluetape`, while workspace-wide work started outside a Git
+worktree uses `<workspace>/.bluetape`. `--state-root` or
+`BLUETAPE_STATE_ROOT` overrides automatic discovery when the task scope is
+explicitly different.
+
 `code-review` and `self-audit` are external companion skills referenced by the workflow but intentionally excluded from this canonical Bluetape bundle. Install them separately when using the Code Review route or harness self-audit gate.
 
 ## 7-Tier review gates
