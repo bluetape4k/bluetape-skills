@@ -65,9 +65,12 @@ same diagnose/new-run rule.
 
 ## Guarded Command Contract
 
-Every command accepts an explicit `--state-root`; when omitted, the fixed
-workspace/XDG discovery contract selects it. A command other than `state-root`
-or `init` requires `--run-id`. Mutation commands require `--owner-file`;
+Every command accepts an explicit `--state-root`. When omitted, discovery uses
+`BLUETAPE_STATE_ROOT`, then the current Git repository/worktree's
+`.bluetape`, then the nearest configured ancestor `.bluetape`, the managed
+workspace `.bluetape`, and finally the XDG fallback. A command other than
+`state-root` or `init` requires `--run-id`. Mutation commands require
+`--owner-file`;
 complex values use a regular non-symlink JSON file below one MiB. Timestamps
 are UTC ISO-8601 values ending in `Z`. Read-only commands never write caches or
 receipt.

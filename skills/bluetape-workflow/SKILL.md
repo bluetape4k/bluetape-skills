@@ -61,6 +61,24 @@ checking only the target repository. Record the resolved path and prove it with
 `python3 <resolved-path> --help` or the read-only `state-root` command. Report
 the runtime surface as missing only after every applicable candidate has been
 checked.
+
+### State-root selection contract
+
+When `--state-root` is omitted, state discovery is scope-aware and follows this
+order:
+
+1. `BLUETAPE_STATE_ROOT`, when set;
+2. the `.bluetape` directory at the current Git repository/worktree root;
+3. the nearest ancestor `.bluetape` containing `config.json` for workspace-wide
+   or non-Git paths;
+4. `$HOME/work/bluetape4k/.bluetape` as the managed workspace fallback;
+5. `$XDG_STATE_HOME/bluetape-skills` (or the platform default XDG state path).
+
+Use a repository worktree's own `.bluetape` for repo-scoped work. Use the
+workspace `.bluetape` for workspace-wide work started outside a Git worktree.
+`bluetape-flow.py init` creates the selected missing state directory; never
+write `.bluetape` files directly. An explicit `--state-root` is the supported
+override when the task scope differs from the current working directory.
 - [ ] **WF-05 — Execute gates in dependency order**
   - **Action:** Follow the physical row order in `common-gates.md` and the leaf;
     complete one item and record fresh evidence before its dependent starts.

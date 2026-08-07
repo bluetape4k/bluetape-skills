@@ -81,6 +81,12 @@ Bluetape 생태계 작업은 `$bluetape-workflow`부터 시작하세요. 작업�
 
 이 CLI는 native coordination을 기록하고 검증하지만 Codex agent tool을 대신하지는 않습니다. Agent 생성, 메시지 전송, 대기, 중단은 main session이 직접 수행한 뒤 관찰한 결과를 기록합니다. `.bluetape` state를 파일로 직접 수정하는 방식은 지원하지 않습니다.
 
+State root는 작업 범위에 따라 탐색합니다. Git repository 안에서 시작한
+작업은 각 `<repo-worktree>/.bluetape`를 사용하고, Git worktree 밖에서
+시작한 workspace 전체 작업은 `<workspace>/.bluetape`를 사용합니다.
+작업 범위를 명시적으로 바꿔야 할 때는 `--state-root` 또는
+`BLUETAPE_STATE_ROOT`로 override할 수 있습니다.
+
 Workflow가 참조하는 `code-review`와 `self-audit`는 외부 companion skill이며 이 canonical Bluetape 묶음에는 포함하지 않습니다. Code Review 경로나 harness self-audit gate를 사용할 때 별도로 설치하세요.
 
 ## 7-Tier review gate

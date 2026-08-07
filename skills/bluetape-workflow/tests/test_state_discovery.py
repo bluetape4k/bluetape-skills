@@ -61,6 +61,25 @@ class StateDiscoveryTest(unittest.TestCase):
         )
         self.assertEqual(state.resolve(), result)
 
+    def test_git_worktree_state_precedes_workspace_state_even_without_config(self):
+        workspace = self.home / "work" / "bluetape4k"
+        workspace.mkdir(parents=True)
+        workspace_state = workspace / ".bluetape"
+        workspace_state.mkdir()
+        (workspace_state / "config.json").write_text("{}\n", encoding="utf-8")
+
+        repo = self.root / "repo"
+        nested = repo / "module"
+        nested.mkdir(parents=True)
+        (repo / ".git").mkdir()
+        repo_state = repo / ".bluetape"
+
+        result = self.runtime.discover_state_root(
+            start=nested, env={}, home=self.home
+        )
+
+        self.assertEqual(repo_state.resolve(), result)
+
     def test_managed_bluetape_workspace_precedes_xdg(self):
         workspace = self.home / "work" / "bluetape4k"
         workspace.mkdir(parents=True)
