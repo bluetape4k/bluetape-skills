@@ -1,11 +1,14 @@
 # GitHub Release Note Quality
 
-Release notes are public English consumer documentation. Apply the parent
-checklist contract.
+Release notes are public Korean consumer documentation. Apply the parent
+checklist contract. Preserve code identifiers, URLs, exact errors, and
+machine-required tokens in their original form. Use Korean headings and prose;
+translate reader-facing category names unless an external parser requires the
+original token.
 
 - [ ] **NOTE-01 — State the release purpose**
-  - **Action:** Start with `## Highlights` covering purpose, train context, and feature/maintenance/patch/corrective class.
-  - **Evidence:** Rendered Highlights section with the exact release identity.
+  - **Action:** Start with `## 주요 내용` covering purpose, train context, and feature/maintenance/patch/corrective class.
+  - **Evidence:** Rendered 주요 내용 section with the exact release identity.
   - **Failure:** Reject link-only or checklist-only notes.
 - [ ] **NOTE-02 — Organize for readers**
   - **Action:** Group changes by features, runtime, security, compatibility, build/CI, docs, and migration impact as applicable.
@@ -13,7 +16,7 @@ checklist contract.
   - **Failure:** Rewrite opaque or trace-only content before publication.
 - [ ] **NOTE-03 — Preserve traceability**
   - **Action:** Explain each change first, then add related issue/PR links on one physical line.
-  - **Evidence:** `Related:` lines for available traceability.
+  - **Evidence:** `관련:` lines for available traceability.
   - **Failure:** Repair missing or misleading links without replacing the explanation.
 - [ ] **NOTE-04 — Identify corrective targets**
   - **Action:** For a corrective release, name the bad prior version and the exact version consumers should use.
@@ -25,5 +28,4 @@ checklist contract.
   - **Failure:** Keep release-note closeout blocked until the live body matches the checked draft.
 
 Verify the live body with `gh release view <tag> -R <owner>/<repo> --json body`:
-Highlights present, related links present where available, and final compare
-range correct.
+주요 내용과 관련 링크가 있고, 최종 비교 범위가 정확한지 확인한다.

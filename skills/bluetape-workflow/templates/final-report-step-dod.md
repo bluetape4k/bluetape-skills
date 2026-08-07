@@ -1,6 +1,9 @@
 # Final Report Template - Step DoD
 
-Use this for user-facing `bluetape4k-*` completion reports. Use Korean when the conversation is Korean, but keep GitHub titles, PR bodies, and pushed commit messages in English unless the user says otherwise.
+Use this for user-facing `bluetape4k-*` completion reports. Use Korean when the
+conversation is Korean, and keep GitHub titles, PR bodies, comments, CHANGELOG
+entries, release notes, and pushed commit messages in Korean unless the user
+says otherwise.
 
 ```markdown
 ## Completion Report - {task title}
