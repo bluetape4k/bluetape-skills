@@ -31,8 +31,8 @@
   - **Evidence:** `v1.3.0` is the latest release; `develop` and `main` SHAs are pinned above; user approved `v1.3.1`.
 - [x] **REL-02 — Prepare release metadata**
   - **Evidence:** Korean `CHANGELOG.md` 1.3.1 entry, paired README v1.3.1 stable/update examples, this checklist, and the cached `.omx/RELEASE_RULE.md` are aligned; `git diff --check` and stale README version checks pass.
-- [ ] **REL-03 — Validate the develop candidate**
-  - **Action:** Run the full validator, targeted reference checks, diff check, archive proof, and isolated fresh installation.
+- [x] **REL-03 — Validate the develop candidate**
+  - **Evidence:** Candidate commit `525f90d3adced49a15735fe93870cbec80383496` passed `./scripts/validate.sh` with `145 passed, 1 skipped, 159 subtests` plus 22 diagram tests; `git diff --check` and targeted stale-reference checks passed; tag-shaped tar.gz/zip archives passed SHA256SUMS verification, extraction, and the same validator; both archive installs yielded 14/14 canonical skills in isolated fresh Codex homes.
 - [ ] **REL-04 — Deliver and merge the develop preparation PR**
   - **Action:** Push the exact branch, create a Korean PR ending in `## DoD Status`, wait for checks/review, and obtain fresh merge approval.
 - [ ] **REL-05 — Promote the exact develop tree to main**
