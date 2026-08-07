@@ -1,6 +1,7 @@
 # PR Body Template - Step DoD Last Section
 
-Use this for `bluetape4k-*` pull requests. Keep the PR body in English unless the user says otherwise.
+Use this for `bluetape4k-*` pull requests. Keep the PR title, body, and comments
+in Korean unless the user says otherwise.
 
 Do not add any section after `## DoD Status`.
 Do not start the PR body with DoD. DoD is execution history; the body must first explain why the PR exists and what it solves.

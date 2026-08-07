@@ -316,8 +316,8 @@ not unblock Step 7-P.
 Complete CG-11 through CG-13 only after Step 7. PR creation may proceed without a
 separate approval only when the approved plan or current request names the
 repository, base, head, and creation action. Read linked issue metadata first.
-Assign `debop`, mirror milestone and relevant labels, use an English title/body,
-and use the central PR template. The body explains why/what before validation
+Assign `debop`, mirror milestone and relevant labels, use a Korean title/body,
+and keep PR comments in Korean with the central PR template. The body explains why/what before validation
 and ends with `## DoD Status`. Verify live metadata and body with `gh pr view`;
 comments are not substitutes.
 

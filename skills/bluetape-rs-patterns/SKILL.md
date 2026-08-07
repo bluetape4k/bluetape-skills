@@ -21,7 +21,9 @@ Cargo, SQL, testing, and P0/P1 rules.
 - Never use `println!`, `eprintln!`, or `dbg!` as operational logging. Libraries
   must not install a global subscriber. Use stable low-cardinality fields and
   never log secrets, credentials, tokens, or raw provider payloads.
-- Public APIs need English Rustdoc and success/error/boundary/feature tests.
+- Public APIs need Korean Rustdoc and success/error/boundary/feature tests.
+  Reader-facing Rust comments follow the same Korean rule; preserve code,
+  identifiers, commands, URLs, and exact error text.
 - Match sibling `lib.rs`/README style. Keep `lib.rs` focused; roadmap, issue
   history, long guides, and non-goal lists belong in README/spec/plan docs.
 - Preserve typed errors and `source()`; do not stringify caller-visible causes.

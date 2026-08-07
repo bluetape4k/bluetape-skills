@@ -105,18 +105,27 @@ do not require post, series, hero, locale-publication, or site-build steps.
 ## Locale and Series Contract
 
 - Keep this skill and its instructional references in English. For user-facing
-  research, specifications, plans, code reviews, and lessons, write Korean
-  prose by default; retain English only for code, commands, APIs, identifiers,
-  URLs, and exact source excerpts. Public GitHub issue and pull-request
-  artifacts remain English unless the user explicitly requests localization.
+  research, specifications, plans, code reviews, lessons, `WIP.md`,
+  `CHANGELOG.md`, release notes, GitHub issue/PR titles, bodies, comments, and
+  pushed commit messages, write Korean prose by default; retain English only
+  for code, commands, APIs, identifiers, URLs, exact source excerpts, and
+  machine-required tokens. Reader-facing code comments such as KDoc, Rustdoc,
+  Go doc comments, and Python docstrings are Korean as well.
 - Korean routes are Korean-first. Unless the user explicitly scopes
   Korean-only, a bilingual article is incomplete until matching English routes
   exist and build.
 - Keep Korean `/ko/blog/...` and English `/blog/...` part counts, titles,
   technical claims, numbers, source links, asset references, and bottom series
   navigation aligned.
-- Public GitHub artifacts and pushed commits remain English under workspace
-  policy.
+- Public GitHub artifacts, CHANGELOG entries, release notes, WIP snapshots, and
+  pushed commits are Korean under workspace policy.
+- In localized Korean Keep a Changelog output, translate the defect category
+  `Fixed` as `버그 수정`. Do not render it as `결정된`, `수정`, or `수정됨`;
+  preserve `Fixed` only when an explicitly English locale or a machine-required
+  token requires it.
+- Translate reader-facing CHANGELOG/release-note categories `Added`, `Changed`,
+  and `Removed` as `추가`, `변경`, and `제거` under the same parser/token
+  exception.
 - For bilingual blog posts, any diagram with reader-facing text must have
   separate Korean and English SVG/PNG assets. Korean assets use Korean labels,
   English assets use English labels, and technical identifiers remain unchanged.

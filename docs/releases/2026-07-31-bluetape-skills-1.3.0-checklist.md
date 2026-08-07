@@ -53,7 +53,7 @@
   - **Evidence:** Both exact-candidate archives passed `144 passed, 1 skipped, 159 subtests` plus 22 diagram tests after extraction; SHA-256 verification and isolated fresh installation each produced 14/14 canonical skills.
   - **Failure:** Do not open the release-preparation PR.
 - [ ] **REL-07 — Deliver preparation PR**
-  - **Action:** Push the exact preparation head and create/verify its `develop` PR with an English body ending in `## DoD Status`.
+  - **Action:** Push the exact preparation head and create/verify its `develop` PR with a Korean body ending in `## DoD Status`.
   - **Evidence:** Live PR metadata, exact head, current reviews/threads, and validator result.
   - **Failure:** Repair live delivery before merge-ready reporting.
 - [ ] **REL-08 — Hold for preparation merge approval**

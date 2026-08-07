@@ -126,9 +126,11 @@ check(state == State.READY) { "state must be READY" }
 
 ## Documentation and Contribution Surface
 
-- Every new or meaningfully updated public or internal KDoc is Korean-first.
-  Do not translate untouched legacy KDoc solely to satisfy this forward-applying
-  rule. CHANGELOG, release notes, issues, PRs, and pushed commits remain English.
+- Public and internal KDoc is Korean by default. New or meaningfully updated
+  KDoc must be Korean, and a touched documentation block should be completed in
+  Korean rather than extending mixed-language prose. Do not bulk-translate
+  untouched legacy KDoc without a separate migration scope. CHANGELOG, release
+  notes, `WIP.md`, GitHub issues/PRs/comments, and pushed commits are Korean.
   Keep `README.md` and existing localized README files equivalent when behavior
   or examples change.
 - Grep actual classes, functions, and capabilities before accepting public
