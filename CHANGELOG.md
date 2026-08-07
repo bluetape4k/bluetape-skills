@@ -4,6 +4,15 @@ All notable changes to Bluetape Skills are documented in this file.
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-07
+
+### 변경
+
+- 한국 개발자가 주 독자인 기준으로 GitHub issue/PR 제목·본문·댓글과 push 대상 commit message를 한국어로 작성하도록 운영 규칙을 통일했습니다.
+- KDoc, RustDoc, Go doc comment, Python docstring 등 독자가 읽는 코드 주석을 한국어로 작성하도록 기준을 정리했습니다.
+- `WIP.md`, `docs/**/*.md`, `CHANGELOG.md`, release notes는 한국어로 작성하고, `AGENTS.md`, `CLAUDE.md`, `SKILL.md` 등 AI-facing 운영 문서는 영어로 유지하도록 경계를 명확히 했습니다.
+- 코드 식별자, 명령, URL, 정확한 오류 메시지, machine-readable token은 원문을 보존하도록 예외를 명시했습니다.
+
 ## [1.3.0] - 2026-07-31
 
 ### Changed
@@ -102,5 +111,6 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
+[1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.0...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.1...develop
