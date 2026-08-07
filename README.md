@@ -15,7 +15,7 @@ The repository is a portable public bundle, not a copy of a maintainer's Codex h
 Install the stable release, validate the bundle, and run the installer:
 
 ```bash
-git clone --branch v1.3.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.3.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
@@ -33,15 +33,15 @@ The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrit
 
 Restart Codex after installation so the new skills are discovered.
 
-To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.3.0 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
+To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.3.1 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
 
 ## Update
 
 Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
 
 ```bash
-git clone --branch v1.3.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.3.0
-cd bluetape-skills-v1.3.0
+git clone --branch v1.3.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.3.1
+cd bluetape-skills-v1.3.1
 ./scripts/validate.sh
 ./scripts/install.sh --force
 ```
@@ -80,6 +80,12 @@ The `skills/manifest.json` file is the machine-readable inventory. Skill folders
 Version 1.1.0 adds the Phase 2 native runtime to `$bluetape-workflow`. Manifest 1.1 defines run and lane lifecycles, liveness decisions, topology-based completion, receipt-backed recovery, and bounded evidence. The guarded `bluetape-flow.py` CLI is the only writer for `.bluetape` workflow state.
 
 The CLI records and validates native coordination; it does not replace Codex agent tools. The main session still performs agent spawn, messaging, waiting, and interruption, then records the observed result. Direct writes to `.bluetape` state are unsupported.
+
+State-root discovery is scope-aware: work started inside a Git repository uses
+`<repo-worktree>/.bluetape`, while workspace-wide work started outside a Git
+worktree uses `<workspace>/.bluetape`. `--state-root` or
+`BLUETAPE_STATE_ROOT` overrides automatic discovery when the task scope is
+explicitly different.
 
 `code-review` and `self-audit` are external companion skills referenced by the workflow but intentionally excluded from this canonical Bluetape bundle. Install them separately when using the Code Review route or harness self-audit gate.
 

@@ -577,6 +577,17 @@ def _read_contained_owner_handle(run_path, owner_file):
     return read_owner_handle(owner_path, expected_run_id=run_dir.name)
 
 
+def _git_worktree_root(start):
+    current = Path(start).resolve()
+    if current.is_file():
+        current = current.parent
+    for candidate in (current,) + tuple(current.parents):
+        marker = candidate / ".git"
+        if marker.is_dir() or marker.is_file():
+            return candidate
+    return None
+
+
 def discover_state_root(start=None, state_root=None, env=None, home=None):
     environment = os.environ if env is None else env
     home_path = Path.home() if home is None else Path(home)
@@ -593,6 +604,9 @@ def discover_state_root(start=None, state_root=None, env=None, home=None):
         return selected.resolve()
     current = Path.cwd() if start is None else Path(start)
     current = current.resolve()
+    worktree_root = _git_worktree_root(current)
+    if worktree_root is not None:
+        return (worktree_root / ".bluetape").resolve()
     for candidate in (current,) + tuple(current.parents):
         state = candidate / ".bluetape"
         if (state / "config.json").is_file():

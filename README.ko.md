@@ -15,7 +15,7 @@ Bluetape 개발 워크플로를 위한 설치 가능한 canonical [Codex skill](
 안정 버전을 복제하고 배포본을 검증한 뒤 설치 스크립트를 실행합니다.
 
 ```bash
-git clone --branch v1.3.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.3.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
@@ -33,15 +33,15 @@ cd bluetape-skills
 
 설치 뒤에는 Codex를 다시 시작해야 새 skill을 인식합니다.
 
-아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.3.0 --depth 1` 옵션을 빼고 기본 브랜치인 `develop`을 복제하세요. `main`은 검토를 거친 안정 릴리스 승격에만 사용합니다. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
+아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.3.1 --depth 1` 옵션을 빼고 기본 브랜치인 `develop`을 복제하세요. `main`은 검토를 거친 안정 릴리스 승격에만 사용합니다. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
 
 ## 업데이트
 
 릴리스 태그는 변경되지 않습니다. 안정 설치본을 갱신하려면 원하는 새 태그를 별도 디렉터리에 복제하고 검증한 뒤, 기존 skill을 백업하면서 교체하세요.
 
 ```bash
-git clone --branch v1.3.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.3.0
-cd bluetape-skills-v1.3.0
+git clone --branch v1.3.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.3.1
+cd bluetape-skills-v1.3.1
 ./scripts/validate.sh
 ./scripts/install.sh --force
 ```
@@ -80,6 +80,12 @@ Bluetape 생태계 작업은 `$bluetape-workflow`부터 시작하세요. 작업�
 1.1.0부터 `$bluetape-workflow`에 Phase 2 native runtime이 포함됩니다. Manifest 1.1은 run과 lane 수명주기, liveness 판정, topology 기반 완료 조건, receipt 기반 복구, 크기가 제한된 evidence를 정의합니다. `.bluetape` workflow state는 guarded CLI인 `bluetape-flow.py`만 기록합니다.
 
 이 CLI는 native coordination을 기록하고 검증하지만 Codex agent tool을 대신하지는 않습니다. Agent 생성, 메시지 전송, 대기, 중단은 main session이 직접 수행한 뒤 관찰한 결과를 기록합니다. `.bluetape` state를 파일로 직접 수정하는 방식은 지원하지 않습니다.
+
+State root는 작업 범위에 따라 탐색합니다. Git repository 안에서 시작한
+작업은 각 `<repo-worktree>/.bluetape`를 사용하고, Git worktree 밖에서
+시작한 workspace 전체 작업은 `<workspace>/.bluetape`를 사용합니다.
+작업 범위를 명시적으로 바꿔야 할 때는 `--state-root` 또는
+`BLUETAPE_STATE_ROOT`로 override할 수 있습니다.
 
 Workflow가 참조하는 `code-review`와 `self-audit`는 외부 companion skill이며 이 canonical Bluetape 묶음에는 포함하지 않습니다. Code Review 경로나 harness self-audit gate를 사용할 때 별도로 설치하세요.
 
