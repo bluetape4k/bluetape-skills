@@ -22,6 +22,7 @@ NUMBER = r"[-+]?(?:\d*\.\d+|\d+)(?:[eE][-+]?\d+)?"
 TOKEN_RE = re.compile(rf"[A-Za-z]|{NUMBER}")
 URL_RE = re.compile(r"url\(\s*#([^\s)]+)\s*\)")
 SIZE_RE = re.compile(rf"^\s*({NUMBER})\s*[xX]\s*({NUMBER})\s*$")
+CSS_RULE_RE = re.compile(r"([^{}]+)\{([^{}]*)\}")
 NON_RENDER_TAGS = {"defs", "marker", "symbol", "clipPath", "mask", "pattern", "filter"}
 
 ROLE_SIZES: dict[str, tuple[float, float]] = {
@@ -82,8 +83,44 @@ def parse_style(value: str | None) -> dict[str, str]:
     return result
 
 
-def effective_attr(node: ET.Element, name: str) -> str | None:
-    return node.attrib.get(name) or parse_style(node.attrib.get("style")).get(name)
+def stylesheet(root: ET.Element) -> dict[str, dict[str, str]]:
+    """Read the small selector subset used by generated SVG stylesheets."""
+
+    rules: dict[str, dict[str, str]] = {}
+    for style in root.iter():
+        if local_name(style.tag) != "style" or not style.text:
+            continue
+        css = re.sub(r"/\*.*?\*/", "", style.text, flags=re.DOTALL)
+        for selectors, declarations in CSS_RULE_RE.findall(css):
+            properties = parse_style(declarations)
+            if not properties:
+                continue
+            for selector in selectors.split(","):
+                normalized = selector.strip().split()[-1]
+                if normalized:
+                    rules.setdefault(normalized, {}).update(properties)
+    return rules
+
+
+def effective_attr(
+    node: ET.Element, name: str, styles: dict[str, dict[str, str]] | None = None
+) -> str | None:
+    if name in node.attrib:
+        return node.attrib[name]
+    inline = parse_style(node.attrib.get("style")).get(name)
+    if inline is not None:
+        return inline
+    if styles:
+        candidates = [local_name(node.tag)]
+        node_id = node.attrib.get("id")
+        if node_id:
+            candidates.append(f"#{node_id}")
+        candidates.extend(f".{item}" for item in node.attrib.get("class", "").split())
+        for selector in candidates:
+            value = styles.get(selector, {}).get(name)
+            if value is not None:
+                return value
+    return None
 
 
 def iter_rendered(root: ET.Element):
@@ -105,10 +142,12 @@ def number(value: str | None) -> float | None:
     return float(match.group(0)) if match else None
 
 
-def marker_references(node: ET.Element) -> list[tuple[str, str]]:
+def marker_references(
+    node: ET.Element, styles: dict[str, dict[str, str]] | None = None
+) -> list[tuple[str, str]]:
     references: list[tuple[str, str]] = []
     for position in ("marker-start", "marker-mid", "marker-end"):
-        value = effective_attr(node, position)
+        value = effective_attr(node, position, styles)
         if not value:
             continue
         match = URL_RE.search(value)
@@ -444,11 +483,12 @@ def validate_marker_direction(marker: Marker, marker_element: ET.Element, positi
 
 def audit_file(path: Path, margin: float) -> tuple[bool, list[str], str]:
     root = ET.parse(path).getroot()
+    styles = stylesheet(root)
     markers = marker_inventory(root)
     marker_elements = {marker.attrib.get("id"): marker for marker in root.findall(".//svg:marker", NS)}
     references: list[tuple[ET.Element, str, str]] = []
     for node in iter_rendered(root):
-        for position, marker_id in marker_references(node):
+        for position, marker_id in marker_references(node, styles):
             references.append((node, position, marker_id))
 
     failures: list[str] = []

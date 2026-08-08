@@ -100,6 +100,11 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
   `auto-start-reverse` for `marker-start`), and
   `data-tip-direction="positive-x"`; direct arrowheads must declare
   `data-arrowhead="true"`, `data-role`, `data-size`, and `data-solid-head="true"`.
+- Every rendered connector that is expected to carry a marker must expose a
+  machine-readable `marker-start`/`marker-end` reference, either as a direct
+  attribute or through a CSS rule the audit can resolve. `markers>0` with
+  `used_markers=0` is an evidence failure, not a PASS; do not rely on a visual
+  guess to fill that gap.
 - The marker's local +x axis must point at the visible tip. For every
   `marker-end`, validate the final path tangent; for every `marker-start`, use
   `orient="auto-start-reverse"`. A source that renders an arrowhead backwards
@@ -107,6 +112,9 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 - Run `diagram-arrowhead-audit.py` to reject mis-sized/untyped heads, dashed
   head paint, reversed marker geometry/orientation, and terminal segments too
   short for the arrowhead footprint before a bend or target edge.
+- For a user-reported arrowhead defect, retain the baseline audit line and the
+  repaired audit line. The repair evidence must show the intended role/size,
+  nonzero marker usage, direction checks, terminal checks, and zero failures.
 - Bent connectors use rounded orthogonal corners with enough pre/post bend
   clearance. A `Q` command is not enough if the PNG still looks sharp.
 - Fan-out/fan-in bus branches keep each bend in one connector path; never hide
@@ -166,6 +174,7 @@ Every completion report or PR body must include concrete evidence rows:
 | Connector audits | counts such as `connectors`, `cards`, `labels`, `shared_segments`, `label_cards`, `label_labels`, `label_connectors`, `q_bends`, `failures=0` |
 | Arrowhead audit | role/size counts, solid-head result, and terminal-clearance checks with failures=0 |
 | Arrowhead direction | marker `orient`, local tip axis, terminal tangent/direction checks with failures=0 |
+| Arrowhead before/after | baseline and repaired audit lines; `used_markers`, direction, terminal, and failure deltas |
 | Raster geometry | PNG dimensions, aspect, content occupancy, margins, transparency decision, and failures=0 |
 | Asset exposure | SVG/PNG pair count, README PNG refs, missing refs, and Mermaid/Graphviz residue counts |
 | Type-specific audit | sequence/class/ERD/architecture/chart invariant result |
