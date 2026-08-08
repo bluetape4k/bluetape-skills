@@ -4,6 +4,24 @@ All notable changes to Bluetape Skills are documented in this file.
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-08-08
+
+### 추가
+
+- `$bluetape-diagram`에 semantic ledger와 semantic audit를 추가해 diagram의
+  의미 계약, 관계 방향, 표시되는 connector를 렌더링 전에 검증하도록 했습니다.
+- 화살촉 방향·크기·terminal segment, SVG/PNG asset pair, visual geometry,
+  mixed-corner와 shared connector를 자동 점검하는 audit script와 회귀 테스트를
+  추가했습니다.
+
+### 변경
+
+- orthogonal connector의 rounded corner와 화살촉 여유를 제작 계약으로 고정하고,
+  README workflow diagram도 SVG와 원본 크기 PNG에서 같은 둥근 꺾임을 유지하도록
+  보강했습니다.
+- 반복적으로 지적된 diagram 제작 lesson을 reusable `$bluetape-diagram`
+  reference와 공개 bundle 검증 게이트로 승격했습니다.
+
 ## [1.3.1] - 2026-08-07
 
 ### 변경
@@ -111,6 +129,7 @@ All notable changes to Bluetape Skills are documented in this file.
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
+[1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.1...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.2...develop

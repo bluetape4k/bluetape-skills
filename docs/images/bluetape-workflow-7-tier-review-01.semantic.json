@@ -1,0 +1,41 @@
+{
+  "kind": "workflow",
+  "source": {
+    "question": "How do the 2-R, 3-R, and 6-R gates converge six independent review perspectives into a repaired P0/P1-clean result?",
+    "revision": "c1b9fef574346ff12399315465adf2364a630dc3",
+    "paths": [
+      "README.md",
+      "skills/bluetape-full-feature/SKILL.md",
+      "skills/bluetape-full-feature/references/review-perspectives.md",
+      "skills/bluetape-full-feature/references/step-6r-code-review.md",
+      "skills/bluetape-workflow/references/common-gates.md"
+    ]
+  },
+  "nodes": [
+    {"id": "spec-gate", "label": "2-R / Spec", "source": "README.md"},
+    {"id": "plan-gate", "label": "3-R / Plan", "source": "README.md"},
+    {"id": "pre-pr-gate", "label": "6-R / Pre-PR", "source": "README.md"},
+    {"id": "launch-lenses", "label": "Launch six independent lenses", "source": "skills/bluetape-full-feature/SKILL.md"},
+    {"id": "independent-lenses", "label": "Performance, Stability, Security, Operator/Ops, Developer/API, User/Caller", "source": "skills/bluetape-full-feature/references/review-perspectives.md"},
+    {"id": "main-integration", "label": "Main-session Integration", "source": "skills/bluetape-full-feature/SKILL.md"},
+    {"id": "p0-p1-decision", "label": "P0 = 0 and P1 = 0?", "source": "README.md"},
+    {"id": "next-gate", "label": "Open the next gate", "source": "skills/bluetape-workflow/references/common-gates.md"},
+    {"id": "blocker-loop", "label": "Repair blocker, rerun validation, reopen affected lanes, reintegrate", "source": "README.md"}
+  ],
+  "edges": [
+    {"id": "spec-launch", "from": "spec-gate", "to": "launch-lenses", "kind": "flow", "source": "README.md"},
+    {"id": "plan-launch", "from": "plan-gate", "to": "launch-lenses", "kind": "flow", "source": "README.md"},
+    {"id": "pre-pr-launch", "from": "pre-pr-gate", "to": "launch-lenses", "kind": "flow", "source": "README.md"},
+    {"id": "launch-lenses", "from": "launch-lenses", "to": "independent-lenses", "kind": "flow", "source": "skills/bluetape-full-feature/SKILL.md"},
+    {"id": "lenses-integration", "from": "independent-lenses", "to": "main-integration", "kind": "flow", "source": "skills/bluetape-full-feature/SKILL.md"},
+    {"id": "integration-decision", "from": "main-integration", "to": "p0-p1-decision", "kind": "flow", "source": "README.md"},
+    {"id": "decision-next", "from": "p0-p1-decision", "to": "next-gate", "kind": "branch", "source": "README.md"},
+    {"id": "decision-blocker", "from": "p0-p1-decision", "to": "blocker-loop", "kind": "branch", "source": "README.md"},
+    {"id": "blocker-reintegrate", "from": "blocker-loop", "to": "main-integration", "kind": "loop", "source": "README.md"}
+  ],
+  "behavior": {"branches": 1, "loops": 1},
+  "repairs": [
+    {"target": "marker-metadata", "reason": "declare role, fixed size, and positive-x tip direction on every referenced marker", "touches": 3},
+    {"target": "rounded-bus-elbows", "reason": "keep fan-out and fan-in turns in one rounded connector path while structural buses remain non-shared", "touches": 15}
+  ]
+}
