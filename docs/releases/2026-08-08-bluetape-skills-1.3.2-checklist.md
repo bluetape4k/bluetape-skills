@@ -34,10 +34,14 @@
   - **증거:** live GitHub에서 `v1.3.1`이 최신이고, 후보 HEAD·안정 기준·사용자 범위 요청을 위 표에 고정했다.
 - [x] **REL-02 — 공개 릴리스 메타데이터 준비**
   - **증거:** `CHANGELOG.md`의 `1.3.2` 항목, EN/KO README의 `v1.3.2` install/update 예시, 이 체크리스트가 일치한다.
-- [ ] **REL-03 — develop 후보 검증**
-  - **조치:** `./scripts/validate.sh`, `git diff --check`, diagram audit 회귀 테스트와 공개 경계 검사를 실행한다.
-  - **증거:** exact candidate의 validator 결과, 테스트 수, diff 검사 결과.
+- [x] **REL-03 — develop 후보 검증**
+  - **조치:** `./scripts/validate.sh`, `git diff --check`, diagram audit 회귀 테스트와 공개 경계 검사를 실행했다.
+  - **증거:** exact candidate `60cf68ef35c7bbc082622aabc8a6f92ebddff17d`에서 `145 passed, 1 skipped, 159 subtests passed`, diagram audit `49 tests OK`, `git diff --check` PASS, public boundary PASS.
   - **실패:** 실패한 검사를 먼저 복구하고 PR 생성을 중단한다.
+- [x] **REL-03A — archive 소비자 사전 검증**
+  - **조치:** exact candidate로 tar.gz/zip과 `SHA256SUMS`를 만들고 추출본 validator 및 격리된 fresh install을 실행했다.
+  - **증거:** 두 archive checksum `OK`, 두 추출본 validator `PASS: 14 canonical skills...`, 두 fresh install 모두 14/14 canonical skills.
+  - **실패:** archive 또는 fresh install이 실패하면 PR 생성을 중단한다.
 - [ ] **REL-04 — develop 준비 PR 전달**
   - **조치:** exact preparation branch를 push하고 Korean PR body가 `## DoD Status`로 끝나는지 확인한 뒤 CI와 review를 기다린다.
   - **증거:** live PR URL, base/head SHA, metadata, checks, reviews.
