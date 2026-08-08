@@ -53,15 +53,15 @@
   <text x="800" y="319" text-anchor="middle" class="small">parallel perspectives, separate findings</text>
 
   <!-- fan-out bus -->
-  <g fill="none" stroke="#4f7dc9" stroke-width="2.2">
-    <path class="connector" d="M 800 334 V 360"/>
-    <path class="connector" d="M 260 360 H 1340"/>
-    <path class="connector" d="M 260 360 V 390" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 476 360 V 390" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 692 360 V 390" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 908 360 V 390" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 1124 360 V 390" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 1340 360 V 390" marker-end="url(#arrow-blue)"/>
+  <g fill="none" stroke="#4f7dc9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path class="connector" d="M 800 334 V 348 Q 800 360 788 360"/>
+    <path class="bus-line" d="M 260 360 H 1340"/>
+    <path class="connector" d="M 260 360 H 248 Q 236 360 236 372 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 476 360 H 464 Q 452 360 452 372 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 692 360 H 680 Q 668 360 668 372 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 908 360 H 920 Q 932 360 932 372 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1124 360 H 1136 Q 1148 360 1148 372 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1340 360 H 1352 Q 1364 360 1364 372 V 390" marker-end="url(#arrow-blue)"/>
   </g>
 
   <!-- six lens cards -->
@@ -81,14 +81,14 @@
   <text x="1340" y="426" text-anchor="middle" class="gate">User / Caller</text><text x="1340" y="451" text-anchor="middle" class="small">outcome and clarity</text>
 
   <!-- lenses to integration -->
-  <g fill="none" stroke="#4f7dc9" stroke-width="2.2">
-    <path class="connector" d="M 260 474 V 506"/>
-    <path class="connector" d="M 476 474 V 506"/>
-    <path class="connector" d="M 692 474 V 506"/>
-    <path class="connector" d="M 908 474 V 506"/>
-    <path class="connector" d="M 1124 474 V 506"/>
-    <path class="connector" d="M 1340 474 V 506"/>
-    <path class="connector" d="M 260 506 H 1340"/>
+  <g fill="none" stroke="#4f7dc9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path class="connector" d="M 260 474 V 494 Q 260 506 248 506"/>
+    <path class="connector" d="M 476 474 V 494 Q 476 506 464 506"/>
+    <path class="connector" d="M 692 474 V 494 Q 692 506 680 506"/>
+    <path class="connector" d="M 908 474 V 494 Q 908 506 920 506"/>
+    <path class="connector" d="M 1124 474 V 494 Q 1124 506 1136 506"/>
+    <path class="connector" d="M 1340 474 V 494 Q 1340 506 1352 506"/>
+    <path class="bus-line" d="M 248 506 H 1352"/>
     <path class="connector" d="M 800 506 V 532" marker-end="url(#arrow-blue)"/>
   </g>
   <g filter="url(#shadow)">

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit bluetape4k connectors that mix rounded Q bends with hard turns."""
+"""Audit bluetape4k connectors for rounded orthogonal turns."""
 
 from __future__ import annotations
 
@@ -166,8 +166,6 @@ def sharp_turn(previous: Segment, current: Segment) -> bool:
 def audit_segments(path_name: str, path_index: int, d: str, segments: list[Segment]) -> tuple[int, int, list[str]]:
     q_bends = sum(1 for segment in segments if segment.op == "Q")
     failures: list[str] = []
-    if q_bends == 0:
-        return 0, 0, failures
 
     for index, current in enumerate(segments):
         if index == 0:
@@ -175,13 +173,12 @@ def audit_segments(path_name: str, path_index: int, d: str, segments: list[Segme
         previous = segments[index - 1]
         if not sharp_turn(previous, current):
             continue
-        reason = None
-        if previous.op == "Q" or current.op == "Q":
+        if q_bends == 0:
+            reason = "unrounded orthogonal turn"
+        elif previous.op == "Q" or current.op == "Q":
             reason = "hard turn adjacent to Q bend"
         elif any(segment.op == "Q" for segment in segments):
             reason = "unrounded L/H/V turn in a path that also uses Q bends"
-        if reason is None:
-            continue
         failures.append(
             f"{path_name}: path#{path_index}: {reason} "
             f"{previous.exit_dir}->{current.entry_dir} at ({current.start[0]:.1f},{current.start[1]:.1f}) d={d[:180]}"
@@ -212,7 +209,7 @@ def audit_file(path: Path) -> tuple[int, int, int, list[str]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Audit connector paths that mix rounded Q bends with hard L/H/V turns.")
+    parser = argparse.ArgumentParser(description="Audit connector paths for rounded orthogonal turns.")
     parser.add_argument("svg", nargs="+", type=Path)
     args = parser.parse_args()
 

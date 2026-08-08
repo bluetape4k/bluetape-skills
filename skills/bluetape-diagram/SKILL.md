@@ -109,6 +109,8 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
   short for the arrowhead footprint before a bend or target edge.
 - Bent connectors use rounded orthogonal corners with enough pre/post bend
   clearance. A `Q` command is not enough if the PNG still looks sharp.
+- Fan-out/fan-in bus branches keep each bend in one connector path; never hide
+  a sharp H/V turn by splitting it across separate bus and branch paths.
 - If full-size PNG inspection contradicts a script result, the PNG wins.
 
 ## Evidence Ledger

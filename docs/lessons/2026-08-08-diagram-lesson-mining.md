@@ -71,8 +71,15 @@ CairoSVG 2.9.0으로 다시 PNG로 렌더링했다.
 - branch/loop 자산의 재현 가능한 source model은
   `docs/images/*.semantic.json` ledger로 보존했다.
 
+후속 full-size PNG 검토에서 버스와 분기를 분리한 것만으로는 충분하지 않다는
+점도 확인했다. 분기 선분이 버스에서 바로 수직으로 꺾이면 소스에 Q가 없어도
+감사 결과가 통과했지만, PNG에서는 정각 T 접점으로 보였다. 따라서 각 분기의
+첫 꺾임을 같은 connector path 안의 Q로 유지하고, 버스는 구조선(`bus-line`)으로
+분리했다. `diagram-mixed-corner-audit.py`도 이제 Q가 전혀 없는 H/V 꺾임을
+실패시키며, 이 회귀 조건을 전용 테스트로 고정했다.
+
 최종 감사 결과는 세 SVG 모두 XML/text/arrowhead/connector/geometry/endpoint/
-mixed-corner 실패 0, marker 방향 검사 `1/1`, `16/16`, `8/8`, PNG는 각각
+mixed-corner 실패 0 (`q_bends=26`), marker 방향 검사 `1/1`, `16/16`, `8/8`, PNG는 각각
 `2400x1440`, `3200x1800`, `2400x1440`의 opaque canvas와 균등 46px 여백,
 README pair 감사는 `svgs=3`, `pngs=3`, `pairs=3`, `png_refs=3`,
 `svg_refs=0`이다. 각 PNG는 full-size로 확인했으며, 새 규칙은 이 3개

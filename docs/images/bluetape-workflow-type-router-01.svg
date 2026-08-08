@@ -25,15 +25,15 @@
   <!-- Primary route connectors -->
   <path d="M 600 186 V 228" fill="none" stroke="#4f7dc9" stroke-width="3" marker-end="url(#arrow-blue)"/>
   <g fill="none" stroke="#4f7dc9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-    <path class="connector" d="M 600 338 V 390"/>
-    <path class="connector" d="M 118 390 H 1082"/>
-    <path class="connector" d="M 118 390 V 438" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 279 390 V 438" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 440 390 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 600 338 V 378 Q 600 390 588 390"/>
+    <path class="bus-line" d="M 118 390 H 1082"/>
+    <path class="connector" d="M 118 390 H 106 Q 94 390 94 402 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 279 390 H 267 Q 255 390 255 402 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 440 390 H 428 Q 416 390 416 402 V 438" marker-end="url(#arrow-blue)"/>
     <path class="connector" d="M 600 390 V 438" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 762 390 V 438" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 923 390 V 438" marker-end="url(#arrow-blue)"/>
-    <path class="connector" d="M 1082 390 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 762 390 H 774 Q 786 390 786 402 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 923 390 H 935 Q 947 390 947 402 V 438" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1082 390 H 1094 Q 1106 390 1106 402 V 438" marker-end="url(#arrow-blue)"/>
   </g>
 
   <!-- Request and router -->

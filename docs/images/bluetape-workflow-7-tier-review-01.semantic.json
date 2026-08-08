@@ -35,6 +35,7 @@
   ],
   "behavior": {"branches": 1, "loops": 1},
   "repairs": [
-    {"target": "marker-metadata", "reason": "declare role, fixed size, and positive-x tip direction on every referenced marker", "touches": 3}
+    {"target": "marker-metadata", "reason": "declare role, fixed size, and positive-x tip direction on every referenced marker", "touches": 3},
+    {"target": "rounded-bus-elbows", "reason": "keep fan-out and fan-in turns in one rounded connector path while structural buses remain non-shared", "touches": 15}
   ]
 }

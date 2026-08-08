@@ -22,6 +22,7 @@
   ],
   "behavior": {"branches": 1, "loops": 0},
   "repairs": [
-    {"target": "marker-metadata", "reason": "declare primary role and positive-x tip direction for the workflow connectors", "touches": 1}
+    {"target": "marker-metadata", "reason": "declare primary role and positive-x tip direction for the workflow connectors", "touches": 1},
+    {"target": "rounded-bus-elbows", "reason": "keep every fan-out branch turn rounded instead of hiding a hard T junction across bus paths", "touches": 8}
   ]
 }

@@ -163,6 +163,11 @@ replace one-by-one full-size PNG inspection.
   plus round line caps/joins.
 - A `Q` command is not proof: if the PNG still shows a hard corner, move bend
   coordinates, change ports, or open corridor space.
+- A fan-out/fan-in bus must not hide a sharp turn by splitting one relationship
+  into separate H/V paths. Keep each relationship's bend in one connector path
+  with a `Q`; treat the trunk/bus as structural, and let
+  `diagram-mixed-corner-audit.py` reject every unrounded H/V turn even when a
+  path contains no `Q` at all.
 - Account for arrowhead size before each target bend. Leave enough terminal
   segment for the arrowhead before it reaches the card edge.
 - Separate incoming and outgoing ports for cards with multiple relationships.
