@@ -121,9 +121,19 @@ replace one-by-one full-size PNG inspection.
   - sequence messages: `16x16`
   - primary flow/progression/query/write/read movement: `14x14`
   - secondary/static relationships: `10x10`
+- Make the role machine-checkable on every referenced `<marker>` with
+  `data-role="uml-hollow|sequence|primary|secondary"`, matching numeric
+  `markerWidth`/`markerHeight`, and `markerUnits="userSpaceOnUse"`. A direct
+  polygon/polyline head must declare `data-arrowhead="true"`, the same
+  `data-role`, `data-size="WxH"`, and `data-solid-head="true"`.
 - Dashed relationship lines may be dashed, but their arrowheads must render
   solid. If CairoSVG renders marker-based heads dashed, replace them with direct
   `polygon` or `polyline` heads with explicit no-dash attributes.
+- Run `diagram-arrowhead-audit.py` before PNG inspection. It rejects untyped or
+  mis-sized referenced markers, dashed marker children/direct heads, and a
+  marker-start/marker-end terminal segment shorter than the arrowhead footprint
+  plus the clearance margin. This is a coordinate guard, not a replacement for
+  full-size PNG inspection.
 - When one marker mismatch is found, scan the whole related diagram set for the
   same pattern.
 
@@ -178,6 +188,7 @@ xmllint --noout <diagram>.svg
 cairosvg <diagram>.svg -o <diagram>.png -s 2
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-semantic-audit.py" --repo-root <repository-root> --json <diagram>.semantic.json
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-connector-audit.py" <diagram>.svg
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-arrowhead-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-geometry-audit.py" --fail-diagonal <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-endpoint-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-mixed-corner-audit.py" <diagram>.svg
@@ -211,8 +222,8 @@ to review.
   - **Evidence:** Icon source paths and duplicate-pattern scan, or concrete text-only N/A.
   - **Failure:** Reject invented logos or standard-plus-legacy duplicates.
 - [ ] **DIA-COM-04 — Verify markers in PNG**
-  - **Action:** Use fixed per-color markers or direct heads, preserve standard role sizes, and verify solid color/size/direction in PNG.
-  - **Evidence:** Marker audit counts and zoomed/full-size PNG notes.
+  - **Action:** Use fixed per-color markers or direct heads, declare the role/size contract, run the arrowhead audit, and verify solid color/size/direction in PNG.
+  - **Evidence:** Marker role/size/terminal audit counts and zoomed/full-size PNG notes.
   - **Failure:** Dashed, black, mismatched, check-like, or inconsistent heads require repair and related-set scan.
 - [ ] **DIA-COM-05 — Verify connector endpoints and routes**
   - **Action:** Enforce perpendicular boundary attachment, corner clearance, no card/border intrusion, separated ports, no shared connector segments, label clearance, and shortest semantic routes.

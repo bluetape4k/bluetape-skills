@@ -84,6 +84,12 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 - Same-role arrowheads must render with consistent size/color in PNG:
   UML hollow inheritance `18x16`, sequence message `16x16`, primary
   flow/progression `14x14`, secondary/static relationship `10x10`.
+- Referenced markers must declare `data-role`, matching numeric dimensions, and
+  `markerUnits="userSpaceOnUse"`; direct arrowheads must declare
+  `data-arrowhead="true"`, `data-role`, `data-size`, and `data-solid-head="true"`.
+- Run `diagram-arrowhead-audit.py` to reject mis-sized/untyped heads, dashed
+  head paint, and terminal segments too short for the arrowhead footprint before
+  a bend or target edge.
 - Bent connectors use rounded orthogonal corners with enough pre/post bend
   clearance. A `Q` command is not enough if the PNG still looks sharp.
 - If full-size PNG inspection contradicts a script result, the PNG wins.
@@ -139,6 +145,7 @@ Every completion report or PR body must include concrete evidence rows:
 | Kind rules | relevant reference files loaded |
 | Raster text | SVG `text_hazards=0` or HTML-branch N/A, plus applicable `code_without_highlight=0` |
 | Connector audits | counts such as `connectors`, `cards`, `labels`, `shared_segments`, `label_cards`, `label_labels`, `label_connectors`, `q_bends`, `failures=0` |
+| Arrowhead audit | role/size counts, solid-head result, and terminal-clearance checks with failures=0 |
 | Type-specific audit | sequence/class/ERD/architecture/chart invariant result |
 | Visual inspection | full-size PNG path and observed pass/fail notes |
 | Review exposure | local review page link check when a review page exists |
