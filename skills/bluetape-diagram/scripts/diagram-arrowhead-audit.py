@@ -51,12 +51,19 @@ class Marker:
     height: float | None
     units: str | None
     role: str | None
+    orient: str | None
+    ref_x: float | None
+    tip_direction: str | None
 
 
 @dataclass(frozen=True)
 class Segment:
     start_clearance: float
     end_clearance: float
+    start_point: tuple[float, float] = (0.0, 0.0)
+    end_point: tuple[float, float] = (0.0, 0.0)
+    start_tangent: tuple[float, float] = (0.0, 0.0)
+    end_tangent: tuple[float, float] = (0.0, 0.0)
 
 
 def local_name(tag: str) -> str:
@@ -127,6 +134,9 @@ def marker_inventory(root: ET.Element) -> dict[str, Marker]:
             height=number(marker.attrib.get("markerHeight")),
             units=marker.attrib.get("markerUnits"),
             role=normalize_role(marker.attrib.get("data-role")),
+            orient=marker.attrib.get("orient"),
+            ref_x=number(marker.attrib.get("refX")),
+            tip_direction=marker.attrib.get("data-tip-direction"),
         )
     return markers
 
@@ -188,8 +198,9 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
             end = (values[0], values[1])
             if relative:
                 end = (end[0] + current[0], end[1] + current[1])
+            tangent = (end[0] - current[0], end[1] - current[1])
             length = distance(current, end)
-            current_segments.append(Segment(length, length))
+            current_segments.append(Segment(length, length, current, end, tangent, tangent))
             current = end
             continue
 
@@ -200,8 +211,9 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
             values, index = parsed
             x = values[0] + current[0] if relative else values[0]
             end = (x, current[1])
+            tangent = (end[0] - current[0], end[1] - current[1])
             length = distance(current, end)
-            current_segments.append(Segment(length, length))
+            current_segments.append(Segment(length, length, current, end, tangent, tangent))
             current = end
             continue
 
@@ -212,8 +224,9 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
             values, index = parsed
             y = values[0] + current[1] if relative else values[0]
             end = (current[0], y)
+            tangent = (end[0] - current[0], end[1] - current[1])
             length = distance(current, end)
-            current_segments.append(Segment(length, length))
+            current_segments.append(Segment(length, length, current, end, tangent, tangent))
             current = end
             continue
 
@@ -227,7 +240,16 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
             if relative:
                 control = (control[0] + current[0], control[1] + current[1])
                 end = (end[0] + current[0], end[1] + current[1])
-            current_segments.append(Segment(distance(current, control), distance(control, end)))
+            current_segments.append(
+                Segment(
+                    distance(current, control),
+                    distance(control, end),
+                    current,
+                    end,
+                    (control[0] - current[0], control[1] - current[1]),
+                    (end[0] - control[0], end[1] - control[1]),
+                )
+            )
             current = end
             continue
 
@@ -243,7 +265,16 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
                 c1 = (c1[0] + current[0], c1[1] + current[1])
                 c2 = (c2[0] + current[0], c2[1] + current[1])
                 end = (end[0] + current[0], end[1] + current[1])
-            current_segments.append(Segment(distance(current, c1), distance(c2, end)))
+            current_segments.append(
+                Segment(
+                    distance(current, c1),
+                    distance(c2, end),
+                    current,
+                    end,
+                    (c1[0] - current[0], c1[1] - current[1]),
+                    (end[0] - c2[0], end[1] - c2[1]),
+                )
+            )
             current = end
             continue
 
@@ -256,14 +287,18 @@ def parse_path_segments(d: str) -> list[list[Segment]]:
             if relative:
                 end = (end[0] + current[0], end[1] + current[1])
             length = distance(current, end)
-            current_segments.append(Segment(length, length))
+            tangent = (end[0] - current[0], end[1] - current[1])
+            current_segments.append(Segment(length, length, current, end, tangent, tangent))
             current = end
             continue
 
         if upper == "Z":
             if subpath_start is not None and current != subpath_start:
                 length = distance(current, subpath_start)
-                current_segments.append(Segment(length, length))
+                tangent = (subpath_start[0] - current[0], subpath_start[1] - current[1])
+                current_segments.append(
+                    Segment(length, length, current, subpath_start, tangent, tangent)
+                )
             current = subpath_start or current
             command = None
             continue
@@ -324,6 +359,86 @@ def validate_direct_arrowhead(node: ET.Element) -> list[str]:
     dash = effective_attr(node, "stroke-dasharray")
     if dash and dash.replace("!important", "").strip() != "none":
         failures.append(f"{name}: direct arrowhead dasharray is {dash}")
+    tip_direction = node.attrib.get("data-tip-direction")
+    if tip_direction != "positive-x":
+        failures.append(f"{name}: direct arrowhead needs data-tip-direction=positive-x")
+    return failures
+
+
+def path_tangent(node: ET.Element, position: str) -> tuple[float, float] | None:
+    """Return the local tangent at the marker attachment point."""
+
+    tag = local_name(node.tag)
+    if tag == "path" and node.attrib.get("d"):
+        subpaths = [subpath for subpath in parse_path_segments(node.attrib["d"]) if subpath]
+        if not subpaths:
+            return None
+        segment = subpaths[0][0] if position == "marker-start" else subpaths[-1][-1]
+        return segment.start_tangent if position == "marker-start" else segment.end_tangent
+    if tag == "line":
+        start = (number(node.attrib.get("x1")) or 0.0, number(node.attrib.get("y1")) or 0.0)
+        end = (number(node.attrib.get("x2")) or 0.0, number(node.attrib.get("y2")) or 0.0)
+        tangent = (end[0] - start[0], end[1] - start[1])
+        return tangent if position == "marker-end" else (-tangent[0], -tangent[1])
+    if tag in {"polyline", "polygon"} and node.attrib.get("points"):
+        values = [float(item) for item in re.findall(NUMBER, node.attrib["points"])]
+        points = list(zip(values[::2], values[1::2]))
+        if len(points) < 2:
+            return None
+        if position == "marker-start":
+            return (points[0][0] - points[1][0], points[0][1] - points[1][1])
+        return (points[-1][0] - points[-2][0], points[-1][1] - points[-2][1])
+    return None
+
+
+def infer_marker_tip_direction(marker_element: ET.Element) -> str | None:
+    """Infer a simple triangle's tip side, or return None for an ambiguous shape."""
+
+    points: list[tuple[float, float]] = []
+    for child in marker_element.iter():
+        if local_name(child.tag) != "path" or not child.attrib.get("d"):
+            continue
+        try:
+            points.extend(
+                point
+                for subpath in parse_path_segments(child.attrib["d"])
+                for segment in subpath
+                for point in (segment.start_point, segment.end_point)
+            )
+        except ValueError:
+            return None
+    unique = {(round(x, 6), round(y, 6)) for x, y in points}
+    if len(unique) < 3:
+        return None
+    min_x = min(x for x, _ in unique)
+    max_x = max(x for x, _ in unique)
+    min_points = [point for point in unique if point[0] == min_x]
+    max_points = [point for point in unique if point[0] == max_x]
+    if len(max_points) == 1 and len(min_points) >= 2:
+        return "positive-x"
+    if len(min_points) == 1 and len(max_points) >= 2:
+        return "negative-x"
+    return None
+
+
+def validate_marker_direction(marker: Marker, marker_element: ET.Element, positions: set[str], marker_id: str) -> list[str]:
+    failures: list[str] = []
+    orient = (marker.orient or "").strip().lower()
+    if orient not in {"auto", "auto-start-reverse"}:
+        failures.append(
+            f"{marker_id}: orient must be auto or auto-start-reverse so SVG renderers follow connector direction"
+        )
+    if marker.tip_direction != "positive-x":
+        failures.append(f"{marker_id}: marker needs data-tip-direction=positive-x for a forward local axis")
+    inferred = infer_marker_tip_direction(marker_element)
+    if inferred == "negative-x":
+        failures.append(f"{marker_id}: marker geometry tip points negative-x; SVG output will reverse the arrowhead")
+    elif inferred is None:
+        failures.append(f"{marker_id}: marker geometry tip direction is ambiguous; declare a simple +x triangle")
+    if "marker-start" in positions and orient != "auto-start-reverse":
+        failures.append(f"{marker_id}: marker-start requires orient=auto-start-reverse")
+    if "marker-end" in positions and orient not in {"auto", "auto-start-reverse"}:
+        failures.append(f"{marker_id}: marker-end requires automatic orientation")
     return failures
 
 
@@ -338,6 +453,9 @@ def audit_file(path: Path, margin: float) -> tuple[bool, list[str], str]:
 
     failures: list[str] = []
     used_ids = {marker_id for _, _, marker_id in references}
+    positions_by_marker: dict[str, set[str]] = {}
+    for _, position, marker_id in references:
+        positions_by_marker.setdefault(marker_id, set()).add(position)
     for marker_id in sorted(used_ids):
         marker = markers.get(marker_id)
         if marker is None:
@@ -360,16 +478,31 @@ def audit_file(path: Path, margin: float) -> tuple[bool, list[str], str]:
         marker_element = marker_elements.get(marker_id)
         if marker_element is not None:
             failures.extend(validate_marker_paint(marker_element, marker_id))
+            failures.extend(
+                validate_marker_direction(marker, marker_element, positions_by_marker.get(marker_id, set()), marker_id)
+            )
 
     for node in direct_arrowhead_nodes(root):
         failures.extend(validate_direct_arrowhead(node))
 
     terminal_checks = 0
+    direction_checks = 0
     for node, position, marker_id in references:
-        if position == "marker-mid" or local_name(node.tag) != "path" or not node.attrib.get("d"):
-            continue
         marker = markers.get(marker_id)
         if marker is None or marker.width is None or marker.height is None:
+            continue
+        if position != "marker-mid":
+            tangent = path_tangent(node, position)
+            if tangent is None:
+                failures.append(
+                    f"{node.attrib.get('id') or local_name(node.tag)}: {position} marker direction cannot be established from this shape"
+                )
+            elif math.hypot(*tangent) <= 1e-9:
+                failures.append(
+                    f"{node.attrib.get('id') or local_name(node.tag)}: {position} marker direction has a zero terminal tangent"
+                )
+            direction_checks += 1
+        if position == "marker-mid" or local_name(node.tag) != "path" or not node.attrib.get("d"):
             continue
         try:
             subpaths = [subpath for subpath in parse_path_segments(node.attrib["d"]) if subpath]
@@ -393,7 +526,8 @@ def audit_file(path: Path, margin: float) -> tuple[bool, list[str], str]:
     status = "FAIL" if failures else "PASS"
     summary = (
         f"{path.name}: {status} markers={len(markers)} used_markers={len(used_ids)} "
-        f"direct_heads={sum(1 for _ in direct_arrowhead_nodes(root))} terminal_checks={terminal_checks}"
+        f"direct_heads={sum(1 for _ in direct_arrowhead_nodes(root))} direction_checks={direction_checks} "
+        f"terminal_checks={terminal_checks}"
     )
     return not failures, failures, summary
 

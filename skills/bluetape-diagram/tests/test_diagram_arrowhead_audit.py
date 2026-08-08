@@ -20,7 +20,7 @@ AUDIT = next(
 
 def marker(width: int = 14, height: int = 14, role: str = "primary", child: str | None = None) -> str:
     child = child or '<path d="M0 0 L14 7 L0 14 Z" fill="#2563EB"/>'
-    return f'<marker id="head" markerUnits="userSpaceOnUse" markerWidth="{width}" markerHeight="{height}" data-role="{role}">{child}</marker>'
+    return f'<marker id="head" markerUnits="userSpaceOnUse" markerWidth="{width}" markerHeight="{height}" orient="auto" data-tip-direction="positive-x" data-role="{role}">{child}</marker>'
 
 
 class DiagramArrowheadAuditTest(unittest.TestCase):
@@ -101,12 +101,40 @@ class DiagramArrowheadAuditTest(unittest.TestCase):
     def test_direct_arrowhead_requires_solid_metadata(self) -> None:
         result = self.run_audit(
             "<!-- BODY -->"
-            '<polygon id="head" class="arrowhead" data-role="primary" data-size="14x14" points="0,0 14,7 0,14" fill="#2563EB" stroke-dasharray="4 2"/>'
+            '<polygon id="head" class="arrowhead" data-role="primary" data-size="14x14" data-tip-direction="positive-x" points="0,0 14,7 0,14" fill="#2563EB" stroke-dasharray="4 2"/>'
         )
 
         self.assertEqual(1, result.returncode, result.stdout + result.stderr)
         self.assertIn("data-solid-head", result.stdout)
         self.assertIn("dasharray is 4 2", result.stdout)
+
+    def test_reversed_marker_geometry_is_rejected(self) -> None:
+        result = self.run_audit(
+            marker(child='<path d="M14 0 L0 7 L14 14 Z" fill="#2563EB"/>')
+            + "<!-- BODY -->"
+            '<path d="M20 80 H200" marker-end="url(#head)"/>'
+        )
+
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("tip points negative-x", result.stdout)
+
+    def test_marker_start_requires_auto_start_reverse(self) -> None:
+        result = self.run_audit(
+            marker() + "<!-- BODY -->"
+            '<path d="M200 80 H20" marker-start="url(#head)"/>'
+        )
+
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("marker-start requires orient=auto-start-reverse", result.stdout)
+
+    def test_missing_orientation_is_rejected(self) -> None:
+        result = self.run_audit(
+            marker().replace(' orient="auto"', "") + "<!-- BODY -->"
+            '<path d="M20 80 H200" marker-end="url(#head)"/>'
+        )
+
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("orient must be auto", result.stdout)
 
 
 if __name__ == "__main__":

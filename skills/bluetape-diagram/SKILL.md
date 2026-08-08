@@ -37,11 +37,15 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 ## Execution Contract
 
 1. Read the target README/page and source-backed behavior before drawing.
-2. For the high-change cases named above, validate a semantic ledger before
+2. If the asset is generated, inspect the generator/template source before the
+   output. Search the source for stale palette selectors, shared text classes,
+   unused markers, and marker orientation so a regenerated asset cannot restore
+   the defect.
+3. For the high-change cases named above, validate a semantic ledger before
    choosing coordinates. Keep the reader question, source revision/paths,
    unique node IDs, closed edges, complexity decision, and repair receipt.
    Never shorten a technical identifier just to satisfy a budget.
-3. Work one asset at a time and choose the pipeline by information shape:
+4. Work one asset at a time and choose the pipeline by information shape:
    - Use SVG -> PNG for precise static structure, topology, time order, and
      relationships: architecture/component, class/UML, ERD, sequence, and
      static connector-driven flow.
@@ -51,14 +55,14 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
      locale support alone do not qualify an asset for HTML.
    - Do not force one universal pipeline. Apply the eligibility gate in
      `references/chart.md` or `references/workflow.md`.
-4. Treat PNG output as authoritative. Source-only success never closes the
+5. Treat PNG output as authoritative. Source-only success never closes the
    task.
-5. Convert every user-reported visual defect into a concrete geometry/style
+6. Convert every user-reported visual defect into a concrete geometry/style
    invariant and record the evidence.
-6. Use the installed generators only as helpers:
+7. Use the installed generators only as helpers:
    - `$fireworks-tech-graph` for diagrams/charts by default.
    - `$architecture-diagram-generator` for system architecture diagrams.
-7. Do not use Graphviz for bluetape4k README diagrams.
+8. Do not use Graphviz for bluetape4k README diagrams.
 
 ## Non-Negotiable Gates
 
@@ -78,6 +82,13 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
   perpendicular attachment, geometry, crossing/card-intrusion,
   relationship-label clearance, shared-corridor, mixed-corner, and full-size
   PNG evidence.
+- Every final PNG must pass `diagram-visual-audit.py`. Record dimensions,
+  aspect ratio, content bounding-box occupancy, margin imbalance, and the
+  transparent/opaque decision. A tall canvas with content in only one region
+  is a failure, even when SVG/XML validation passes.
+- Every README-facing asset directory must pass
+  `diagram-asset-pair-audit.py`: each SVG has exactly one matching PNG, local
+  README embeds resolve to PNGs, and Mermaid/Graphviz residue is absent.
 - Audit rows marked `WEAK`, `UNAVAILABLE`, `connectors=0`, `cards=0`,
   `paths=0`, or missing command output are not PASS evidence unless a targeted
   fallback invariant proves the same claim.
@@ -85,11 +96,17 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
   UML hollow inheritance `18x16`, sequence message `16x16`, primary
   flow/progression `14x14`, secondary/static relationship `10x10`.
 - Referenced markers must declare `data-role`, matching numeric dimensions, and
-  `markerUnits="userSpaceOnUse"`; direct arrowheads must declare
+  `markerUnits="userSpaceOnUse"`, `orient="auto"` (or
+  `auto-start-reverse` for `marker-start`), and
+  `data-tip-direction="positive-x"`; direct arrowheads must declare
   `data-arrowhead="true"`, `data-role`, `data-size`, and `data-solid-head="true"`.
+- The marker's local +x axis must point at the visible tip. For every
+  `marker-end`, validate the final path tangent; for every `marker-start`, use
+  `orient="auto-start-reverse"`. A source that renders an arrowhead backwards
+  is a failed direction audit, not a PNG “style” issue.
 - Run `diagram-arrowhead-audit.py` to reject mis-sized/untyped heads, dashed
-  head paint, and terminal segments too short for the arrowhead footprint before
-  a bend or target edge.
+  head paint, reversed marker geometry/orientation, and terminal segments too
+  short for the arrowhead footprint before a bend or target edge.
 - Bent connectors use rounded orthogonal corners with enough pre/post bend
   clearance. A `Q` command is not enough if the PNG still looks sharp.
 - If full-size PNG inspection contradicts a script result, the PNG wins.
@@ -118,16 +135,16 @@ common checklist and every selected kind checklist for each asset separately.
   - **Evidence:** Selected pipeline, successful commands, renderer version, and PNG dimensions/path.
   - **Failure:** Source-only success, an unapproved renderer, or an asset that bypasses its eligibility gate does not advance.
 - [ ] **DIA-05 — Run common and type-specific audits**
-  - **Action:** Run raster-text/code-highlight, connector/relationship-label/geometry/endpoint/mixed-corner, and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
-  - **Evidence:** Counts and failures=0 with no WEAK/UNAVAILABLE/zero-count ambiguity.
+  - **Action:** Run raster-text/code-highlight, connector/relationship-label/geometry/endpoint/mixed-corner, arrowhead direction, PNG canvas, asset-pair, and kind-specific audits as triggered, adding targeted fallback invariants for weak generic counts.
+  - **Evidence:** Counts and failures=0 with no WEAK/UNAVAILABLE/zero-count ambiguity; PNG dimensions/occupancy and SVG/PNG pair/ref counts are recorded.
   - **Failure:** Repair the asset or prove the same claim with a concrete fallback before visual review.
 - [ ] **DIA-06 — Inspect the full-size PNG**
   - **Action:** Open the final PNG after the last coordinate change and inspect labels, endpoints, arrowheads, corners, crossings, card intrusion, icons, spacing, fonts, and whitespace.
   - **Evidence:** Full-size PNG path and observed pass/fail notes.
   - **Failure:** PNG contradiction overrides scripts; return to DIA-03.
 - [ ] **DIA-07 — Verify exposure and diff hygiene**
-  - **Action:** Check canonical embeds/review-page links, related asset parity, and `git diff --check` for source/PNG/page changes.
-  - **Evidence:** Link/embed results, canonical paths, and clean diff check.
+  - **Action:** Check canonical embeds/review-page links, related asset parity, the SVG/PNG pair and README PNG-only audit, and `git diff --check` for source/PNG/page changes.
+  - **Evidence:** Link/embed results, pair/ref counts, canonical paths, and clean diff check.
   - **Failure:** Broken exposure, stale paths, or unrelated artifacts blocks completion.
 - [ ] **DIA-08 — Render the evidence ledger**
   - **Action:** Report every asset and checklist row with commands, counts, dimensions, inspection notes, reference paths, and gaps.
@@ -146,6 +163,9 @@ Every completion report or PR body must include concrete evidence rows:
 | Raster text | SVG `text_hazards=0` or HTML-branch N/A, plus applicable `code_without_highlight=0` |
 | Connector audits | counts such as `connectors`, `cards`, `labels`, `shared_segments`, `label_cards`, `label_labels`, `label_connectors`, `q_bends`, `failures=0` |
 | Arrowhead audit | role/size counts, solid-head result, and terminal-clearance checks with failures=0 |
+| Arrowhead direction | marker `orient`, local tip axis, terminal tangent/direction checks with failures=0 |
+| Raster geometry | PNG dimensions, aspect, content occupancy, margins, transparency decision, and failures=0 |
+| Asset exposure | SVG/PNG pair count, README PNG refs, missing refs, and Mermaid/Graphviz residue counts |
 | Type-specific audit | sequence/class/ERD/architecture/chart invariant result |
 | Visual inspection | full-size PNG path and observed pass/fail notes |
 | Review exposure | local review page link check when a review page exists |

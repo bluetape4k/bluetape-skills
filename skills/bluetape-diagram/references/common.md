@@ -19,6 +19,10 @@ visual, blog image, or site visual.
   or long technical identifiers, create and validate a semantic ledger before
   drawing. The ledger is an input contract, not a replacement for rendered
   geometry or PNG inspection.
+- When an SVG/PNG is generated, inspect the generator/template source in the
+  same change. Audit selectors and marker definitions for stale palettes,
+  shared shape/text classes, unused markers, and orientation defaults before
+  regenerating any asset. A clean output cannot compensate for a stale source.
 
 ## One-Asset Loop
 
@@ -123,17 +127,25 @@ replace one-by-one full-size PNG inspection.
   - secondary/static relationships: `10x10`
 - Make the role machine-checkable on every referenced `<marker>` with
   `data-role="uml-hollow|sequence|primary|secondary"`, matching numeric
-  `markerWidth`/`markerHeight`, and `markerUnits="userSpaceOnUse"`. A direct
+  `markerWidth`/`markerHeight`, `markerUnits="userSpaceOnUse"`,
+  `orient="auto"` (or `auto-start-reverse` for a `marker-start`), and
+  `data-tip-direction="positive-x"`. A direct
   polygon/polyline head must declare `data-arrowhead="true"`, the same
-  `data-role`, `data-size="WxH"`, and `data-solid-head="true"`.
+  `data-role`, `data-size="WxH"`, `data-tip-direction="positive-x"`, and
+  `data-solid-head="true"`.
+- Treat the marker's local +x axis as the forward axis. `marker-end` must use
+  the final non-zero path tangent, while `marker-start` must use
+  `auto-start-reverse`; a numeric or missing `orient`, a reversed triangle,
+  or a zero terminal tangent is a direction failure. `diagram-arrowhead-audit.py`
+  must report the direction-check count, not only marker size.
 - Dashed relationship lines may be dashed, but their arrowheads must render
   solid. If CairoSVG renders marker-based heads dashed, replace them with direct
   `polygon` or `polyline` heads with explicit no-dash attributes.
 - Run `diagram-arrowhead-audit.py` before PNG inspection. It rejects untyped or
-  mis-sized referenced markers, dashed marker children/direct heads, and a
-  marker-start/marker-end terminal segment shorter than the arrowhead footprint
-  plus the clearance margin. This is a coordinate guard, not a replacement for
-  full-size PNG inspection.
+  mis-sized referenced markers, reversed marker geometry/orientation, dashed
+  marker children/direct heads, and a marker-start/marker-end terminal segment
+  shorter than the arrowhead footprint plus the clearance margin. This is a
+  coordinate guard, not a replacement for full-size PNG inspection.
 - When one marker mismatch is found, scan the whole related diagram set for the
   same pattern.
 
@@ -163,6 +175,11 @@ replace one-by-one full-size PNG inspection.
 - Keep relationship labels auditable: use an explicit label background `<rect>`
   or explicit text `x`/`y` coordinates. Recognized labels with unbounded or
   malformed transform geometry fail closed.
+- Classify decoration paths by complete class tokens (for example,
+  `icon-line-*` must not become a route merely because it contains the token
+  `line`). Preserve `data-source`/`data-target` on connectors and make path
+  parsers consume every control/end point in `Q`, `C`, and transformed fixtures;
+  parser uncertainty is a documented exception, not a passing zero count.
 
 ## Lane, Layer, and Whitespace
 
@@ -175,6 +192,31 @@ replace one-by-one full-size PNG inspection.
   crowding connectors or shrinking text.
 - When changing lane or card dimensions, move dependent connector ports, paths,
   labels, notes, footers, frames, and viewBox together.
+- Reserve a no-flow zone around lane titles, subtitles, notes, and footer
+  labels. Connectors must never enter or cross that zone; if a route needs the
+  space, move the port/lane boundary or split the lane before adding a detour.
+
+## PNG Canvas and Asset Exposure
+
+- The rendered PNG is the acceptance artifact. Run
+  `diagram-visual-audit.py` on every final PNG and record width/height, aspect,
+  content bounding-box occupancy, ink occupancy, margins, margin imbalance, and
+  `alpha_min`. The default screening thresholds are aspect `<= 4:1`,
+  bounding-box occupancy `>= 0.22`, and margin imbalance `<= 0.35`; a relaxed
+  threshold requires a named, source-backed exception.
+- Decide explicitly whether the README PNG is opaque or intentionally
+  transparent. A transparent background is allowed only when the visual note
+  and full-size inspection prove that it preserves the intended canvas; use
+  `--require-opaque` for README exports that must be self-contained.
+- For every README-facing asset directory, run
+  `diagram-asset-pair-audit.py`. Require a one-to-one SVG/PNG pair, resolve
+  local Markdown/HTML image links, reject SVG embeds, and reject Mermaid or
+  Graphviz residue. `--require-all-referenced` is required when the directory
+  is the canonical README asset set.
+- Mechanical validators must distinguish `validated`,
+  `documentedExceptions`, and `exceptionSlugs`. `legacySkipped`, `targets=0`,
+  `cards=0`, or `paths=0` is incomplete evidence until a targeted fallback
+  invariant proves the actual entities.
 
 ## Required Local Commands
 
@@ -189,6 +231,8 @@ cairosvg <diagram>.svg -o <diagram>.png -s 2
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-semantic-audit.py" --repo-root <repository-root> --json <diagram>.semantic.json
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-connector-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-arrowhead-audit.py" <diagram>.svg
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-visual-audit.py" --require-opaque <diagram>.png
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-asset-pair-audit.py" --asset-dir <asset-dir> --readme <README.md> --require-all-referenced
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-geometry-audit.py" --fail-diagonal <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-endpoint-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-mixed-corner-audit.py" <diagram>.svg
@@ -222,8 +266,8 @@ to review.
   - **Evidence:** Icon source paths and duplicate-pattern scan, or concrete text-only N/A.
   - **Failure:** Reject invented logos or standard-plus-legacy duplicates.
 - [ ] **DIA-COM-04 — Verify markers in PNG**
-  - **Action:** Use fixed per-color markers or direct heads, declare the role/size contract, run the arrowhead audit, and verify solid color/size/direction in PNG.
-  - **Evidence:** Marker role/size/terminal audit counts and zoomed/full-size PNG notes.
+  - **Action:** Use fixed per-color markers or direct heads, declare the role/size/orientation/tip-axis contract, run the arrowhead audit, and verify solid color/size/direction in PNG.
+  - **Evidence:** Marker role/size/orient/tip-axis/terminal/direction audit counts and zoomed/full-size PNG notes.
   - **Failure:** Dashed, black, mismatched, check-like, or inconsistent heads require repair and related-set scan.
 - [ ] **DIA-COM-05 — Verify connector endpoints and routes**
   - **Action:** Enforce perpendicular boundary attachment, corner clearance, no card/border intrusion, separated ports, no shared connector segments, label clearance, and shortest semantic routes.
@@ -234,14 +278,22 @@ to review.
   - **Evidence:** Mixed-corner audit and PNG corner inspection.
   - **Failure:** A lone Q or remaining sharp H/V/L turn is not proof; move bends/ports/corridors.
 - [ ] **DIA-COM-07 — Synchronize lanes, canvas, and whitespace**
-  - **Action:** Move dependent ports/paths/labels/footer/frame/viewBox with lane/card changes and measure requested whitespace trims.
-  - **Evidence:** Before/after dimensions/gaps and full-size PNG inspection.
-  - **Failure:** Excess whitespace, cramped lanes, or stale dependent coordinates blocks PASS.
+  - **Action:** Move dependent ports/paths/labels/footer/frame/viewBox with lane/card changes, reserve no-flow title/note zones, and measure requested whitespace trims.
+  - **Evidence:** Before/after dimensions/gaps, no-flow-zone result, and full-size PNG inspection.
+  - **Failure:** Excess whitespace, cramped lanes, title/note crossings, or stale dependent coordinates blocks PASS.
 - [ ] **DIA-COM-08 — Run required local commands**
-  - **Action:** Run the selected pipeline's source validation, render, and diff checks; add XML, CairoSVG, connector, geometry, endpoint, and mixed-corner checks when triggered.
-  - **Evidence:** Exact selected-pipeline commands; for connector-heavy SVGs also include nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, and failures=0.
-  - **Failure:** WEAK/UNAVAILABLE/zero counts require targeted fallback proof; missing output is FAIL.
+  - **Action:** Run the selected pipeline's source validation, render, diff, arrowhead-direction, PNG-geometry, and asset-pair checks; add XML, CairoSVG, connector, geometry, endpoint, and mixed-corner checks when triggered.
+  - **Evidence:** Exact selected-pipeline commands; for connector-heavy SVGs also include nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, `validated=<n>`, `documentedExceptions=<n>`, and failures=0.
+  - **Failure:** WEAK/UNAVAILABLE/zero counts or `legacySkipped` require targeted fallback proof; missing output is FAIL.
 - [ ] **DIA-COM-09 — Verify review exposure**
   - **Action:** When a review page exists, prove it links current worktree canonical SVG/PNG outputs.
   - **Evidence:** Link targets and rendered review-page result, or concrete absence N/A.
   - **Failure:** Do not ask for review through stale or missing assets.
+- [ ] **DIA-COM-10 — Verify PNG canvas geometry**
+  - **Action:** Run `diagram-visual-audit.py` on every final PNG, inspect full size, and record any explicit aspect/occupancy/transparency exception.
+  - **Evidence:** Dimensions, aspect, bbox/ink occupancy, margins, alpha decision, and failures=0.
+  - **Failure:** Blank/background-only output, stale tall/wide canvas, severe margin imbalance, or undocumented transparency blocks PASS.
+- [ ] **DIA-COM-11 — Verify source pair and README exposure**
+  - **Action:** Run `diagram-asset-pair-audit.py` on the canonical asset directory and target README(s), with `--require-all-referenced` when the directory is the README set.
+  - **Evidence:** SVG/PNG pair count, README PNG refs, missing refs, SVG refs, duplicate refs, Mermaid/Graphviz residue, and failures=0.
+  - **Failure:** Missing pair, missing/SVG README link, residue, or unreferenced canonical asset blocks PASS.

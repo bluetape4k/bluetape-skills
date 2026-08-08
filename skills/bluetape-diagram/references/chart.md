@@ -40,6 +40,10 @@ HTML/CSS chart source rules:
   Markdown pages embed only `<chart>.png`.
 - Do not add a browser or chart dependency when an existing repository capture
   runner or installed Chromium can render the asset.
+- Before regeneration, scan the generator/source stylesheet for stale palette
+  selectors and unused `<marker>` definitions. A chart source that leaves a
+  marker or shared `.label` rule active after the visual role was removed is a
+  source failure even if the current PNG looks acceptable.
 
 ## Deterministic HTML Capture
 
@@ -78,6 +82,9 @@ capture cannot be proved, return to SVG -> PNG.
   representative point.
 - Reject charts with missing legends, unreadable tick labels, clipped text,
   misleading scales, or unexplained color meaning.
+- Run `diagram-visual-audit.py` on the exported PNG and record the asset-pair
+  audit when the chart is README-facing; contact sheets do not replace the
+  full-size canvas/occupancy check.
 
 ## Blocking Chart Checklist
 
