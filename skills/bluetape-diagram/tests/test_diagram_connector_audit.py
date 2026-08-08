@@ -9,7 +9,14 @@ import unittest
 
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
-AUDIT = SKILL_ROOT / "scripts" / "diagram-connector-audit.py"
+AUDIT = next(
+    path
+    for path in (
+        SKILL_ROOT / "scripts" / "diagram-connector-audit.py",
+        SKILL_ROOT / "scripts" / "executable_diagram-connector-audit.py",
+    )
+    if path.exists()
+)
 
 
 class DiagramConnectorAuditTest(unittest.TestCase):

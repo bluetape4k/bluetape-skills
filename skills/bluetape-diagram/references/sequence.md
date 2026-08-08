@@ -41,6 +41,12 @@ or stale palettes that do not match the opened references.
   must belong to the same muted semantic color family.
 - Define explicit per-color markers; do not reuse a blue marker for green,
   amber, red, purple, or return paths.
+- Every message marker must declare `orient="auto"`,
+  `data-tip-direction="positive-x"`, and a fixed `userSpaceOnUse` size. Before
+  regeneration, audit the generator CSS/selectors so participant text and
+  participant shapes do not share a collision-prone `.label` rule, and remove
+  unused marker definitions. Direction and source-selector defects are
+  generator failures, not post-render polish.
 
 ## Labels and Rows
 

@@ -1,0 +1,28 @@
+{
+  "kind": "workflow",
+  "source": {
+    "question": "How does one Bluetape request map to the lightest safe workflow lane before mutation?",
+    "revision": "c1b9fef574346ff12399315465adf2364a630dc3",
+    "paths": [
+      "README.md",
+      "skills/bluetape-workflow/SKILL.md",
+      "skills/bluetape-workflow/references/checklist-contract.md"
+    ]
+  },
+  "nodes": [
+    {"id": "request", "label": "User request", "source": "README.md"},
+    {"id": "workflow-router", "label": "bluetape-workflow", "source": "skills/bluetape-workflow/SKILL.md"},
+    {"id": "typed-lanes", "label": "A/B/C/D/E/P/F workflow lanes", "source": "skills/bluetape-workflow/SKILL.md"},
+    {"id": "evidence-close", "label": "Evidence closes the selected lane", "source": "skills/bluetape-workflow/references/checklist-contract.md"}
+  ],
+  "edges": [
+    {"id": "request-router", "from": "request", "to": "workflow-router", "kind": "flow", "source": "README.md"},
+    {"id": "router-lanes", "from": "workflow-router", "to": "typed-lanes", "kind": "branch", "source": "skills/bluetape-workflow/SKILL.md"},
+    {"id": "lanes-evidence", "from": "typed-lanes", "to": "evidence-close", "kind": "flow", "source": "skills/bluetape-workflow/references/checklist-contract.md"}
+  ],
+  "behavior": {"branches": 1, "loops": 0},
+  "repairs": [
+    {"target": "marker-metadata", "reason": "declare primary role and positive-x tip direction for the workflow connectors", "touches": 1},
+    {"target": "rounded-bus-elbows", "reason": "keep every fan-out branch turn rounded instead of hiding a hard T junction across bus paths", "touches": 8}
+  ]
+}
