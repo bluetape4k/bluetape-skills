@@ -11,14 +11,14 @@
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#64748b" flood-opacity="0.15"/>
     </filter>
-    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M 0 1 L 11 6 L 0 11 Z" fill="#4f7dc9"/>
+    <marker id="arrow-blue" data-role="primary" data-tip-direction="positive-x" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 0 1 L 13 7 L 0 13 Z" fill="#4f7dc9"/>
     </marker>
-    <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M 0 1 L 11 6 L 0 11 Z" fill="#d25b63"/>
+    <marker id="arrow-red" data-role="primary" data-tip-direction="positive-x" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 0 1 L 13 7 L 0 13 Z" fill="#d25b63"/>
     </marker>
-    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M 0 1 L 11 6 L 0 11 Z" fill="#45a66f"/>
+    <marker id="arrow-green" data-role="primary" data-tip-direction="positive-x" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M 0 1 L 13 7 L 0 13 Z" fill="#45a66f"/>
     </marker>
   </defs>
 
@@ -41,10 +41,10 @@
   <text x="1285" y="197" text-anchor="middle" class="small">current diff and fresh evidence</text>
 
   <!-- gates to launch -->
-  <g fill="none" stroke="#4f7dc9" stroke-width="2.5" marker-end="url(#arrow-blue)">
-    <path class="connector" d="M 315 214 V 236 Q 315 248 327 248 H 708 Q 720 248 720 260 V 270"/>
-    <path class="connector" d="M 800 214 V 270"/>
-    <path class="connector" d="M 1285 214 V 236 Q 1285 248 1273 248 H 892 Q 880 248 880 260 V 270"/>
+  <g fill="none" stroke="#4f7dc9" stroke-width="2.5">
+    <path class="connector" d="M 315 214 V 236 Q 315 248 327 248 H 708 Q 720 247 720 255 V 270" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 800 214 V 270" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1285 214 V 236 Q 1285 248 1273 248 H 892 Q 880 247 880 255 V 270" marker-end="url(#arrow-blue)"/>
   </g>
   <g filter="url(#shadow)">
     <rect x="620" y="270" width="360" height="64" rx="16" fill="#faf5ff" stroke="#8a6fd1" stroke-width="2"/>
@@ -53,13 +53,15 @@
   <text x="800" y="319" text-anchor="middle" class="small">parallel perspectives, separate findings</text>
 
   <!-- fan-out bus -->
-  <g fill="none" stroke="#4f7dc9" stroke-width="2.2" marker-end="url(#arrow-blue)">
-    <path class="connector" d="M 800 334 V 348 Q 800 360 788 360 H 272 Q 260 360 260 372 V 390"/>
-    <path class="connector" d="M 800 334 V 348 Q 800 360 788 360 H 488 Q 476 360 476 372 V 390"/>
-    <path class="connector" d="M 800 334 V 348 Q 800 360 788 360 H 704 Q 692 360 692 372 V 390"/>
-    <path class="connector" d="M 800 334 V 348 Q 800 360 812 360 H 896 Q 908 360 908 372 V 390"/>
-    <path class="connector" d="M 800 334 V 348 Q 800 360 812 360 H 1112 Q 1124 360 1124 372 V 390"/>
-    <path class="connector" d="M 800 334 V 348 Q 800 360 812 360 H 1328 Q 1340 360 1340 372 V 390"/>
+  <g fill="none" stroke="#4f7dc9" stroke-width="2.2">
+    <path class="connector" d="M 800 334 V 360"/>
+    <path class="connector" d="M 260 360 H 1340"/>
+    <path class="connector" d="M 260 360 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 476 360 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 692 360 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 908 360 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1124 360 V 390" marker-end="url(#arrow-blue)"/>
+    <path class="connector" d="M 1340 360 V 390" marker-end="url(#arrow-blue)"/>
   </g>
 
   <!-- six lens cards -->
@@ -79,13 +81,15 @@
   <text x="1340" y="426" text-anchor="middle" class="gate">User / Caller</text><text x="1340" y="451" text-anchor="middle" class="small">outcome and clarity</text>
 
   <!-- lenses to integration -->
-  <g fill="none" stroke="#4f7dc9" stroke-width="2.2" marker-end="url(#arrow-blue)">
-    <path class="connector" d="M 260 474 V 494 Q 260 506 272 506 H 788 Q 800 506 800 518 V 532"/>
-    <path class="connector" d="M 476 474 V 494 Q 476 506 488 506 H 788 Q 800 506 800 518 V 532"/>
-    <path class="connector" d="M 692 474 V 494 Q 692 506 704 506 H 788 Q 800 506 800 518 V 532"/>
-    <path class="connector" d="M 908 474 V 494 Q 908 506 896 506 H 812 Q 800 506 800 518 V 532"/>
-    <path class="connector" d="M 1124 474 V 494 Q 1124 506 1112 506 H 812 Q 800 506 800 518 V 532"/>
-    <path class="connector" d="M 1340 474 V 494 Q 1340 506 1328 506 H 812 Q 800 506 800 518 V 532"/>
+  <g fill="none" stroke="#4f7dc9" stroke-width="2.2">
+    <path class="connector" d="M 260 474 V 506"/>
+    <path class="connector" d="M 476 474 V 506"/>
+    <path class="connector" d="M 692 474 V 506"/>
+    <path class="connector" d="M 908 474 V 506"/>
+    <path class="connector" d="M 1124 474 V 506"/>
+    <path class="connector" d="M 1340 474 V 506"/>
+    <path class="connector" d="M 260 506 H 1340"/>
+    <path class="connector" d="M 800 506 V 532" marker-end="url(#arrow-blue)"/>
   </g>
   <g filter="url(#shadow)">
     <rect x="585" y="532" width="430" height="82" rx="16" fill="#e8f1ff" stroke="#4f7dc9" stroke-width="2.5"/>

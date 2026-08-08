@@ -51,8 +51,33 @@ README SVG/Mermaid residue, unreferenced canonical PNG을 각각 실패시킨다
 
 ## 남은 범위
 
-이번 변경에서 기존 workspace diagram을 재렌더링하거나 강제로 metadata를
-일괄 삽입하지 않았다. 따라서 기존 자산은 다음 touched-asset 작업에서
-`data-tip-direction`/`orient`, SVG↔PNG pair, README exposure, PNG canvas를
-순서대로 보강해야 한다. 새 규칙이 기존 자산 전체에 적용됐다고 주장하지
-않으며, one-asset loop와 full-size PNG 검사를 유지한다.
+초기 규칙 보강 단계에서는 기존 diagram을 재렌더링하지 않았지만, 후속
+자산 이행에서 공개 bundle의 현재 3개 자산을 실제로 보강했다.
+
+## 후속 자산 이행 (2026-08-08)
+
+사용자 요청에 따라 다음 자산을 one-asset loop로 재검증하고, SVG를
+CairoSVG 2.9.0으로 다시 PNG로 렌더링했다.
+
+- `bluetape-skills-public-bundle-boundary-01.svg`: primary marker에
+  `data-role`과 `data-tip-direction="positive-x"`를 추가했다.
+- `bluetape-workflow-7-tier-review-01.svg`: blue/red/green marker를 모두
+  `14x14` primary head로 통일하고, marker를 group에서 실제 종단 path로
+  옮겼다. fan-out/fan-in 공통 선분은 무화살표 bus/trunk로 분리해
+  `shared_segments=0`으로 만들고, 짧은 마지막 수직 구간을 15px 이상으로
+  확보했다.
+- `bluetape-workflow-type-router-01.svg`: primary marker metadata를 추가하고
+  7개 lane fan-out을 trunk/bus/종단 branch로 분리했다.
+- branch/loop 자산의 재현 가능한 source model은
+  `docs/images/*.semantic.json` ledger로 보존했다.
+
+최종 감사 결과는 세 SVG 모두 XML/text/arrowhead/connector/geometry/endpoint/
+mixed-corner 실패 0, marker 방향 검사 `1/1`, `16/16`, `8/8`, PNG는 각각
+`2400x1440`, `3200x1800`, `2400x1440`의 opaque canvas와 균등 46px 여백,
+README pair 감사는 `svgs=3`, `pngs=3`, `pairs=3`, `png_refs=3`,
+`svg_refs=0`이다. 각 PNG는 full-size로 확인했으며, 새 규칙은 이 3개
+자산에 실제 적용된 상태다.
+
+새 diagram을 추가할 때도 generator/source metadata, one-asset loop,
+semantic ledger(반복 review·branch·긴 식별자), SVG↔PNG pair, full-size PNG
+검사를 생략하지 않는다.
