@@ -1,6 +1,6 @@
 ---
 name: bluetape-diagram
-description: Use when bluetape4k work creates or updates technical diagrams, charts, README visuals, docs visuals, blog images, or site visual assets.
+description: Use when bluetape4k work creates or updates technical diagrams, charts, README visuals, docs visuals, blog images, or site visual assets, especially repeated-review diagrams with long identifiers, branches, loops, or geometry blockers.
 ---
 
 # bluetape4k Diagram Generation
@@ -26,6 +26,10 @@ Then read only the matching kind files:
 | chart, benchmark, README metric visual | `references/chart.md` |
 | reader-explorable business workflow, journey, decision/process map, operational flow | `references/workflow.md` |
 
+For an asset with repeated review/recreation, a benchmark comparison, more than
+one branch/loop, or long technical identifiers, also read
+`references/semantic-ledger.md` and create its ledger before drawing.
+
 If a user-reported defect is about connectors, markers, arrowheads, labels,
 icons, lane whitespace, rendered PNG parity, or review pages, keep
 `references/common.md` open while editing.
@@ -33,7 +37,11 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
 ## Execution Contract
 
 1. Read the target README/page and source-backed behavior before drawing.
-2. Work one asset at a time and choose the pipeline by information shape:
+2. For the high-change cases named above, validate a semantic ledger before
+   choosing coordinates. Keep the reader question, source revision/paths,
+   unique node IDs, closed edges, complexity decision, and repair receipt.
+   Never shorten a technical identifier just to satisfy a budget.
+3. Work one asset at a time and choose the pipeline by information shape:
    - Use SVG -> PNG for precise static structure, topology, time order, and
      relationships: architecture/component, class/UML, ERD, sequence, and
      static connector-driven flow.
@@ -43,14 +51,14 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
      locale support alone do not qualify an asset for HTML.
    - Do not force one universal pipeline. Apply the eligibility gate in
      `references/chart.md` or `references/workflow.md`.
-3. Treat PNG output as authoritative. Source-only success never closes the
+4. Treat PNG output as authoritative. Source-only success never closes the
    task.
-4. Convert every user-reported visual defect into a concrete geometry/style
+5. Convert every user-reported visual defect into a concrete geometry/style
    invariant and record the evidence.
-5. Use the installed generators only as helpers:
+6. Use the installed generators only as helpers:
    - `$fireworks-tech-graph` for diagrams/charts by default.
    - `$architecture-diagram-generator` for system architecture diagrams.
-6. Do not use Graphviz for bluetape4k README diagrams.
+7. Do not use Graphviz for bluetape4k README diagrams.
 
 ## Non-Negotiable Gates
 
@@ -63,6 +71,9 @@ icons, lane whitespace, rendered PNG parity, or review pages, keep
   change.
 - Reject CairoSVG text hazards and unhighlighted explicit code snippets with
   `diagram-svg-text-normalize.py` before canonical SVG PNG rendering.
+- High-change assets must have a passing `diagram-semantic-audit.py` report
+  before rendering; a budget warning is a split/subtitle/legend repair signal,
+  not permission to remove source-backed nodes or shorten identifiers.
 - Connector-heavy diagrams must have XML parse, marker/color, endpoint,
   perpendicular attachment, geometry, crossing/card-intrusion,
   relationship-label clearance, shared-corridor, mixed-corner, and full-size
@@ -89,12 +100,12 @@ common checklist and every selected kind checklist for each asset separately.
   - **Evidence:** Source/asset ledger and trigger-to-reference map.
   - **Failure:** Remove or defer assets without a source-backed reader purpose.
 - [ ] **DIA-02 — Load common and kind rules**
-  - **Action:** Read `common.md` and only the matching architecture/class/ERD/sequence/chart/workflow references; keep common open for user-reported geometry/style defects.
+  - **Action:** Read `common.md`, the matching kind reference, and `semantic-ledger.md` for high-change/branch-heavy/long-identifier assets; keep common open for user-reported geometry/style defects.
   - **Evidence:** Exact loaded reference list and applicable conditional rules.
   - **Failure:** Do not edit from generic diagram conventions.
 - [ ] **DIA-03 — Complete one source edit**
-  - **Action:** Edit exactly one asset in the selected source format, preserving source-backed concepts and converting reported defects into explicit invariants.
-  - **Evidence:** Scoped SVG diff, or eligible DOM-native chart/workflow HTML/CSS plus its single structured data source, and the invariant list.
+  - **Action:** Edit exactly one asset in the selected source format, preserving source-backed concepts and converting reported defects into explicit invariants. For high-change assets, update the semantic ledger and repair receipt with the same edit.
+  - **Evidence:** Scoped SVG diff, or eligible DOM-native chart/workflow HTML/CSS plus its single structured data source, the passing semantic report when applicable, and the invariant list.
   - **Failure:** Stop batch progression until this asset completes the full loop.
 - [ ] **DIA-04 — Validate source and render the authoritative PNG**
   - **Action:** For SVG, validate XML and render with CairoSVG at scale 2. For an eligible DOM-native chart or workflow, validate source/data and use the deterministic Chromium capture contract from its kind reference.

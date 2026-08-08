@@ -10,7 +10,14 @@ import xml.etree.ElementTree as ET
 
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
-NORMALIZER = SKILL_ROOT / "scripts" / "diagram-svg-text-normalize.py"
+NORMALIZER = next(
+    path
+    for path in (
+        SKILL_ROOT / "scripts" / "diagram-svg-text-normalize.py",
+        SKILL_ROOT / "scripts" / "executable_diagram-svg-text-normalize.py",
+    )
+    if path.exists()
+)
 
 
 class DiagramSvgTextNormalizeTest(unittest.TestCase):

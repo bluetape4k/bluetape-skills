@@ -15,6 +15,10 @@ visual, blog image, or site visual.
   user explicitly asks for migration or visual parity.
 - If the user reports a defect, scan the related diagram set for the same
   marker, connector, label, icon, lane, endpoint, or style pattern.
+- For repeated-review assets, benchmark comparisons, branch/loop-heavy views,
+  or long technical identifiers, create and validate a semantic ledger before
+  drawing. The ledger is an input contract, not a replacement for rendered
+  geometry or PNG inspection.
 
 ## One-Asset Loop
 
@@ -36,14 +40,16 @@ remain SVG, while eligible charts and business workflows follow `chart.md` or
 `workflow.md`.
 
 1. Select and record one approved source pipeline.
-2. Edit one source asset.
-3. Validate the source: XML for SVG, or HTML plus its data contract for an
+2. For the high-change cases above, run `diagram-semantic-audit.py` against the
+   source ledger and record its counts/budget before drawing.
+3. Edit one source asset.
+4. Validate the source: XML for SVG, or HTML plus its data contract for an
    eligible DOM-native chart/workflow.
-4. Render the matching PNG with CairoSVG or the kind-specific deterministic
+5. Render the matching PNG with CairoSVG or the kind-specific deterministic
    Chromium capture contract.
-5. Inspect the full-size PNG.
-6. Run type-specific audits and fallback invariants.
-7. Record evidence before moving to the next asset.
+6. Inspect the full-size PNG.
+7. Run type-specific audits and fallback invariants.
+8. Record evidence and any repair receipt before moving to the next asset.
 
 Batch scripts and contact sheets are allowed only as pattern scans. They do not
 replace one-by-one full-size PNG inspection.
@@ -170,6 +176,7 @@ by its kind reference.
 ```bash
 xmllint --noout <diagram>.svg
 cairosvg <diagram>.svg -o <diagram>.png -s 2
+python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-semantic-audit.py" --repo-root <repository-root> --json <diagram>.semantic.json
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-connector-audit.py" <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-geometry-audit.py" --fail-diagonal <diagram>.svg
 python3 "${CODEX_HOME:-$HOME/.codex}/skills/bluetape-diagram/scripts/diagram-endpoint-audit.py" <diagram>.svg
