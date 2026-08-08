@@ -52,6 +52,19 @@ class DiagramArrowheadAuditTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("terminal_checks=1", result.stdout)
 
+    def test_class_based_marker_reference_is_counted_and_audited(self) -> None:
+        result = self.run_audit(
+            marker()
+            + "<!-- BODY -->"
+            '<style>.flow{marker-end:url(#head)}</style>'
+            '<path id="flow" class="flow" d="M20 80 H200" fill="none"/>'
+        )
+
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("used_markers=1", result.stdout)
+        self.assertIn("direction_checks=1", result.stdout)
+        self.assertIn("terminal_checks=1", result.stdout)
+
     def test_wrong_role_size_is_rejected(self) -> None:
         result = self.run_audit(
             marker(width=18, height=14) + "<!-- BODY -->"
