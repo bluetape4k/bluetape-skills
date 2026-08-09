@@ -1,4 +1,5 @@
 .worktrees/
+.bluetape/
 
 # Local validation caches
 **/.pytest_cache/
