@@ -57,16 +57,70 @@ authorize publication side effects.
 | Any new post or substantial rewrite | `references/blog-style-checklist.md` after reading 2-3 nearby posts |
 | Cache, Near Cache, Exposed cache, or workshop cache series | `references/cache-series-lessons.md` |
 | Korean draft is translated, generic, promotional, or LLM-like | `references/korean-naturalness-checklist.md` after facts are locked |
+| Any Korean Superpowers brainstorming, specification/design, plan, review, or lesson | `references/korean-naturalness-checklist.md` after facts are locked |
 | User asks for their Exposed-book voice or says the text does not sound like them | `references/kotlin-exposed-book-style.md` |
 
 Do not load cache or personal-voice references for unrelated posts.
 
+## Superpowers Technical Artifact Gate
+
+Apply this gate to every new or materially revised brainstorming/design
+discussion, specification/design, implementation plan, review, and lesson. It
+applies to transient chat prose and review summaries as well as files under
+`docs/superpowers/`, `docs/review/`, and `docs/lessons/`. Instantiate a fresh
+copy for each artifact; evidence from one artifact does not prove another.
+
+Treat a revision as material when it changes technical meaning, a decision or
+recommendation, scope or boundary, acceptance/DoD mapping, evidence or source
+basis, finding severity or disposition, verification claims, or the
+reader-facing structure that supports those elements. Spelling, punctuation,
+or layout corrections that change none of them do not require a fresh full
+checklist, but the owning edit still needs the `SPW-05` final read-back.
+
+Independent reviewer notes may remain lane-internal while perspectives are
+being collected. Once those notes are integrated into a verdict, user-visible
+response, or persisted review artifact, treat the integrated output as a new
+artifact and complete the full `SPW-01` through `SPW-05` gate.
+
+Apply `bluetape-workflow/references/checklist-contract.md`. Every row below is
+required unless the entire artifact is out of scope. A language-policy reminder,
+spellcheck, or generic prose cleanup cannot replace these checks. A missing or
+unchecked item blocks the dependent workflow step.
+
+The native `writer` role and this `bluetape-writer` skill are distinct. A
+delegated writer response is supporting evidence only; the owning session must
+still load this skill, verify the final integrated artifact, and record every
+applicable `SPW-*` result.
+
+- [ ] **SPW-01 — Lock audience, purpose, and evidence**
+  - **Action:** Identify the artifact kind, primary reader, required language, decision or question, current source paths/URLs, exact identifiers, and unsupported or unresolved claims before drafting.
+  - **Evidence:** Artifact path or transcript location, audience/language, purpose, source ledger, preserved technical tokens, and explicit unknowns.
+  - **Failure:** Stop drafting or qualify/remove unsupported claims; do not write repository behavior from memory while current evidence is available.
+- [ ] **SPW-02 — Satisfy the artifact contract**
+  - **Action:** Write the smallest complete structure for the artifact kind: brainstorming states the problem, constraints, viable alternatives, recommendation, and tradeoffs; a spec adds boundaries, contracts, failure modes, compatibility, acceptance criteria, and DoD; a plan adds dependency order, exact actions/files, expected evidence, tests, rollback/rerun points, and approval gates; a review adds scope/basis, severity, concrete location/evidence, disposition, gaps, and verdict; a lesson adds context, decision, outcome, verification, miss or surprise, and a future guard or evidence-backed N/A.
+  - **Evidence:** Artifact sections or transcript anchors covering every applicable field without filler.
+  - **Failure:** Keep the artifact incomplete and block approval, implementation, PR progression, or lesson closure until the missing contract is repaired.
+- [ ] **SPW-03 — Apply Korean technical register**
+  - **Action:** For Korean artifacts, complete `references/korean-naturalness-checklist.md` after facts are locked; use precise engineer-to-engineer prose, stable terminology, concrete verbs, and correct subject/predicate and semantic dimensions while preserving code, identifiers, commands, URLs, numbers, citations, and exact errors. For an explicitly non-Korean artifact, apply the same precision and preservation rules in its approved language.
+  - **Evidence:** Completed naturalness checklist for Korean or approved non-Korean scope, terminology decisions, and confirmation that no meaning-changing rewrite occurred.
+  - **Failure:** Reject translationese, promotional or generic AI prose, invented metaphors, vague conclusions, terminology drift, or any rewrite that changes technical meaning.
+- [ ] **SPW-04 — Verify technical meaning and traceability**
+  - **Action:** Read the finished artifact against its sources and upstream/downstream artifacts; verify facts, identifiers, numbers, links, examples, decisions, acceptance mapping, severity, commands, and stated gaps without softening uncertainty or findings.
+  - **Evidence:** Source-to-claim and, when applicable, spec-to-plan or finding-to-disposition traceability with mismatches repaired.
+  - **Failure:** Reopen the artifact and every dependent review or approval affected by drift; a later test or CI pass does not repair prose traceability.
+- [ ] **SPW-05 — Read back and record writer DoD**
+  - **Action:** Re-read the rendered Markdown or final transcript in context, confirm headings/tables/lists/code fences and concise technical flow, then record `SPW-01` through `SPW-05` status in the owning workflow evidence.
+  - **Evidence:** Final path or transcript anchor, read-back result, applicable checklist count, remaining gaps, and owning workflow step.
+  - **Failure:** Leave the writer gate unchecked and block the dependent workflow step; do not claim the artifact or workflow step complete.
+
 ## Article Workflow
 
 Use this sequence only for technical posts, series, or site routes. For README,
-KDoc, design, plan, review, lesson, operations, release, or diagram prose, use
-the parent Type E workflow plus the triggered reference and validation rows;
-do not require post, series, hero, locale-publication, or site-build steps.
+KDoc, design, plan, review, lesson, operations, release, or diagram prose, stay
+inside the parent workflow already selected by `bluetape-workflow` and apply
+the matching writer gate plus triggered references; standalone documentation
+maintenance remains Type E. Do not require post, series, hero,
+locale-publication, or site-build steps.
 
 1. Confirm single post/series, Korean-only/English-only/bilingual scope, source
    repositories, branch, benchmark evidence, and visual needs.
@@ -189,9 +243,10 @@ do not require post, series, hero, locale-publication, or site-build steps.
 
 Apply this checklist to technical blog posts and article routes. For README,
 KDoc, specification, design, plan, review, lesson, operations, release, or
-diagram prose, use the parent Type E checklist plus every triggered reference;
-mark article-only route, locale, hero, and series-navigation rows N/A with
-concrete scope evidence.
+diagram prose, use the already selected parent workflow plus `SPW-*` when
+triggered; standalone documentation maintenance uses Type E. Do not instantiate
+`BLOG-*` rows for a non-article artifact merely to mark article-only route,
+locale, hero, or series-navigation work N/A.
 
 Apply `bluetape-workflow/references/checklist-contract.md`.
 

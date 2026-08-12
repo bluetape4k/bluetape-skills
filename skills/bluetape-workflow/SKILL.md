@@ -148,6 +148,7 @@ Load only what the current step needs:
 | Rust implementation/review/release preflight | `bluetape-rs-patterns` |
 | Python implementation/review/release preflight | `bluetape-py-patterns` |
 | Blog/article or Korean README prose | `bluetape-writer` |
+| Any Superpowers technical artifact: brainstorming/design discussion, specification/design, implementation plan, review, or lesson | `bluetape-writer`; complete `SPW-01`, `SPW-02`, `SPW-03`, `SPW-04`, and `SPW-05` for each new or materially revised artifact |
 | Diagram, chart, benchmark visual, or README visual asset | `bluetape-diagram` |
 | User-facing final report | `templates/final-report-step-dod.md` |
 | Issue-linked PR body | `templates/pr-body-step-dod.md`; `## DoD Status` must be the final `##` section |
@@ -155,6 +156,12 @@ Load only what the current step needs:
 If a required leaf skill is missing or unreadable, stop before mutation and
 report the missing workflow surface. Do not silently reconstruct a large
 workflow from memory.
+
+The Superpowers technical artifact route is a hard gate for transient
+brainstorming/review prose as well as durable files. A language-policy reminder
+or a generic editorial pass is not substitute evidence. A missing or unreadable
+`bluetape-writer`, or any unchecked `SPW-*` item for the current artifact,
+blocks the dependent workflow step.
 
 ## Native Coordinator Boundary
 
