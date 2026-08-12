@@ -116,13 +116,13 @@
   - **Action:** CHANGELOG, EN/KO README, release checklist를 `v1.3.3`으로 맞춘다.
   - **Evidence:** `CHANGELOG.md`, `README.md`, `README.ko.md`, 이 checklist의 `v1.3.3` 정렬과 README version token count 5/5.
   - **Failure:** 불일치한 상태로 검증하지 않는다.
-- [ ] **CG-07 — 대상 검증 실행**
+- [x] **CG-07 — 대상 검증 실행**
   - **Action:** validator, diff check, archive checksum·추출·fresh install을 실행한다.
-  - **Evidence:** exact candidate SHA와 fresh command 결과.
+  - **Evidence:** candidate `f3f0dc9647ae59c6495dad088fd932a07462baaf`에서 validator PASS, archive SHA-256 2개 OK, tar/zip 추출본 validator PASS, 격리 설치 14/14 각각 확인.
   - **Failure:** 수정 후 전체 영향 검증을 다시 실행한다.
-- [ ] **CG-09 — lesson gate 평가**
+- [x] **CG-09 — lesson gate 평가**
   - **Action:** task/diff와 기존 release lesson을 대조한다.
-  - **Evidence:** 새 lesson path 또는 novel failure/recovery/design/operations 부재와 재사용한 기존 rule.
+  - **Evidence:** 새 lesson N/A. `docs/lessons/2026-07-27-live-skill-bundle-sync-workflow-gates.md`의 공개 bundle 경계·fresh install 규칙과 `docs/lessons/2026-08-12-superpowers-writer-hard-gate.md`의 writer gate 결정을 그대로 재사용했다. 이번 release metadata diff에는 novel failure, recovery, design, operational guidance가 없다.
   - **Failure:** lesson 근거 없이는 pre-PR proof로 진행하지 않는다.
 - [ ] **CG-10 — pre-PR proof 수렴**
   - **Action:** 최종 diff review, P0/P1=0, 검증 재실행 후 commit한다.
@@ -143,9 +143,9 @@
   - **Action:** exact candidate에서 public bundle validator와 diff check를 실행한다.
   - **Evidence:** `./scripts/validate.sh`에서 workflow `146 passed, 1 skipped, 164 subtests`, diagram 50개, canonical skill 14개와 public boundary PASS. `git diff --check` PASS.
   - **Failure:** commit/push를 중단한다.
-- [ ] **REL-03A — archive 소비자 사전 검증**
+- [x] **REL-03A — archive 소비자 사전 검증**
   - **Action:** candidate-derived tar.gz/zip/checksum과 추출본·fresh install을 검증한다.
-  - **Evidence:** checksum OK, 두 추출본 validator PASS, 두 격리 설치 14/14.
+  - **Evidence:** candidate `f3f0dc9`에서 tar `5eb8f6c1ba3854bf3dd0334aea82806223e3dee71030fac8489d707a5c28fbd7`, zip `bd12030f51c9c22c6468f47b15f1a310348d357d66e6014a2d0745ec2911fa4d`; checksum OK, 두 추출본 validator PASS, 두 격리 설치 14/14.
   - **Failure:** PR 생성을 중단한다.
 - [ ] **REL-04 — develop 준비 PR 전달**
   - **Action:** exact branch를 push하고 `develop` 대상 Korean PR을 만들고 live read-back한다.
