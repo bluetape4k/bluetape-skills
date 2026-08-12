@@ -88,3 +88,25 @@ README pair 감사는 `svgs=3`, `pngs=3`, `pairs=3`, `png_refs=3`,
 새 diagram을 추가할 때도 generator/source metadata, one-asset loop,
 semantic ledger(반복 review·branch·긴 식별자), SVG↔PNG pair, full-size PNG
 검사를 생략하지 않는다.
+
+## 화살촉 결함의 기준선/수정 후 증거 (2026-08-08)
+
+두 대표 아키텍처 자산에서 같은 결함을 먼저 재현했다. 기존 감사는 CSS에만
+`marker-end`가 선언된 커넥터를 사용하지 않은 것으로 오인해 `markers=4
+used_markers=0`(graph), `markers=5 used_markers=0`(image)으로 보고했으며,
+실제 PNG에서 graph 화살촉은 방향과 끝점이 불안정하고 image 주요 경로의
+화살촉은 secondary 크기라 작았다.
+
+수정 후 기준선과 같은 명령을 다시 실행한 결과는 다음과 같다.
+
+| 자산 | arrowhead 감사 | connector/geometry | PNG |
+|---|---|---|---|
+| `bluetape4k-graph-architecture-01` | `markers=4 used_markers=4 direction_checks=12 terminal_checks=8` | `connectors=8 intrusions=0`, `geometry_failures=0` | `3160x1960`, opaque, 균등 58px 여백 |
+| `bluetape4k-image-architecture-01` | `markers=5 used_markers=5 direction_checks=15 terminal_checks=11` | `connectors=11 intrusions=0`, `geometry_failures=0` | `3160x1960`, opaque, 균형 여백 |
+
+이 증거를 재현하려면 marker 참조가 직접 속성이거나 감사기가 해석할 수 있는
+CSS 규칙이어야 하며, `markers>0 used_markers=0`은 PASS가 아니라 실패로
+처리해야 한다. 사용자 결함 보고에는 기준선과 수정 후 감사 줄을 함께 남기고,
+전체 크기 PNG를 확인한다. 이 회귀 조건은 `bluetape-diagram`의 CSS marker
+resolver와 테스트로 고정했으며, 공개 bundle 검증은 `145 passed, 1 skipped,
+159 subtests`, diagram 전체 테스트는 `50 passed`이다.

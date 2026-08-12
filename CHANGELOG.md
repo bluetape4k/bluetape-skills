@@ -1,8 +1,30 @@
-# Changelog
+# 변경 기록
 
-All notable changes to Bluetape Skills are documented in this file.
+Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
+
+## [1.3.3] - 2026-08-12
+
+### 추가
+
+- Superpowers brainstorming, specification/design, plan, review, lesson마다
+  `$bluetape-writer`의 `SPW-01..05`를 독립적으로 적용하는 필수 게이트와
+  회귀 검증을 추가했습니다. 기술적 의미가 달라지는 material revision과
+  독립 review를 통합한 최종 산출물도 새 writer 검증 대상으로 판정합니다.
+
+### 변경
+
+- `$bluetape-diagram`의 arrowhead audit가 CSS class 기반 marker를 포함하고,
+  변경 전·후 증거를 더 엄격하게 검증하도록 보강했습니다.
+- 공개 release checklist와 관련 기술 문서의 독자용 설명을 한국어 기술 문체로
+  통일하고, Type A 산출물이 별도 Type E workflow로 잘못 중첩되지 않도록
+  책임 경계를 명확히 했습니다.
+
+### 버그 수정
+
+- repository-local `.bluetape/` runtime state가 공개 bundle에 포함되지 않도록
+  root ignore 규칙을 추가했습니다.
 
 ## [1.3.2] - 2026-08-08
 
@@ -33,103 +55,118 @@ All notable changes to Bluetape Skills are documented in this file.
 
 ## [1.3.0] - 2026-07-31
 
-### Changed
+### 변경
 
-- Simplified the canonical workflow contracts for GPT-5.6 by assigning shared
-  semantics to one owner and keeping leaf skills focused on type-specific
-  deltas.
-- Updated `$bluetape-diagram` with a reusable workflow reference and clearer
-  validation boundaries for deterministic public diagrams.
-- Strengthened `$bluetape-writer` Korean register and naturalness guidance
-  without retaining article-specific examples in the reusable reference.
-- Kept new and meaningfully updated Kotlin guidance Korean-first across the
-  canonical Kotlin and full-feature skill surfaces.
+- GPT-5.6용 canonical workflow 계약의 공통 의미를 한 소유자에게 모으고,
+  leaf skill은 유형별 차이에 집중하도록 단순화했습니다.
+- 재사용 가능한 workflow reference와 결정론적 공개 다이어그램의 검증
+  경계를 명확히 하도록 `$bluetape-diagram`을 갱신했습니다.
+- 재사용 reference에는 글별 사례를 남기지 않고 `$bluetape-writer`의 한국어
+  문체와 자연스러움 지침을 강화했습니다.
+- canonical Kotlin 및 full-feature skill 표면의 신규·의미 있는 변경 지침은
+  한국어 우선으로 유지했습니다.
 
 ## [1.2.2] - 2026-07-27
 
-### Added
+### 추가
 
-- Added reusable workflow lessons for repository-practice discovery, hook
-  target resolution, receipt lifecycle recovery, public-bundle test
-  portability, and completion-gate discipline.
-- Added operational logging requirements to the Go, Kotlin, Python, and Rust
-  implementation patterns.
+- 저장소 관행 탐색, hook 대상 확인, receipt 수명주기 복구, 공개 번들 테스트
+  이식성, 완료 gate 규율을 다루는 재사용 가능한 workflow lesson을
+  추가했습니다.
+- Go, Kotlin, Python, Rust 구현 패턴에 운영 로그 요구사항을 추가했습니다.
 
-### Changed
+### 변경
 
-- Adopted `develop` as the default integration branch and reserved `main` for
-  reviewed stable-release promotion only.
-- Expanded `$bluetape-diagram` guidance for DOM-native HTML/CSS charts,
-  deterministic capture, bilingual fonts, and localized visual assets.
-- Strengthened `$bluetape-workflow` worktree isolation, GNO fallback,
-  delegation deadlines, run-command contracts, and failure-resolution rules.
-- Clarified `$bluetape-writer` language selection, audience register, and
-  Korean naturalness checks.
+- `develop`를 기본 통합 branch로 채택하고 `main`은 검토된 안정 release
+  승격에만 사용하도록 했습니다.
+- DOM 기반 HTML/CSS 차트, 결정론적 캡처, 이중 언어 글꼴, 현지화된 시각
+  자산에 대한 `$bluetape-diagram` 지침을 확장했습니다.
+- `$bluetape-workflow`의 worktree 격리, GNO fallback, 위임 deadline,
+  run-command 계약, 실패 해소 규칙을 강화했습니다.
+- `$bluetape-writer`의 언어 선택, 독자 문체, 한국어 자연스러움 점검을
+  명확히 했습니다.
 
-### Fixed
+### 버그 수정
 
-- Allowed append-only coordinator completion after a failed review lane is
-  explicitly linked to a completed correction or exact-head rereview lane,
-  while unresolved and invalid failure-resolution claims remain blocking.
-- Made source-only workflow contract tests skip explicitly when private
-  `AGENTS.md` and external companion skills are absent from the public bundle.
+- 실패한 review lane을 완료된 correction 또는 exact-head rereview lane과
+  명시적으로 연결한 뒤 append-only coordinator 완료를 허용하되, 미해결·잘못된
+  실패 해소 주장은 계속 block하도록 했습니다.
+- private `AGENTS.md`와 외부 companion skill이 공개 번들에 없을 때 source-only
+  workflow contract test가 명시적으로 skip하도록 했습니다.
 
 ## [1.2.1] - 2026-07-17
 
-### Added
+### 추가
 
-- A fail-closed SVG text normalizer that removes renderer-sensitive text halos
-  and preserves lane and relationship labels in CairoSVG PNG output.
-- Semantic token highlighting for explicit code snippets, with regression
-  coverage for CSS cascade, inline attributes, token styles, and idempotence.
+- renderer에 민감한 text halo를 제거하고 CairoSVG PNG 출력의 lane·관계 label을
+  보존하는 fail-closed SVG text normalizer를 추가했습니다.
+- 명시적 code snippet의 semantic token highlighting을 추가하고 CSS cascade,
+  inline attribute, token style, 멱등성 회귀 범위를 포함했습니다.
 
-### Changed
+### 변경
 
-- `$bluetape-diagram` now requires `text_hazards=0` and
-  `code_without_highlight=0` before canonical PNG rendering.
+- canonical PNG를 렌더링하기 전에 `$bluetape-diagram`이 `text_hazards=0`과
+  `code_without_highlight=0`을 요구하도록 했습니다.
 
 ## [1.2.0] - 2026-07-17
 
-### Added
+### 추가
 
-- Automatic `$bluetape-diagram` connector checks for relationship-label collisions and shared connector segments.
+- 관계 label 충돌과 공유 connector segment를 검사하는
+  `$bluetape-diagram` 자동 connector check를 추가했습니다.
 
-### Changed
+### 변경
 
-- Connector audit failures now use `data-from`/`data-to` relationship names when available, apply SVG affine transforms, and keep disconnected path subpaths separate.
+- connector audit 실패는 가능한 경우 `data-from`/`data-to` 관계 이름을 사용하고,
+  SVG affine transform을 적용하며, 연결되지 않은 path subpath를 분리해
+  유지하도록 했습니다.
 
 ## [1.1.0] - 2026-07-14
 
-### Added
+### 추가
 
-- Phase 2 native workflow runtime with guarded run/lane lifecycle commands, topology-based completion, liveness handling, receipt-backed recovery, handoff, and immutable live reports.
-- Workflow manifest 1.1, receipt/topology/liveness contracts, and regression coverage for coordinator lifecycle, recovery, security, locking, scale, and rendered layouts.
+- guard가 적용된 run/lane lifecycle command, topology 기반 완료 판정,
+  liveness 처리, receipt 기반 복구, handoff, immutable live report를 제공하는
+  Phase 2 native workflow runtime을 추가했습니다.
+- Workflow manifest 1.1, receipt/topology/liveness 계약과 coordinator lifecycle,
+  복구, 보안, lock, 규모, 렌더링 레이아웃 회귀 범위를 추가했습니다.
 
-### Changed
+### 변경
 
-- Synchronized all 14 canonical Bluetape skills so router, maintenance, publishing, bug-fix, fast-track, full-feature, and self-improvement gates share the current workflow contract.
-- Expanded bundle validation to check the manifest inventory, rendered executable names, declared external companion skills, workflow contracts, and the complete workflow test suite.
-- Updated English and Korean installation, update, runtime, and verification guidance for the 1.1.0 bundle.
+- 14개 canonical Bluetape skill을 동기화해 router, maintenance, publishing,
+  bug-fix, fast-track, full-feature, self-improvement gate가 현재 workflow
+  계약을 공유하도록 했습니다.
+- 번들 검증이 manifest inventory, 렌더링된 실행 파일 이름, 선언된 외부
+  companion skill, workflow 계약, 전체 workflow test suite를 점검하도록
+  확장했습니다.
+- 1.1.0 번들의 영어·한국어 설치, 업데이트, runtime, 검증 지침을
+  갱신했습니다.
 
-### Security
+### 보안
 
-- Hardened owner fencing, filesystem containment, permission checks, stale-lock recovery, receipt verification, and recovery-run provenance.
+- owner fencing, filesystem containment, permission check, stale-lock recovery,
+  receipt 검증, recovery-run provenance을 강화했습니다.
 
 ## [1.0.0] - 2026-07-11
 
-### Added
+### 추가
 
-- First stable public bundle of 14 canonical Bluetape development skills with their references, templates, scripts, and agent prompts.
-- Safe install and update scripts with private runtime state and retired aliases excluded from distribution.
-- Bilingual installation and usage guidance, including the public bundle boundary, workflow router, and 7-Tier review gates.
-- Validation for canonical inventory, required skill front matter, and forbidden private or secret-like payloads.
+- reference, template, script, agent prompt를 포함한 14개 canonical Bluetape
+  개발 skill의 첫 안정 공개 번들을 제공했습니다.
+- private runtime state와 retired alias를 배포에서 제외하는 안전한 설치·업데이트
+  script를 추가했습니다.
+- 공개 번들 경계, workflow router, 7-Tier review gate를 포함한 이중 언어 설치·
+  사용 지침을 추가했습니다.
+- canonical inventory, 필수 skill front matter, private 또는 secret 유사
+  payload 금지 여부를 검증하도록 했습니다.
 
 [1.0.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.0.0
 [1.1.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.1.0
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
+[1.3.3]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.3
 [1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.2...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.3...develop

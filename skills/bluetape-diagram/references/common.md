@@ -133,6 +133,10 @@ replace one-by-one full-size PNG inspection.
   polygon/polyline head must declare `data-arrowhead="true"`, the same
   `data-role`, `data-size="WxH"`, `data-tip-direction="positive-x"`, and
   `data-solid-head="true"`.
+- Expose marker references on every rendered connector with a direct
+  `marker-start`/`marker-end` attribute or a CSS rule that
+  `diagram-arrowhead-audit.py` can resolve. A report with `markers>0` but
+  `used_markers=0` is incomplete evidence and cannot pass.
 - Treat the marker's local +x axis as the forward axis. `marker-end` must use
   the final non-zero path tangent, while `marker-start` must use
   `auto-start-reverse`; a numeric or missing `orient`, a reversed triangle,
@@ -146,6 +150,10 @@ replace one-by-one full-size PNG inspection.
   marker children/direct heads, and a marker-start/marker-end terminal segment
   shorter than the arrowhead footprint plus the clearance margin. This is a
   coordinate guard, not a replacement for full-size PNG inspection.
+- For a user-reported arrowhead defect, record both the failing or weak
+  baseline line and the repaired line. The repaired line must show the role and
+  standard size, nonzero marker usage, direction/terminal checks, and zero
+  failures before visual inspection is accepted.
 - When one marker mismatch is found, scan the whole related diagram set for the
   same pattern.
 
@@ -272,7 +280,7 @@ to review.
   - **Failure:** Reject invented logos or standard-plus-legacy duplicates.
 - [ ] **DIA-COM-04 — Verify markers in PNG**
   - **Action:** Use fixed per-color markers or direct heads, declare the role/size/orientation/tip-axis contract, run the arrowhead audit, and verify solid color/size/direction in PNG.
-  - **Evidence:** Marker role/size/orient/tip-axis/terminal/direction audit counts and zoomed/full-size PNG notes.
+  - **Evidence:** Baseline and repaired marker role/size/orient/tip-axis/usage/terminal/direction audit counts and zoomed/full-size PNG notes.
   - **Failure:** Dashed, black, mismatched, check-like, or inconsistent heads require repair and related-set scan.
 - [ ] **DIA-COM-05 — Verify connector endpoints and routes**
   - **Action:** Enforce perpendicular boundary attachment, corner clearance, no card/border intrusion, separated ports, no shared connector segments, label clearance, and shortest semantic routes.
@@ -288,7 +296,7 @@ to review.
   - **Failure:** Excess whitespace, cramped lanes, title/note crossings, or stale dependent coordinates blocks PASS.
 - [ ] **DIA-COM-08 — Run required local commands**
   - **Action:** Run the selected pipeline's source validation, render, diff, arrowhead-direction, PNG-geometry, and asset-pair checks; add XML, CairoSVG, connector, geometry, endpoint, and mixed-corner checks when triggered.
-  - **Evidence:** Exact selected-pipeline commands; for connector-heavy SVGs also include nonzero meaningful entity counts, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, `validated=<n>`, `documentedExceptions=<n>`, and failures=0.
+  - **Evidence:** Exact selected-pipeline commands; for connector-heavy SVGs also include nonzero meaningful entity counts, `used_markers>=1` when markers are defined, `shared_segments=0`, `label_cards=0`, `label_labels=0`, `label_connectors=0`, `validated=<n>`, `documentedExceptions=<n>`, and failures=0.
   - **Failure:** WEAK/UNAVAILABLE/zero counts or `legacySkipped` require targeted fallback proof; missing output is FAIL.
 - [ ] **DIA-COM-09 — Verify review exposure**
   - **Action:** When a review page exists, prove it links current worktree canonical SVG/PNG outputs.
