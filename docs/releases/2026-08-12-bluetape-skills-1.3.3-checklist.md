@@ -63,13 +63,13 @@
   - **Action:** required, conditional, N/A를 범위 근거와 함께 구분한다.
   - **Evidence:** 아래 N/A 표와 순서화된 required 항목.
   - **Failure:** 분류하지 않은 항목은 required unchecked로 처리한다.
-- [ ] **CL-03 — 의존 순서 준수**
+- [x] **CL-03 — 의존 순서 준수**
   - **Action:** 체크리스트 위에서 아래 순서로 실행한다.
-  - **Evidence:** commit, PR, merge, publication timestamp와 결과.
+  - **Evidence:** 현재까지 preflight -> 문서 -> validator -> archive/fresh install -> review/lesson -> commit -> push -> PR 순서로 실행했다. merge와 publication branch는 아직 시작하지 않았다.
   - **Failure:** 순서를 건너뛴 downstream 증거를 다시 실행한다.
-- [ ] **CL-04 — 증거 즉시 기록**
+- [x] **CL-04 — 증거 즉시 기록**
   - **Action:** 각 명령과 live 결과를 확인한 직후 해당 항목에 기록한다.
-  - **Evidence:** 명령, SHA, URL, test count, checksum.
+  - **Evidence:** candidate SHA, test count, archive checksum, remote SHA, PR URL과 live metadata를 각 gate에서 기록했다.
   - **Failure:** 증거가 없는 항목은 unchecked로 둔다.
 - [ ] **CL-05 — fail closed**
   - **Action:** 승인·검증·review 대기를 `PENDING`으로 유지한다.
@@ -147,9 +147,9 @@
   - **Action:** candidate-derived tar.gz/zip/checksum과 추출본·fresh install을 검증한다.
   - **Evidence:** candidate `f3f0dc9`에서 tar `5eb8f6c1ba3854bf3dd0334aea82806223e3dee71030fac8489d707a5c28fbd7`, zip `bd12030f51c9c22c6468f47b15f1a310348d357d66e6014a2d0745ec2911fa4d`; checksum OK, 두 추출본 validator PASS, 두 격리 설치 14/14.
   - **Failure:** PR 생성을 중단한다.
-- [ ] **REL-04 — develop 준비 PR 전달**
+- [x] **REL-04 — develop 준비 PR 전달**
   - **Action:** exact branch를 push하고 `develop` 대상 Korean PR을 만들고 live read-back한다.
-  - **Evidence:** PR URL, head SHA, assignee, final `## DoD Status`.
+  - **Evidence:** PR #32 `https://github.com/bluetape4k/bluetape-skills/pull/32`, initial exact head `3f282c96d66764c31020c6aa29f4a651b1290068`, assignee `debop`, final heading `## DoD Status`, `MERGEABLE`.
   - **Failure:** live PR을 복구한다.
 - [ ] **REL-05 — develop 병합 승인 대기**
   - **Action:** exact-head merge-ready를 보고하고 fresh approval을 기다린다.
@@ -182,17 +182,17 @@
   - **Action:** 승인된 repo/base/head와 모든 pre-PR prerequisite를 다시 확인한다.
   - **Evidence:** 사용자가 `bluetape4k/bluetape-skills`의 `release/bluetape-skills-1.3.3` -> `develop` PR 생성과 후속 promotion PR 생성을 승인함. CG-01..10과 REL-01..03A PASS.
   - **Failure:** PR 생성을 중단한다.
-- [ ] **CG-12 — exact head push**
+- [x] **CG-12 — exact head push**
   - **Action:** force 없이 push하고 local/remote SHA를 대조한다.
-  - **Evidence:** matching SHA.
+  - **Evidence:** initial push에서 local/remote `3f282c96d66764c31020c6aa29f4a651b1290068` 일치. 이 live evidence 기록 commit을 포함한 final head도 force 없이 다시 push하고 대조한다.
   - **Failure:** PR 생성을 중단한다.
-- [ ] **CG-13 — PR 생성과 live 검증**
+- [x] **CG-13 — PR 생성과 live 검증**
   - **Action:** assignee `debop`, Korean body, final `## DoD Status`를 확인한다.
-  - **Evidence:** live PR metadata.
+  - **Evidence:** PR #32, base `develop`, head `release/bluetape-skills-1.3.3`, assignee `debop`, final `## DoD Status`, issue/milestone/labels N/A.
   - **Failure:** CI/review 진행 전에 수정한다.
-- [ ] **CG-14 — CI와 live review 확인**
+- [x] **CG-14 — CI와 live review 확인**
   - **Action:** exact head의 checks, reviews, threads를 읽는다.
-  - **Evidence:** required check와 unresolved blocker 없음, P0/P1=0.
+  - **Evidence:** repository workflow와 branch protection이 없어 `statusCheckRollup=[]`; live reviews 0, review threads 0, final scoped review P0=0/P1=0, PR `MERGEABLE`.
   - **Failure:** 대기는 `PENDING`, 실패는 repair로 되돌린다.
 - [ ] **CG-15 — merge-ready 보고**
   - **Action:** exact PR/head, 검증, lesson, count를 사용자에게 보고한다.
