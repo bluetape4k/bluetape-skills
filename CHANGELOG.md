@@ -4,6 +4,28 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-08-12
+
+### 추가
+
+- Superpowers brainstorming, specification/design, plan, review, lesson마다
+  `$bluetape-writer`의 `SPW-01..05`를 독립적으로 적용하는 필수 게이트와
+  회귀 검증을 추가했습니다. 기술적 의미가 달라지는 material revision과
+  독립 review를 통합한 최종 산출물도 새 writer 검증 대상으로 판정합니다.
+
+### 변경
+
+- `$bluetape-diagram`의 arrowhead audit가 CSS class 기반 marker를 포함하고,
+  변경 전·후 증거를 더 엄격하게 검증하도록 보강했습니다.
+- 공개 release checklist와 관련 기술 문서의 독자용 설명을 한국어 기술 문체로
+  통일하고, Type A 산출물이 별도 Type E workflow로 잘못 중첩되지 않도록
+  책임 경계를 명확히 했습니다.
+
+### 버그 수정
+
+- repository-local `.bluetape/` runtime state가 공개 bundle에 포함되지 않도록
+  root ignore 규칙을 추가했습니다.
+
 ## [1.3.2] - 2026-08-08
 
 ### 추가
@@ -143,7 +165,8 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 [1.2.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.0
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
+[1.3.3]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.3
 [1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.2...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.3...develop
