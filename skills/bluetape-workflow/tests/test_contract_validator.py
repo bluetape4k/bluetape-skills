@@ -451,6 +451,27 @@ class ContractValidatorTest(unittest.TestCase):
 
             self.assertEqual(41, result.returncode)
 
+    def test_superpowers_artifacts_require_bluetape_writer_gate(self):
+        skills_root = SKILL_ROOT.parent
+        workflow = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        writer = (skills_root / "bluetape-writer" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        full_feature = (
+            skills_root / "bluetape-full-feature" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Superpowers technical artifact", workflow)
+        for checklist_id in ("SPW-01", "SPW-02", "SPW-03", "SPW-04", "SPW-05"):
+            with self.subTest(checklist_id=checklist_id):
+                self.assertIn(checklist_id, writer)
+                self.assertIn(checklist_id, full_feature)
+
+        self.assertIn("blocks the dependent workflow step", workflow)
+        self.assertIn("blocks the dependent workflow step", writer)
+        self.assertIn("changes technical meaning", writer)
+        self.assertIn("integrated into a verdict", writer)
+
 
 if __name__ == "__main__":
     unittest.main()

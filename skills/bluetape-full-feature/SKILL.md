@@ -24,6 +24,7 @@ Load only at the step that needs it:
 | Step 0 worktree | `using-git-worktrees` when installed/required by the workspace |
 | Step 2 design | `using-superpowers` and `brainstorming` |
 | Step 3 plan | `writing-plans` |
+| Steps 2, 2-R, 3, 3-R, 6-R, 7, and 7-R technical prose | `bluetape-writer`; complete `SPW-01`, `SPW-02`, `SPW-03`, `SPW-04`, and `SPW-05` for every new or materially revised artifact |
 | Step 4 code | `test-driven-development` plus the matching language/domain pattern skill |
 | Step 4-S cleanup | `ai-slop-cleaner` only when cleanup triggers |
 | Step 5/6 completion claims | `verification-before-completion` |
@@ -38,6 +39,12 @@ If a required skill/reference is missing or unreadable, stop that gate and
 report the exact gap. Do not reconstruct a substitute from memory. New modules,
 dependencies, architecture, and multi-layer work must not proceed without the
 required design and planning skills.
+
+For every triggered Superpowers artifact, record the five `SPW-*` results in
+the owning step evidence. Raw independent-lane notes may remain bounded
+machine evidence, but the integrated review, user-visible review prose, and any
+persisted review artifact must pass the writer gate. An unchecked writer row
+keeps that Type A step `PENDING` and blocks its dependent step.
 
 ## Review and Convergence Contract
 
@@ -99,12 +106,12 @@ progression.
   - **Evidence:** Concrete local anchors, prior-decision evidence, source citations, and adopt/borrow/reject rationale.
   - **Failure:** Do not design from recall; repair the evidence gap first.
 - [ ] **A-03 — Approve and review the design spec**
-  - **Action:** Use the required design skills, compare viable alternatives, obtain user approval, write the spec, and run all six review perspectives plus integration.
-  - **Evidence:** Approved spec path, alternatives and failure modes, review table, and latest P0=0/P1=0.
+  - **Action:** Use the required design and writer skills, compare viable alternatives, obtain user approval, write the spec, and run all six review perspectives plus integration.
+  - **Evidence:** Approved spec path, alternatives and failure modes, `SPW-01` through `SPW-05` PASS for the brainstorming/spec and integrated spec review, review table, and latest P0=0/P1=0.
   - **Failure:** Revise and reapprove material changes; keep planning blocked.
 - [ ] **A-04 — Approve and review the implementation plan**
-  - **Action:** Write an ordered executable plan mapping every acceptance criterion to files, pattern skills, tests, docs, hazards, rollback, and commands; run all plan review perspectives.
-  - **Evidence:** Plan path, committed spec/plan, traceability map, review table, and latest P0=0/P1=0.
+  - **Action:** Use the writer skill to write an ordered executable plan mapping every acceptance criterion to files, pattern skills, tests, docs, hazards, rollback, and commands; run all plan review perspectives.
+  - **Evidence:** Plan path, committed spec/plan, `SPW-01` through `SPW-05` PASS for the plan and integrated plan review, traceability map, review table, and latest P0=0/P1=0.
   - **Failure:** Repair missing ordering, proof, ownership, or hazard coverage before code.
 - [ ] **A-05 — Predict triggered risks**
   - **Action:** For high-complexity or sensitive work, record risks, signals, mitigations, and rollback/rerun points; otherwise prove a scoped N/A.
@@ -119,12 +126,12 @@ progression.
   - **Evidence:** Fresh commands and results, verifier verdict PASS, complete acceptance mapping, and all conditional hazards PASS or valid N/A.
   - **Failure:** Return to implementation or reopen the approved artifact when the verifier reports a gap.
 - [ ] **A-08 — Converge the final pre-PR review**
-  - **Action:** Run the final checklist, all six code-review perspectives plus integration, fix blockers, and rerun affected proof.
-  - **Evidence:** Final branch diff, optional tracked review artifact, clean diagnostics/diff check, and latest P0=0/P1=0.
+  - **Action:** Run the final checklist, all six code-review perspectives plus integration, apply the writer gate to the integrated review prose and artifact, fix blockers, and rerun affected proof.
+  - **Evidence:** Final branch diff, `SPW-01` through `SPW-05` PASS for the integrated review and optional tracked review artifact, clean diagnostics/diff check, and latest P0=0/P1=0.
   - **Failure:** Keep PR creation blocked until repaired evidence converges.
 - [ ] **A-09 — Commit durable learning**
-  - **Action:** Commit the lesson before PR creation, using a concise evidence-backed N/A lesson only when genuinely appropriate.
-  - **Evidence:** Tracked lesson commit containing context, decision, outcome, proof, misses, and future guard.
+  - **Action:** Apply the writer gate and commit the lesson before PR creation, using a concise evidence-backed N/A lesson only when genuinely appropriate.
+  - **Evidence:** `SPW-01` through `SPW-05` PASS and a tracked lesson commit containing context, decision, outcome, proof, misses, and future guard.
   - **Failure:** An untracked, stashed, or evidence-only lesson does not satisfy this gate.
 - [ ] **A-10 — Complete authorized PR delivery through live CI and review**
   - **Action:** Complete common gates CG-11 through CG-14: confirm PR authority, publish the exact head, create or update and verify the live PR, rerun review, resolve threads, and wait for required CI conclusions.
@@ -186,6 +193,10 @@ material architecture/API/behavior/migration section, present 2-3 viable
 approaches when choices exist, recommend one, and obtain user approval before
 finalizing it.
 
+Load `bluetape-writer` before drafting the first brainstorming response. Run
+its `SPW-01` through `SPW-05` gate for the approved brainstorming/design prose
+and again for the completed specification.
+
 Write `docs/superpowers/specs/YYYY-MM-DD-{slug}-design.md` inside the worktree.
 Include problem, constraints, current evidence, chosen approach, rejected
 alternatives, boundaries, at least three failure modes for non-trivial work,
@@ -198,11 +209,16 @@ Read `references/review-perspectives.md` with `artifact_kind=spec`. Run all six
 perspectives plus main integration against the exact spec and research basis.
 Revise every P0/P1. If a repair materially changes the approved design, return
 to the user for approval, then rerun affected lanes. Exit only at P0=0/P1=0.
+Apply the writer gate to the integrated review and every materially revised
+spec before recording Step 2-R PASS.
 
 ## Step 3 - Implementation Plan
 
 Load `writing-plans` and write
 `docs/superpowers/plans/YYYY-MM-DD-{slug}-plan.md`. Each task includes:
+
+Load `bluetape-writer` before drafting and complete its full `SPW-*` gate for
+the plan before approval or commit.
 
 - complexity, dependency order, exact files/modules, and disjoint write scope;
 - matching pattern skill and TDD behavior;
@@ -223,6 +239,8 @@ Read `references/review-perspectives.md` with `artifact_kind=plan` and
 integration. Verify every spec acceptance criterion maps to an ordered task and
 command, no task depends on a later artifact, and hazards/docs/rollback are
 assigned. Exit only at P0=0/P1=0.
+Apply the writer gate to the integrated plan review and every materially
+revised plan before recording Step 3-R PASS.
 
 ## Step 3-P - Risk Prediction
 
@@ -301,6 +319,8 @@ when triggered. Review the current branch diff in dependency-ordered module
 slices. Run all six perspectives plus main integration; store a concise tracked
 review artifact under `docs/review/` when it will support PR/merge evidence.
 Fix and revalidate P0/P1, rerun affected lanes, and exit only at zero blockers.
+Complete the writer gate for the integrated review, user-visible review prose,
+and any tracked `docs/review/` artifact before A-08 can pass.
 
 ## Step 7 - Lessons Commit
 
@@ -310,6 +330,8 @@ outcome, verification evidence, review misses, and future guard. If genuinely
 no durable lesson exists, commit the file with concrete scope evidence proving
 `N/A`; do not invent filler. An untracked, stashed, or evidence-only lesson does
 not unblock Step 7-P.
+Complete the full writer gate before committing either a substantive lesson or
+an evidence-backed N/A lesson.
 
 ## Step 7-P - Pull Request
 
@@ -327,6 +349,8 @@ Rerun the six perspectives plus main integration against the actual PR diff,
 reviews, and current CI state. `REQUEST_CHANGES` or any P0/P1 returns to Step 4,
 4-T, and affected review lanes. Record acceptance/deferral rationale for
 non-blocking findings. Refresh the PR body DoD after gate changes.
+Apply the writer gate to the integrated post-PR review and resulting public
+review prose before Step 7-R can pass.
 
 ## Step 8 - CI and Review Gate
 
