@@ -124,9 +124,9 @@
   - **Action:** task/diff와 기존 release lesson을 대조한다.
   - **Evidence:** 새 lesson N/A. `docs/lessons/2026-07-27-live-skill-bundle-sync-workflow-gates.md`의 공개 bundle 경계·fresh install 규칙과 `docs/lessons/2026-08-12-superpowers-writer-hard-gate.md`의 writer gate 결정을 그대로 재사용했다. 이번 release metadata diff에는 novel failure, recovery, design, operational guidance가 없다.
   - **Failure:** lesson 근거 없이는 pre-PR proof로 진행하지 않는다.
-- [ ] **CG-10 — pre-PR proof 수렴**
+- [x] **CG-10 — pre-PR proof 수렴**
   - **Action:** 최종 diff review, P0/P1=0, 검증 재실행 후 commit한다.
-  - **Evidence:** exact commit SHA, clean status, fresh tests.
+  - **Evidence:** candidate `7d2489e09c4d372af83ef9e0966881bbeff56dd3`에서 final scoped review P0=0/P1=0, `./scripts/validate.sh` workflow 146/1 skip/164 subtests와 diagram 50개 PASS, `git diff --check` PASS. 이 체크 상태를 기록한 최종 PR head는 push 직전 다시 검증해 live PR에 고정한다.
   - **Failure:** PR 생성을 차단한다.
 
 ## Release 전용 게이트
@@ -178,9 +178,9 @@
 
 ## PR 전달 게이트
 
-- [ ] **CG-11 — PR 생성 권한 확인**
+- [x] **CG-11 — PR 생성 권한 확인**
   - **Action:** 승인된 repo/base/head와 모든 pre-PR prerequisite를 다시 확인한다.
-  - **Evidence:** `bluetape4k/bluetape-skills`, `develop`, `release/bluetape-skills-1.3.3`, 사용자 승인.
+  - **Evidence:** 사용자가 `bluetape4k/bluetape-skills`의 `release/bluetape-skills-1.3.3` -> `develop` PR 생성과 후속 promotion PR 생성을 승인함. CG-01..10과 REL-01..03A PASS.
   - **Failure:** PR 생성을 중단한다.
 - [ ] **CG-12 — exact head push**
   - **Action:** force 없이 push하고 local/remote SHA를 대조한다.
