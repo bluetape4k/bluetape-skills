@@ -4,6 +4,22 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-08-13
+
+### 추가
+
+- `$bluetape-workflow`가 분류 전에 user-scope, workspace, repository/worktree
+  `AGENTS.md` 기준 정보를 순서대로 읽도록 `WF-00` 게이트를 추가했습니다.
+- PR 생성 직전에 현재 `AGENTS.md` 계층, 선택한 leaf skill, 공통 gate, PR
+  template, linked issue metadata를 다시 읽도록 `CG-12A` 게이트를 추가했습니다.
+
+### 변경
+
+- 운영 문서의 guidance를 이해하기 쉬운 `기준 정보` 또는 `원본`으로 표현하도록
+  workflow 문구와 회귀 검증을 정리했습니다.
+- 공개 workflow manifest, PR DoD template, contract test가 새 게이트와 의존
+  순서를 함께 검증하도록 갱신했습니다.
+
 ## [1.3.3] - 2026-08-12
 
 ### 추가
@@ -166,7 +182,8 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 [1.2.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.1
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
 [1.3.3]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.3
+[1.3.4]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.4
 [1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.3...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.4...develop
