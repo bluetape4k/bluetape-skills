@@ -8,7 +8,7 @@
 | 흐름 / 분류 | `stable-release` / Type E 유지보수 + Type P GitHub skill bundle patch release |
 | 대상 버전 / 태그 | `1.3.4` / `v1.3.4` |
 | 최신 외부 릴리스 | `v1.3.3`, 2026-08-12 공개, tag target `bfb5c1bbb542933501944908fb95fae040027198` |
-| 후보 기준 | `origin/develop` `8ea4341db5b1dafff9fb97cac8bc5e094ef1c4f8` |
+| 후보 기준 | PR #34 head `f96892a38b10df0a41954aa88b303203b1eb3f14` (`chore/agents-pr-guidance-gate`) |
 | 안정 기준 | `origin/main` `bfb5c1bbb542933501944908fb95fae040027198` |
 | 준비 브랜치 | `chore/agents-pr-guidance-gate` -> `develop` |
 | 승격 브랜치 | `release/promote-bluetape-skills-1.3.4` -> `main` |
@@ -38,13 +38,14 @@
   계약을 읽었으며 repo-local `.bluetape` run을 초기화했다.
 - [x] `CG-01`~`CG-05` — 현재 기준 정보, GNO 직접 검색 결과, live GitHub 상태,
   격리 worktree, 한국어 문서 범위를 확인했다.
-- [ ] `CG-06`~`CG-10` — 공개 문서 parity, validator, lesson gate, 최종 diff와
-  commit은 후보 검증 후 기록한다.
+- [x] `CG-06`~`CG-10` — 공개 문서 parity, validator, lesson gate, 최종 diff와
+  `f96892a38b10df0a41954aa88b303203b1eb3f14` commit을 확인했다.
 - [x] `CG-09` — 재사용 가능한 운영 교훈이 있어
   `docs/lessons/2026-08-13-agents-hierarchy-pr-guidance-gate.md`를 작성하고
   `SPW-01`~`SPW-05`를 확인했다.
-- [ ] `CG-11`~`CG-15` — `develop` PR 생성·live read-back·merge-ready 보고 후
-  병합 승인을 대기한다.
+- [x] `CG-11`~`CG-14` — PR #34를 `develop`에 생성하고 live read-back했다.
+  checks 0, reviews 0, `MERGEABLE`, assignee `debop`이다.
+- [ ] `CG-15` — exact PR/head merge-ready 보고 후 병합 승인을 대기한다.
 - [ ] `CG-16`~`CG-18` — fresh merge approval 뒤 rebase merge와 local sync를
   실행한다.
 - [ ] `CG-X01` / `REL-08`~`REL-10` — exact `main` SHA와 fresh publication
@@ -60,7 +61,9 @@
 | 대상 변경 | `SKILL.md`, `workflow-manifest.json`, `common-gates.md`, PR template, contract test |
 | 초기 contract check | 공개 bundle의 외부 companion skill(`code-review`, `self-audit`) 경고만 보고; exit 0 |
 | 초기 workflow test | `147 passed, 1 skipped, 164 subtests passed` |
-| 현재 중단점 | 공개 문서/체크리스트를 포함한 후보 검증과 commit 전 |
+| develop PR | #34, `https://github.com/bluetape4k/bluetape-skills/pull/34`, base `develop`, head `f96892a38b10df0a41954aa88b303203b1eb3f14` |
+| live PR 상태 | `OPEN`, `MERGEABLE`, checks 0, reviews 0, milestone/labels N/A |
+| 현재 중단점 | `CG-15` merge-ready 보고 후 fresh merge approval 대기 |
 
 ## Release holds
 
