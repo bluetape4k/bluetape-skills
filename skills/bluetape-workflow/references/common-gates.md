@@ -98,10 +98,22 @@ never substitutes for the PR mainline.
     remote head SHAs.
   - **Failure:** STOP before PR creation; repair rejected, stale, or mismatched
     head publication without overwriting unrelated remote work.
+- [ ] **CG-12A — Refresh guidance before PR creation**
+  - **Action:** Immediately before `gh pr create` or any PR update, re-read the
+    current applicable user-scope, workspace, and repository/worktree
+    `AGENTS.md` files, the selected leaf skill, this common-gates file, the PR
+    body template, and linked issue metadata. Compare the current guidance
+    snapshot with CG-01; if any applicable rule or target metadata changed,
+    refresh the checklist and rerun affected gates before CG-13.
+  - **Evidence:** Current paths/scopes, read timestamps or content hashes,
+    selected PR rules, linked issue metadata, and a no-drift or re-verification
+    result.
+  - **Failure:** STOP before CG-13; do not create or update the PR until the
+    changed guidance is reconciled and affected evidence is fresh.
 - [ ] **CG-13 — Create and verify the PR**
-  - **Action:** Create or update the PR, assign `debop`, mirror issue milestone
-    and labels, write the required body ending in `## DoD Status`, then query it
-    live.
+  - **Action:** After CG-12A passes, create or update the PR, assign `debop`,
+    mirror issue milestone and labels, write the required body ending in
+    `## DoD Status`, then query it live.
   - **Evidence:** PR URL/number, head SHA, metadata, and verified final heading.
   - **Failure:** Repair the live PR before starting CI/review progression.
 - [ ] **CG-14 — Pass CI and live human review**

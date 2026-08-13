@@ -9,13 +9,50 @@ This is the first-stop router for every bluetape ecosystem repository. It owns
 classification, the first-plan approval gate, step progression, and final DoD
 evidence. Leaf skills own execution detail.
 
+## AGENTS.md Guidance Hierarchy
+
+Before classification, resolve and read every applicable `AGENTS.md` in this
+order:
+
+1. **User scope** — `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`.
+2. **Workspace scope** — the nearest workspace-root `AGENTS.md`; for the
+   bluetape4k workspace, use canonical `.github/docs/workspace/AGENTS.md` and
+   verify the workspace-root copy or symlink.
+3. **Repository/worktree scope** — every applicable repository or nested
+   worktree `AGENTS.md` on the target path.
+
+Apply all applicable instructions together. A narrower repository or worktree
+file may add constraints but may not weaken a broader mandatory gate. Record
+each path, scope, and read result in the checklist. In the bluetape4k
+workspace, missing or unreadable user-scope, workspace, or repository guidance
+blocks classification. Outside that workspace, mark a genuinely inapplicable
+scope `N/A` with concrete path evidence; never assume an absent file was read.
+
+When explaining this hierarchy in Korean, call governing guidance `기준 정보`
+or `원본`; do not use the literal translation `권위`.
+
+## Branch And Worktree Naming
+
+When creating a branch or linked worktree, use a semantic prefix that matches
+the change type, such as `feat/<slug>`, `fix/<slug>`, `docs/<slug>`,
+`chore/<slug>`, or `refactor/<slug>`. Do not create `codex/<slug>` branches or
+worktrees. Keep the branch and worktree names aligned with the same semantic
+prefix wherever practical.
+
 ## Mandatory Router Checklist
 
 **REQUIRED:** Read `references/checklist-contract.md` before creating any task
 checklist. An unchecked required item blocks every dependent item.
 
+- [ ] **WF-00 — Read the AGENTS.md hierarchy**
+  - **Action:** Before classification, resolve and read the current user-scope,
+    workspace, and target repository/worktree `AGENTS.md` files in order.
+  - **Evidence:** Scope, path, read result, and applicable precedence recorded.
+  - **Failure:** STOP before classification when any required guidance is
+    missing or unreadable.
 - [ ] **WF-01 — Classify**
-  - **Action:** Perform read-only discovery and select Type A/B/C/D/E/P/F.
+  - **Action:** After the hierarchy gate passes, perform read-only discovery and
+    select Type A/B/C/D/E/P/F.
   - **Evidence:** type, signals, repository, scope, and exclusions.
   - **Failure:** stop; do not plan an execution lane from an ambiguous type.
 - [ ] **WF-02 — Write the first concrete plan**

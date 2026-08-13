@@ -9,6 +9,7 @@ MODULE_PATH = SKILL_ROOT / "scripts" / "bluetape_runtime.py"
 COORDINATOR_PATH = SKILL_ROOT / "scripts" / "bluetape_coordinator.py"
 CODEX_SOURCE = SKILL_ROOT.parents[1]
 COMMON_GATES_PATH = SKILL_ROOT / "references" / "common-gates.md"
+PR_BODY_TEMPLATE_PATH = SKILL_ROOT / "templates" / "pr-body-step-dod.md"
 
 
 def load_runtime():
@@ -46,6 +47,7 @@ class ManifestContractTest(unittest.TestCase):
         )
         self.assertEqual(
             [
+                "WF-00",
                 "WF-01",
                 "WF-02",
                 "WF-03",
@@ -159,6 +161,18 @@ class ManifestContractTest(unittest.TestCase):
         self.assertIn("isolated worktree", common_gates)
         self.assertIn("integration/default branch", common_gates)
         self.assertIn("explicitly authorized integration sync or merge", common_gates)
+
+    def test_workflow_and_pr_creation_require_guidance_refresh(self):
+        workflow = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        common_gates = COMMON_GATES_PATH.read_text(encoding="utf-8")
+        pr_template = PR_BODY_TEMPLATE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("WF-00", workflow)
+        self.assertIn("user-scope", workflow)
+        self.assertIn("기준 정보", workflow)
+        self.assertIn("CG-12A", common_gates)
+        self.assertIn("Immediately before `gh pr create`", common_gates)
+        self.assertIn("CG-12A", pr_template)
 
 
 if __name__ == "__main__":
