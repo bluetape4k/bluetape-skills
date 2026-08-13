@@ -8,7 +8,7 @@
 | 흐름 / 분류 | `stable-release` / Type E 유지보수 + Type P GitHub skill bundle patch release |
 | 대상 버전 / 태그 | `1.3.4` / `v1.3.4` |
 | 최신 외부 릴리스 | `v1.3.3`, 2026-08-12 공개, tag target `bfb5c1bbb542933501944908fb95fae040027198` |
-| 후보 기준 | PR #34 head `f96892a38b10df0a41954aa88b303203b1eb3f14` (`chore/agents-pr-guidance-gate`) |
+| 후보 기준 | PR #34 head branch `chore/agents-pr-guidance-gate`; exact SHA is recorded by the live PR read-back and PR body |
 | 안정 기준 | `origin/main` `bfb5c1bbb542933501944908fb95fae040027198` |
 | 준비 브랜치 | `chore/agents-pr-guidance-gate` -> `develop` |
 | 승격 브랜치 | `release/promote-bluetape-skills-1.3.4` -> `main` |
@@ -62,7 +62,7 @@
 | 초기 contract check | 공개 bundle의 외부 companion skill(`code-review`, `self-audit`) 경고만 보고; exit 0 |
 | 초기 workflow test | `147 passed, 1 skipped, 164 subtests passed` |
 | develop PR | #34, `https://github.com/bluetape4k/bluetape-skills/pull/34`, base `develop`, head `f96892a38b10df0a41954aa88b303203b1eb3f14` |
-| live PR 상태 | `OPEN`, `MERGEABLE`, checks 0, reviews 0, milestone/labels N/A |
+| live PR 상태 | `OPEN`, `MERGEABLE`, checks 0, reviews 0, milestone/labels N/A; exact head is recorded by the live PR read-back and PR body |
 | 현재 중단점 | `CG-15` merge-ready 보고 후 fresh merge approval 대기 |
 
 ## Release holds
