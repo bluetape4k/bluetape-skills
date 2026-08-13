@@ -51,6 +51,7 @@ Required checks: {checked}/{total}; N/A: {count}; Blocked: {count}
 | Check | Action | Status | Evidence | Failure / Next Action |
 |------|--------|--------|----------|-----------------------|
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {fresh command, file, PR, issue, review comment, CI run; N/A requires concrete scope evidence} | {none, repair, rollback, blocker, or next action} |
+| CG-12A - Guidance refresh | Re-read the current `AGENTS.md` hierarchy, selected leaf skill, common gates, PR template, and linked issue before PR creation | PASS / FAIL / PENDING / N/A | {current scope/path snapshot and no-drift or re-verification evidence} | {none or repair before CG-13} |
 | {id} - {name} | {action performed} | PASS / FAIL / PENDING / N/A | {evidence} | {failure handling} |
 
 Final status: {status derived from the current common gate and exact PR head}
