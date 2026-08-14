@@ -1,5 +1,15 @@
 # AGENTS.md - bluetape-skills
 
+## Guidance hierarchy
+
+Before applying this repository overlay, read and follow the guidance in this
+order:
+
+1. User scope: `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`.
+2. Workspace scope: `/Users/debop/work/bluetape4k/.github/docs/workspace/AGENTS.md`.
+
+Apply both broader scopes before repository-specific rules.
+
 Read and follow the workspace guidance in `../AGENTS.md` first. This file is a
 thin repository-specific overlay.
 
