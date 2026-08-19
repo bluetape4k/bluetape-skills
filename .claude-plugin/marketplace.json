@@ -1,0 +1,17 @@
+{
+  "name": "bluetape-skills",
+  "owner": {
+    "name": "bluetape4k",
+    "url": "https://github.com/bluetape4k/bluetape-skills"
+  },
+  "description": "Bluetape Skills marketplace",
+  "version": "1.3.4",
+  "plugins": [
+    {
+      "name": "bluetape-skills",
+      "source": "./",
+      "description": "Canonical Bluetape workflow, language, and publishing skills",
+      "version": "1.3.4"
+    }
+  ]
+}
