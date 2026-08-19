@@ -1,0 +1,13 @@
+{
+  "name": "bluetape-skills",
+  "displayName": "Bluetape Skills",
+  "version": "1.3.4",
+  "description": "Installable, canonical Codex/Claude skills for Bluetape development workflows.",
+  "author": {
+    "name": "bluetape4k"
+  },
+  "homepage": "https://github.com/bluetape4k/bluetape-skills",
+  "repository": "https://github.com/bluetape4k/bluetape-skills",
+  "license": "MIT",
+  "keywords": ["bluetape", "workflow", "kotlin", "codex"]
+}
