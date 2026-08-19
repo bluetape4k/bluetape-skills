@@ -118,4 +118,40 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -v \
   -s "$diagram_root/tests" \
   -p 'test_*.py'
 
-echo "PASS: ${#expected_skills[@]} canonical skills, workflow contracts, diagram audits, tests, and public bundle boundaries are valid."
+plugin_manifest="$repo_root/.claude-plugin/plugin.json"
+marketplace_manifest="$repo_root/.claude-plugin/marketplace.json"
+
+[[ -f "$plugin_manifest" ]] || { echo "missing plugin manifest: $plugin_manifest" >&2; exit 1; }
+[[ -f "$marketplace_manifest" ]] || { echo "missing marketplace manifest: $marketplace_manifest" >&2; exit 1; }
+
+python3 - "$plugin_manifest" "$marketplace_manifest" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+plugin_path, marketplace_path = sys.argv[1], sys.argv[2]
+
+plugin = json.loads(Path(plugin_path).read_text(encoding="utf-8"))
+if not plugin.get("name"):
+    raise SystemExit("plugin.json missing required field: name")
+
+marketplace = json.loads(Path(marketplace_path).read_text(encoding="utf-8"))
+if not marketplace.get("name"):
+    raise SystemExit("marketplace.json missing required field: name")
+if not marketplace.get("owner", {}).get("name"):
+    raise SystemExit("marketplace.json missing required field: owner.name")
+plugins = marketplace.get("plugins")
+if not isinstance(plugins, list) or not plugins:
+    raise SystemExit("marketplace.json missing non-empty plugins array")
+for entry in plugins:
+    if not entry.get("name") or not entry.get("source"):
+        raise SystemExit("marketplace.json plugin entry missing name or source")
+PY
+
+if command -v claude >/dev/null; then
+  claude plugin validate "$repo_root" --strict
+else
+  echo "claude CLI not found; skipped 'claude plugin validate' (JSON/required-field checks above still ran)"
+fi
+
+echo "PASS: ${#expected_skills[@]} canonical skills, workflow contracts, diagram audits, tests, plugin/marketplace manifests, and public bundle boundaries are valid."
