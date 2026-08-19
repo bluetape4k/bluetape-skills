@@ -4,6 +4,13 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+### 추가
+
+- `.claude-plugin/plugin.json`과 `.claude-plugin/marketplace.json`을 추가해
+  Claude Code plugin marketplace(`bluetape-skills`)로도 설치할 수 있도록
+  했습니다. 기존 Codex 배포 경로(`skills/`, `install.sh`, `manifest.json`)는
+  변경하지 않았습니다.
+
 ## [1.3.4] - 2026-08-13
 
 ### 추가

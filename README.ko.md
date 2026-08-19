@@ -35,6 +35,17 @@ cd bluetape-skills
 
 아직 릴리스되지 않은 변경까지 따라가려면 `--branch v1.3.4 --depth 1` 옵션을 빼고 기본 브랜치인 `develop`을 복제하세요. `main`은 검토를 거친 안정 릴리스 승격에만 사용합니다. 공개 버전과 다운로드 가능한 묶음은 [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases)에서 확인할 수 있습니다.
 
+### Claude Code plugin marketplace로 설치
+
+동일한 skill 묶음을 Claude Code plugin으로도 배포합니다. Claude Code 안에서 다음을 실행하세요.
+
+```
+/plugin marketplace add bluetape4k/bluetape-skills
+/plugin install bluetape-skills@bluetape-skills
+```
+
+각 `SKILL.md`에 있는 `$skill-name` 트리거 표기는 Codex 표기법입니다. Claude Code도 동일한 이름으로 스킬을 자동 인식하므로 별도로 고칠 필요가 없습니다.
+
 ## 업데이트
 
 릴리스 태그는 변경되지 않습니다. 안정 설치본을 갱신하려면 원하는 새 태그를 별도 디렉터리에 복제하고 검증한 뒤, 기존 skill을 백업하면서 교체하세요.

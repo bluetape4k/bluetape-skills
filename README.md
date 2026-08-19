@@ -35,6 +35,17 @@ Restart Codex after installation so the new skills are discovered.
 
 To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.3.4 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
 
+### Install via Claude Code plugin marketplace
+
+The same skills are also published as a Claude Code plugin. From inside Claude Code:
+
+```
+/plugin marketplace add bluetape4k/bluetape-skills
+/plugin install bluetape-skills@bluetape-skills
+```
+
+The skills' `$skill-name` trigger phrasing in each `SKILL.md` is Codex-style notation; Claude Code recognizes the same skills by name automatically, so no rewrite is needed.
+
 ## Update
 
 Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
