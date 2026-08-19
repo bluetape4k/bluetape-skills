@@ -46,6 +46,8 @@ cd bluetape-skills
 
 각 `SKILL.md`에 있는 `$skill-name` 트리거 표기는 Codex 표기법입니다. Claude Code도 동일한 이름으로 스킬을 자동 인식하므로 별도로 고칠 필요가 없습니다.
 
+저장소 버전을 올릴 때는 `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`(최상위 `version`과 해당 `plugins[].version` 모두), `CHANGELOG.md`, 그리고 이 README의 설치 명령 버전 예시에 있는 버전 문자열을 함께 갱신하여 서로 어긋나지 않도록 하세요.
+
 ## 업데이트
 
 릴리스 태그는 변경되지 않습니다. 안정 설치본을 갱신하려면 원하는 새 태그를 별도 디렉터리에 복제하고 검증한 뒤, 기존 skill을 백업하면서 교체하세요.
@@ -127,7 +129,7 @@ Full Feature 작업의 `2-R` Spec Review, `3-R` Plan Review, `6-R` Pre-PR Review
 
 ## 검증
 
-복제하거나 갱신한 뒤 `./scripts/validate.sh`를 실행하세요. canonical inventory, 필수 front matter, rendered executable 이름, 외부 companion 선언, workflow contract, workflow 회귀 테스트, private/runtime payload 부재를 검사합니다.
+복제하거나 갱신한 뒤 `./scripts/validate.sh`를 실행하세요. canonical inventory, 필수 front matter, rendered executable 이름, 외부 companion 선언, workflow contract, workflow 회귀 테스트, private/runtime payload 부재를 검사하며, Claude Code plugin manifest인 `.claude-plugin/plugin.json`과 `.claude-plugin/marketplace.json`이 유효한 JSON이고 필수 필드를 갖췄는지도 함께 검사합니다.
 
 ## 라이선스
 

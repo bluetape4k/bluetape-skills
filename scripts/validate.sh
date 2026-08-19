@@ -146,6 +146,26 @@ if not isinstance(plugins, list) or not plugins:
 for entry in plugins:
     if not entry.get("name") or not entry.get("source"):
         raise SystemExit("marketplace.json plugin entry missing name or source")
+
+first_entry = plugins[0]
+if plugin.get("name") != first_entry.get("name"):
+    raise SystemExit(
+        "plugin.json name "
+        f"({plugin.get('name')!r}) does not match marketplace.json plugins[0].name "
+        f"({first_entry.get('name')!r})"
+    )
+if plugin.get("version") != marketplace.get("version"):
+    raise SystemExit(
+        "plugin.json version "
+        f"({plugin.get('version')!r}) does not match marketplace.json version "
+        f"({marketplace.get('version')!r})"
+    )
+if plugin.get("version") != first_entry.get("version"):
+    raise SystemExit(
+        "plugin.json version "
+        f"({plugin.get('version')!r}) does not match marketplace.json plugins[0].version "
+        f"({first_entry.get('version')!r})"
+    )
 PY
 
 if command -v claude >/dev/null; then

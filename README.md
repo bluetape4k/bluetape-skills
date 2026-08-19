@@ -46,6 +46,8 @@ The same skills are also published as a Claude Code plugin. From inside Claude C
 
 The skills' `$skill-name` trigger phrasing in each `SKILL.md` is Codex-style notation; Claude Code recognizes the same skills by name automatically, so no rewrite is needed.
 
+When the repository's version is bumped, update the version strings in `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` (both the top-level `version` and the matching `plugins[].version`), `CHANGELOG.md`, and this README's install-command version examples together, so they stay in lockstep.
+
 ## Update
 
 Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
@@ -127,7 +129,7 @@ Development and maintenance pull requests target the default `develop` branch. T
 
 ## Verification
 
-Run `./scripts/validate.sh` after cloning or updating. It verifies the canonical inventory, required front matter, rendered executable names, external companion declarations, workflow contracts, the workflow regression suite, and the absence of private/runtime payload.
+Run `./scripts/validate.sh` after cloning or updating. It verifies the canonical inventory, required front matter, rendered executable names, external companion declarations, workflow contracts, the workflow regression suite, the absence of private/runtime payload, and — for the Claude Code plugin manifests — that `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` are valid JSON with their required fields.
 
 ## License
 
