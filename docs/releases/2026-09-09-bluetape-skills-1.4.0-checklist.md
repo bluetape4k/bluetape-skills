@@ -12,6 +12,7 @@
 | 안정 브랜치 | `main` |
 | 후보 브랜치 | `chore/skills-sync-1.4.0` |
 | 후보 source commit | `cc817860a5e67387827b236fec0bd644613d6a6a` |
+| develop PR | #38 — `https://github.com/bluetape4k/bluetape-skills/pull/38` |
 | 배포 범위 | canonical skill 14개, 참조 자료, workflow/diagram 회귀 테스트 |
 | 제외 범위 | private runtime, hooks, config, memory, plugin cache, retired alias, 외부 companion skill |
 | 승인 | 사용자가 현재 skill 동기화와 배포 계획을 승인함. develop/main 병합·tag·release는 exact SHA별 fresh approval 대상 |
@@ -34,7 +35,7 @@
 - [x] `PUB-02` — live branch/PR/release 상태와 GNO historical evidence 확인
 - [x] `PUB-03` — 14개 skill source와 current installed skill parity 확인
 - [x] `PUB-04` — `scripts/validate.sh`, workflow tests, diagram tests, isolated install 통과
-- [ ] `PUB-05` — develop PR merge-ready 및 main promotion hold 갱신
+- [x] `PUB-05` — develop PR merge-ready 및 main promotion hold 갱신
 - [ ] `PUB-06` — develop/main exact SHA push·merge 상태 검증
 - [ ] `PUB-07` — signed `v1.4.0` tag와 GitHub Release 생성·read-back
 - [x] `PUB-08` — downstream consumer synchronization: N/A (source-only skill bundle)
@@ -58,6 +59,9 @@
   `50 tests OK`를 보고했고, isolated install은 14/14 파일 parity를 통과했다.
 - writer terminology unit test는 8개 의도된 finding을 검출했고, 이번 release
   문서·CHANGELOG·README 대상 audit은 4개 파일 0건이었다.
+- PR #38은 `develop` 대상이며 assignee `debop`, label `documentation`,
+  `MERGEABLE/CLEAN`, checks 0, reviews 0, threads 0으로 live read-back했다.
+- PR 병합은 exact final head를 다시 읽은 뒤 fresh approval을 받아 실행한다.
 - merge, immutable tag, GitHub Release는 해당 exact SHA의 merge-ready 보고와
   fresh approval 전에는 실행하지 않는다.
 
