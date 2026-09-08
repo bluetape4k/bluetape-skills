@@ -33,6 +33,8 @@ JVM publish, workflow, writer 변경이 누적되었다. 개인 dotfiles의 hook
 
 ## 결과
 
-배포 단계별 exact SHA와 public artifact evidence를 이 문서에 추가한다. 승인되지
-않은 merge·tag·release는 실행하지 않으며, candidate head가 바뀌면 이전 증거를
-재사용하지 않는다.
+후보 commit `cc817860a5e67387827b236fec0bd644613d6a6a`에 14개 canonical skill과
+공개 경계 fixture를 고정했다. `./scripts/validate.sh`는 workflow 151건과
+subtest 164건, diagram 50건을 통과했고, isolated install은 14/14 파일 parity를
+확인했다. 승인되지 않은 merge·tag·release는 실행하지 않으며, candidate head가
+바뀌면 이전 증거를 재사용하지 않는다.
