@@ -13,6 +13,9 @@
 | 후보 브랜치 | `chore/skills-sync-1.4.0` |
 | 후보 source commit | `cc817860a5e67387827b236fec0bd644613d6a6a` |
 | develop PR | #38 — `https://github.com/bluetape4k/bluetape-skills/pull/38` |
+| develop merge commit | `7be805283ed5ee8e4a964187b6292edcaaafc6ab` |
+| 승격 브랜치 | `release/promote-bluetape-skills-1.4.0` |
+| main promotion base | `fca08654a685927da0c6d87159315f65b6d6970b` |
 | 배포 범위 | canonical skill 14개, 참조 자료, workflow/diagram 회귀 테스트 |
 | 제외 범위 | private runtime, hooks, config, memory, plugin cache, retired alias, 외부 companion skill |
 | 승인 | 사용자가 현재 skill 동기화와 배포 계획을 승인함. develop/main 병합·tag·release는 exact SHA별 fresh approval 대상 |
@@ -61,7 +64,12 @@
   문서·CHANGELOG·README 대상 audit은 4개 파일 0건이었다.
 - PR #38은 `develop` 대상이며 assignee `debop`, label `documentation`,
   `MERGEABLE/CLEAN`, checks 0, reviews 0, threads 0으로 live read-back했다.
-- PR 병합은 exact final head를 다시 읽은 뒤 fresh approval을 받아 실행한다.
+- PR #38은 exact head `1af779494006ff7968b93642d3e683e439593ee7`에 대해 fresh
+  approval 후 rebase merge됐고, live merge commit은
+  `7be805283ed5ee8e4a964187b6292edcaaafc6ab`이다.
+- `origin/develop`과 로컬 `develop`은 merge commit에서 일치한다. `main`은
+  `fca08654a685927da0c6d87159315f65b6d6970b`에 남아 있으며 promotion PR이
+  필요하다.
 - merge, immutable tag, GitHub Release는 해당 exact SHA의 merge-ready 보고와
   fresh approval 전에는 실행하지 않는다.
 
