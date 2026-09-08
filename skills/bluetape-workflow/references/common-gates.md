@@ -68,12 +68,44 @@ never substitutes for the PR mainline.
   - **Failure:** Discard ambiguous parallel evidence and rerun safely.
 - [ ] **CG-09 — Evaluate the lesson gate**
   - **Action:** Apply the selected leaf's lesson rule. Create a committed lesson
-    when required and a durable lesson for reusable learning. Use `N/A` only
-    after reviewing the task and diff, naming the reused existing rule, and
-    confirming no novel failure, recovery, design, or operational guidance.
-  - **Evidence:** Lesson path/index result, or reviewed task/diff, reused rule,
-    and all four absence categories for N/A.
+    when required and a durable lesson for reusable learning. Follow the lesson
+    recurrence-prevention contract below. Use `N/A` only after reviewing the
+    task and diff, naming the reused existing rule, and confirming no novel
+    failure, recovery, design, operational guidance, invalidated assumption,
+    agent mistake, or user correction.
+  - **Evidence:** Lesson path/index result plus the applicable recurrence entries,
+    or reviewed task/diff, reused rule, and every absence category for N/A.
   - **Failure:** Repair the lesson evidence before pre-PR review.
+
+#### CG-09 Lesson Recurrence-Prevention Contract
+
+Write lessons as reusable prevention guidance, not as a raw review table or a
+chronological work log. Consolidate every applicable material finding into the
+smallest durable rule that would have prevented the same miss:
+
+- **Step 2-R design/spec review:** Record invalid assumptions, missing contracts,
+  rejected alternatives, and design corrections that should shape the next
+  specification.
+- **Step 3-R plan/test review:** Record missing sequencing, acceptance mapping,
+  test strategy, risk, ownership, rollback, or verification details that should
+  shape the next implementation plan.
+- **Step 6-R implementation review:** Record implementation defects, convention
+  violations, test gaps, and evidence weaknesses that should be checked before
+  the next pre-PR review.
+- **TDD:** Record assumptions disproved during RED/GREEN work, the failing
+  observation that disproved them, the corrected model, and the earlier check
+  that would prevent repeating the assumption.
+- **Agent and user corrections:** Record when Codex did not read or apply
+  governing guidance, misunderstood the user's instruction, made an incorrect
+  judgment, or required an additional user correction. Treat the user's
+  follow-up correction as first-class evidence rather than omitting it from the
+  final successful narrative.
+
+For each entry, preserve the failed assumption or judgment, the evidence or
+correction that exposed it, the resulting decision, and a concrete future
+guard or verification step. Merge duplicate findings across 2-R, 3-R, 6-R,
+TDD, and user feedback into one stronger rule while retaining the stage and
+evidence links needed to trace why the rule exists.
 - [ ] **CG-10 — Converge the final pre-PR proof**
   - **Action:** Complete every applicable leaf pre-PR row, run the final scoped
     review, fix P0/P1 findings, rerun affected verification, and commit the
@@ -119,11 +151,25 @@ never substitutes for the PR mainline.
 - [ ] **CG-14 — Pass CI and live human review**
   - **Action:** Wait for required CI on the exact PR head, reread current reviews
     and threads after green, and complete applicable diagram, visual, lesson,
-    and other human-review artifacts.
+    and other human-review artifacts. In a repository lane explicitly documented
+    as single-developer with no additional maintainer or reviewer in scope, the
+    live human-review subgate may be recorded as `N/A`; CG-14 itself is not
+    skippable, so exact-head CI, review/thread read-back, final code review,
+    and all applicable artifacts remain required. If independent code-review
+    execution fails, apply the router's **Independent Code Review Fallback**;
+    record inline review provenance without waiving the remaining CG-14 proof.
   - **Evidence:** Successful checks, exact head SHA, no unresolved blockers,
-    P0=0/P1=0, and applicable artifact decisions.
+    P0=0/P1=0, and applicable artifact decisions. For the single-developer
+    exception, record concrete scope evidence (repository/lane and maintainer
+    scope) and `N/A (single-developer lane)` in the checklist and `## DoD
+    Status`; count the human-review subgate as one N/A sub-item under the
+    checklist contract, while CG-14 remains an applicable checklist row in
+    X/Y and passes only when its remaining requirements pass; never use
+    `SKIPPED`.
+    A separately requested human review, multi-maintainer repository, or
+    external-contributor lane keeps this subgate applicable.
   - **Failure:** `PENDING` waits; failed/stale evidence returns to repair and
-    reopens affected verification.
+    reopens affected verification. An unsupported solo claim is not N/A.
 - [ ] **CG-15 — Report merge-ready**
   - **Action:** Re-read router/common/leaf rows, reconcile counts, and report the
     exact PR/head as merge-ready with CI, review, lesson, and artifact evidence.

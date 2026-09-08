@@ -21,6 +21,10 @@ ordering, weaving, or Spring library-module tests.
   `@ConfigurationProperties` values with explicit defaults.
 - Prefer Binder `bindOrCreate` when a default instance is required.
 - Use `ApplicationContextRunner` for auto-configuration slices.
+- Derive runtime capabilities from the actual bean/type contract, not a fixed
+  bean name or configured backend label. Test a user-supplied bean with a
+  nondefault name and the expected type/capability; preserve intentional named
+  qualifiers where they are the documented contract.
 - In library modules, pair `@SpringBootTest` with a narrow
   `@SpringBootConfiguration` and `@ImportAutoConfiguration`, not a broad
   application scan.
@@ -29,7 +33,8 @@ ordering, weaving, or Spring library-module tests.
 - Preserve coroutine cancellation in suspend lifecycle code.
 
 Verify all registered phases, positive/negative conditions, defaults, ordering,
-and absence of optional classes with targeted context-runner tests.
+and absence of optional classes with targeted context-runner tests, including
+custom bean backoff and runtime capability selection.
 
 ## Blocking Spring Checklist
 
@@ -47,7 +52,7 @@ and absence of optional classes with targeted context-runner tests.
   - **Failure:** Repair ambiguous or mutable configuration behavior.
 - [ ] **KT-SPR-04 — Isolate library tests**
   - **Action:** Use context runners or narrow SpringBootConfiguration/imports and verify optional-class absence.
-  - **Evidence:** Targeted slice tests covering presence, absence, defaults, and ordering.
+  - **Evidence:** Targeted slice tests covering presence, absence, defaults, ordering, and custom-name/type/capability behavior.
   - **Failure:** Replace broad application scans that hide library boundaries.
 - [ ] **KT-SPR-05 — Verify weaving and lifecycle**
   - **Action:** Check pointcut/import drift, avoid redundant proxy enablement, and preserve coroutine cancellation.

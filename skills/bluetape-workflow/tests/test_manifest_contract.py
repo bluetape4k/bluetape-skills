@@ -127,25 +127,12 @@ class ManifestContractTest(unittest.TestCase):
         required = set(schema["required"])
         self.assertTrue({"sequence", "previous_checksum", "checksum"} <= required)
 
-    def test_restart_guidance_preserves_current_codex_process(self):
-        agents_path = CODEX_SOURCE / "AGENTS.md"
-        skills_dir = (
-            CODEX_SOURCE / "private_skills"
-            if (CODEX_SOURCE / "private_skills").is_dir()
-            else CODEX_SOURCE / "skills"
-        )
-        doctor_path = skills_dir / "doctor" / "SKILL.md"
-        if not agents_path.is_file() or not doctor_path.is_file():
-            self.skipTest(
-                "source-only AGENTS.md and doctor skill are outside the public bundle"
-            )
+    def test_public_overlay_preserves_private_runtime_boundary(self):
+        agents = (CODEX_SOURCE / "AGENTS.md").read_text(encoding="utf-8")
 
-        agents = agents_path.read_text(encoding="utf-8")
-        doctor = doctor_path.read_text(encoding="utf-8")
-        self.assertIn("Keep the current Codex process open", agents)
-        self.assertIn("launch a separate Codex process", agents)
-        self.assertNotIn("Restart Codex CLI", doctor)
-        self.assertIn("launch a separate Codex process", doctor)
+        self.assertIn("public distribution surface", agents)
+        self.assertIn("private chezmoi source", agents)
+        self.assertIn("personal configuration", agents)
 
     def test_cg02_requires_useful_query_and_collection_fallbacks(self):
         common_gates = COMMON_GATES_PATH.read_text(encoding="utf-8")

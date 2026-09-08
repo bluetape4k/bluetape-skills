@@ -2,7 +2,9 @@
 
 Use this for Korean software technical documentation in the bluetape
 ecosystem. It owns naturalness and register checks, not repository-specific
-facts or an ever-growing terminology dictionary.
+facts or an ever-growing terminology dictionary. Domain terms and contextual
+collision rules live in `terminology-glossary.md` and
+`terminology-rules.json`.
 
 ## Preservation Rules
 
@@ -66,9 +68,16 @@ Choose the term that names the software state or operation precisely:
 | `authority boundary` -> `권위 경계` | `책임 경계`, `상태 변경 경계` |
 | `source of truth` -> `진실의 원천` | `기준 데이터 원본`, `SSOT` when useful |
 
-Use established Korean loanwords consistently, for example `스냅숏`,
-`아웃박스`, `페이로드`, `메트릭`, `트랜잭션`, and `커넥션 풀`. Preserve exact
-English only when it is an identifier or official name.
+Use established Korean loanwords consistently when the domain has approved
+them, for example `아웃박스`, `페이로드`, `메트릭`, `트랜잭션`, and `커넥션
+풀`. Do not force one Korean word onto every occurrence of an English source
+term: distinguish the domain role first, then preserve exact English only when
+it is an identifier, official name, or source excerpt.
+
+Do not ban words such as `행` or `영속` globally. A database row can be a `행`,
+while an action-queue item is a `조치 메시지(작업 요청)`; a contract may use
+`영속`, while reader-facing prose may be clearer as `저장된`. Use the
+context-aware audit rules to find candidates, then review the sentence.
 
 ## Technical Claim Boundaries
 
@@ -134,6 +143,13 @@ individual words mechanically.
     diagram labels; verify paired locale links at the intended ref.
   - **Evidence:** final content and link review.
   - **Failure:** do not approve partial localization or stale facts.
+- [ ] **KO-07 — Run the contextual terminology audit**
+  - **Action:** Run `node ~/.codex/skills/bluetape-writer/scripts/audit-korean-terms.mjs`
+    for each changed Korean file after facts and code tokens are frozen.
+  - **Evidence:** machine-readable or text report, with every finding repaired
+    or recorded as an intentional context-specific exception.
+  - **Failure:** do not approve the draft while a terminology collision is
+    unexplained; never repair it with a global replacement.
 
 Promote a new global rule only when multiple independent tasks demonstrate the
 same reusable failure. Otherwise keep the finding in the task lesson.
