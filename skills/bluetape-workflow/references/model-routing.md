@@ -1,15 +1,14 @@
 # Native Agent Routing
 
-Read this reference only immediately before native subagent dispatch. The
-workflow-local default is model `gpt-5.6-luna` with reasoning effort `max` for
-every native subagent. Keep the concrete installed `agent_type` and lens from
-the current workspace `AGENTS.md` and agent catalog, but do not silently use a
-role's different model or effort default.
+Read this reference only immediately before native subagent dispatch. Pass the
+concrete installed `agent_type` (role) and lens from the current workspace
+`AGENTS.md` and agent catalog. Do not pass a model or reasoning override from
+the workflow; OMX resolves those values from the per-agent registry
+(`.omx-config.json`) and generated native agent TOML.
 
-If the current runtime or agent catalog cannot honor the
-`gpt-5.6-luna`/`max` pair, keep the lane `PENDING`, record the capability
-mismatch, and obtain an explicit fallback before dispatch. Never silently
-downgrade the model or reasoning effort.
+If the selected role has no verified runtime mapping, keep the lane `PENDING`,
+record the capability mismatch, and obtain an explicit fallback before
+dispatch. Never silently invent a role or bypass the registry.
 
 ## Boundaries
 

@@ -19,9 +19,12 @@ this skill. Report its triggered checks in the parent workflow's DoD evidence.
 
 | Trigger | Required reference |
 |---|---|
-| Any new/touched Kotlin tests, fixtures, Testcontainers, HTTP adapter, or HC5 factory | `references/testing.md` |
+| New/touched tests or fixtures; Testcontainers/HTTP/HC5; production plugin, generated-artifact or transaction wiring; secret-bearing provider failures or diagnostic redaction | `references/testing.md` |
 | Spring Boot auto-configuration, properties, conditional beans, or library integration tests | `references/spring-boot.md` |
 | Module add, move, rename, removal, benchmark module, or artifact rename | `references/module-setup.md` and workflow `references/repository-hazards.md` |
+| Cancellation, timeout, async completion, cleanup, or resource ownership | `references/lifecycle.md` |
+| Published JVM signatures, generated owners, data-class evolution, or serialized formats | `references/compatibility.md` |
+| Retry queues, streaming replay, cache invalidation, or transactional side effects | `references/data-boundaries.md` |
 | Before completion or a Kotlin review verdict | `references/checklist.md` |
 
 Load `kotlin-coroutines-skill`, `ecc-kotlin-exposed`, or
@@ -71,7 +74,9 @@ check(state == State.READY) { "state must be READY" }
   suspend calls or suspend close paths in `runCatching`.
 - If cleanup must run after cancellation, isolate only cleanup in
   `NonCancellable`, then rethrow the original cancellation.
-- Wrap blocking APIs in `withContext(Dispatchers.IO)` and avoid `GlobalScope`.
+- Move blocking APIs off event loops with `withContext(Dispatchers.IO)`; this
+  does not itself interrupt blocking work. Follow `references/lifecycle.md`
+  for cancellation, timeout ownership, and cleanup ordering. Avoid `GlobalScope`.
 - In cancellable loops, prefer `currentCoroutineContext().ensureActive()`;
   query `Job` only when a liveness Boolean is needed.
 - The coroutine context dispatcher key is `ContinuationInterceptor`, not
@@ -147,7 +152,7 @@ Apply `bluetape-workflow/references/checklist-contract.md`. Complete
 `references/checklist.md`; its rows are the canonical Kotlin verdict state.
 
 - [ ] **KT-01 — Load triggered Kotlin guidance**
-  - **Action:** Classify the touched Kotlin surface and load every matching testing, Spring, module, coroutine, Exposed, and domain reference.
+  - **Action:** Classify the touched Kotlin surface and load every matching testing, Spring, module, lifecycle, compatibility, data-boundary, coroutine, Exposed, and domain reference.
   - **Evidence:** Trigger-to-reference map with concrete touched files/symbols.
   - **Failure:** Keep implementation/review blocked until no trigger is unclassified.
 - [ ] **KT-02 — Inspect impact and reuse**

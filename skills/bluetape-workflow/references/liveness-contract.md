@@ -32,6 +32,11 @@ execution evidence. The managed watchdog hook denies unsupervised waits and,
 when supervised, enforces these ceilings and denies further waits after either
 deadline.
 
+For an unavailable independent code-review lane, use the router's
+**Independent Code Review Fallback** after the bounded recovery path. Reclaim
+the work inline instead of repeatedly launching reviewers or ending delivery
+solely on reviewer unavailability; preserve the failed lane's actual evidence.
+
 A heartbeat proves only liveness. It is never progress, changed-path, check,
 component, main-verification, or completion evidence.
 

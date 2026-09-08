@@ -13,8 +13,10 @@ and P0/P1 review rules.
 
 Load `references/hardening-lessons.md` only when work touches release proof,
 source parity, distributed cache/lock/rate limiting, canonical encoders, rule
-engines, observability hooks, Testcontainers readiness, benchmarks, or public
-example/diagram evidence.
+engines, spatial SQL or remote graph adapters, external provider adapters
+(including broker request/response boundaries), external crypto/KMS or envelope
+boundaries, observability hooks, Testcontainers readiness, benchmarks, or
+public example/diagram evidence.
 
 ## Non-Negotiables
 
@@ -24,16 +26,132 @@ example/diagram evidence.
 - Logging is mandatory for production components with operational behavior.
   Record lifecycle transitions, external IO failures, retries/fallbacks, and
   terminal failures through caller-owned `log/slog`, an injected logger, or an
-  explicit hook. Pure deterministic helpers are exempt.
+  explicit hook. Pure deterministic helpers and side-effect-free adapters that
+  expose safe operation errors to a caller-owned observer are exempt from an
+  internal logger; the adapter must not install global logging state or emit
+  raw provider errors.
 - Never use `fmt.Print*`, `log.Print*`, or direct stdout/stderr writes as
   operational logging. Use stable low-cardinality fields and never log secrets,
   credentials, tokens, or raw provider payloads.
 - Specify success, failure, zero-value/nil, cancellation, timeout, cleanup, and
   error contracts where applicable.
+- External provider adapters must inject the narrowest client surface, validate
+  bounded request data before dispatch, preserve caller identity separately
+  from provider-assigned IDs, classify transport and per-item responses
+  deterministically, and let caller cancellation win at every response
+  boundary. Provider messages and payloads stay out of public error strings;
+  fake clients must deep-copy requests and prove malformed, partial, and
+  cancellation responses without live credentials.
+- For conditional key-value providers, model contention separately from
+  transport ambiguity: a failed compare/condition is a normal no-write result,
+  while a dispatched mutation error, malformed output, or output-plus-error is
+  commit-unknown until an explicitly bounded, consistency-appropriate probe
+  proves the owner/value state. Keep lease correctness in an absolute deadline
+  field and treat provider TTL/expiry metadata as cleanup or retention hints
+  only. Strictly parse Lua/SDK result shapes before decoding payloads, and never
+  decode or publish a result after a response-time cancellation checkpoint.
+  Preflight serialized writes and bound reads/CAS probes before handing bytes to
+  a codec; use a narrow range/length check or equivalent provider primitive so a
+  legacy oversized value cannot be fully materialized. Return a typed size error
+  while preserving the existing value when the operation is non-destructive.
+  Fakes must atomically emulate compare-and-set, capture deep-copied payloads and
+  request metadata, and support output-plus-error plus late-cancellation cases.
+- Observability SDKs (metrics, logs, traces, and audit sinks) use the same
+  adapter discipline with one extra boundary: keep each signal's batching,
+  ordering, cardinality, and deprecation rules explicit instead of inventing a
+  shared publisher. Preflight documented service limits (item count, byte
+  budget, dimensions/labels, event span, and finite numeric values) before the
+  SDK call; never make raw payloads or high-cardinality values default
+  log/metric fields. Compile-checked examples should inject fake method
+  subsets, deep-copy captured requests, assert cancellation before dispatch and
+  after a response, and prove provider diagnostics are redacted. If a service
+  deprecates a sequencing token or allows parallel writes, document that
+  current contract and test that stale serialization is not reintroduced.
+  Configuration, credentials, retries, timeouts, global registries/loggers, and
+  live endpoints remain caller-owned.
+- External execution/polling adapters must define a finite wait budget or make
+  the caller deadline explicit, bound and cancel timers/backoff, allowlist
+  terminal statuses (including an unknown-status policy), and never stop or
+  retry implicitly as a side effect of waiting cancellation. Fakes must prove
+  delay/backoff sequencing, terminal failure mapping, timeout ownership, and
+  no late response publication.
 - Concurrent/shared-state claims require bounded stress evidence and
   `go test -race`; no-panic smoke tests are insufficient.
 - A P0/P1 finding blocks the workflow. Reviews report P0/P1/P2/P3 with
   `file:line` evidence or explicit no-finding evidence.
+
+### HTTP adapter boundaries and synchronous compatibility
+
+- Check a nil downstream handler before parsing request data or invoking any
+  parser, limiter, policy, or external dependency. Return the adapter's
+  documented terminal response and prove the dependency call count is zero;
+  do not let a framework default status hide a missing chain.
+- Treat a response write error after the framework has committed the response
+  as an observation boundary, not a retry signal. Preserve the committed
+  response, never re-enter an outer error handler or issue a second write, and
+  expose only a fixed low-cardinality redacted observer. Keep the caller-owned
+  cause available through `errors.Is`/`errors.As` without including provider or
+  transport text in the observer's public message. Custom callbacks own their
+  own response and observation policy.
+- Do not wrap a synchronous legacy provider in a goroutine merely to return on
+  cancellation. Check context before and after the call, wait for a
+  non-cooperative call to return, and make the lifecycle explicit in the
+  migration contract. Add a context-aware method/interface for providers that
+  can cooperate, and test pre-cancel, in-flight cancellation, late cancel,
+  bounded completion, and zero detached goroutines.
+- When a legacy configuration can carry a provider that also implements the
+  context-aware interface, detect that capability once during adapter
+  construction, preserve explicit context-aware option precedence, and route
+  through the context method. Test auto-upgraded in-flight cancellation and
+  reject any late-success result observed after the cancellation checkpoint.
+
+### External crypto and envelope boundaries
+
+- Keep cloud KMS credentials, client construction/close, retry policy, key
+  policy, rotation, cache, and logging caller-owned. Inject the smallest SDK
+  method subset needed by the Go package; document whether the injected client
+  must support concurrent calls and cooperative `context.Context` cancellation.
+- Reject a nil KMS client before any call, including a nil interface and typed
+  nil values of every `reflect.IsNil`-capable kind (`Chan`, `Func`, `Interface`,
+  `Map`, `Pointer`, and `Slice`). Prove no panic and zero provider calls for
+  each kind, and keep the zero-value provider failure explicit.
+- For a plaintext data-key response, if the SDK returns a non-nil output,
+  reserve `defer zeroBytes(output.Plaintext)` immediately before checking the
+  SDK error or plaintext length. For encrypted data-key responses, reserve the
+  corresponding zeroing of `output.CiphertextBlob` and every local blob copy
+  before validation or return. Zero SDK slices and every mutable local copy on
+  success, error, cancellation, validation failure, and panic. Call this
+  best-effort because Go copies, compiler/GC behavior, and expanded crypto keys
+  cannot be promised to disappear.
+- Define a canonical, versioned envelope encoding before implementation. Bind
+  version, algorithm, key identity, encrypted data key, sorted context, and
+  caller associated data to the local AEAD with an explicit domain and length
+  encoding. Reject unknown/duplicate/case-variant fields, invalid UTF-8,
+  non-canonical base64, trailing bytes, and oversized input before expensive
+  KMS or crypto work. For map-like KMS encryption context, preserve keys and
+  values byte-for-byte: matching is case-sensitive, `tenant` and `Tenant` are
+  distinct, only exact duplicate keys are rejected, and no trim, case-fold, or
+  Unicode normalization is implicit. Require deterministic field/array order,
+  reject null/whitespace ambiguity, and prove byte-for-byte canonical
+  re-marshal plus canonical padded-base64 round trips. Bound raw JSON string
+  tokens before `json.Unmarshal`/canonical re-encoding; a decoded-size limit
+  alone does not prevent allocation amplification from escape-heavy or giant
+  source strings. When replacing a wire encoder, keep a fixed fixture produced
+  by the prior writer and prove the new reader remains backward-compatible.
+- Check cancellation before parsing or KMS, after each external response, and
+  at the final result-publication boundary. Do not add a goroutine to force-stop
+  a non-cooperative client; prove no local crypto or result publication occurs
+  after a cancellation checkpoint fails.
+- Fakes for external crypto must deep-copy request maps and byte slices, record
+  logical method calls and observed contexts, support blocking/cancellation and
+  output-plus-error cases, return fresh output buffers, and assert the provider
+  never retains SDK-owned response slices. Assert metadata mismatch causes zero
+  KMS calls. Add redaction tests (including `%+v`), bounded input tests,
+  concurrent stress, race execution, and fake-only allocation benchmarks with
+  fixture identity, environment, and logical call-count evidence; never treat
+  live-cloud latency as a local benchmark. Public error values must also
+  sanitize externally constructible sentinel/operation fields to the documented
+  safe allowlist; test manual construction as well as internal wrapping.
 
 ## P0/P1 Gate
 
@@ -92,6 +210,12 @@ sites are default non-goals.
 ## Implementation Defaults
 
 - Format touched files with repo tooling/`gofmt`.
+- Keep reader-facing Go doc prose in Korean, but begin each exported declaration
+  comment with the exact identifier followed by an ASCII space. Write
+  `// Point 값은 ...` or `// NewPoint 함수는 ...`; a directly attached Korean
+  particle such as `// Point는 ...` fails `revive`'s exported-comment rule. Run
+  the configured linter after the first public declaration so the defect does
+  not spread across a new package.
 - Use table-driven tests and compile-checked examples.
 - Wrap causal errors with `%w`; preserve typed/sentinel inspection.
 - Close owned resources deterministically.

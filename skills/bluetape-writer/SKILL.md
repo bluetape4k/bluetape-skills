@@ -58,6 +58,7 @@ authorize publication side effects.
 | Cache, Near Cache, Exposed cache, or workshop cache series | `references/cache-series-lessons.md` |
 | Korean draft is translated, generic, promotional, or LLM-like | `references/korean-naturalness-checklist.md` after facts are locked |
 | Any Korean Superpowers brainstorming, specification/design, plan, review, or lesson | `references/korean-naturalness-checklist.md` after facts are locked |
+| User-approved terminology set or repeated domain-term correction | `references/terminology-glossary.md` and `references/terminology-rules.json`; run `scripts/audit-korean-terms.mjs` |
 | User asks for their Exposed-book voice or says the text does not sound like them | `references/kotlin-exposed-book-style.md` |
 
 Do not load cache or personal-voice references for unrelated posts.
@@ -133,14 +134,17 @@ locale-publication, or site-build steps.
 4. Draft Korean first unless the user explicitly requests another locale.
 5. Review facts, identifiers, numbers, source URLs, benchmark direction, and
    code snippets before prose humanization.
-6. Run the triggered Korean naturalness/personal-voice pass. Preserve facts,
+6. Run the contextual terminology audit before the Korean naturalness pass.
+   Resolve collection/item, database-row/action-message, state-code/reader-label,
+   and code-token/prose distinctions instead of applying global replacements.
+7. Run the triggered Korean naturalness/personal-voice pass. Preserve facts,
    terms, numbers, commands, citations, and user wording; manually reject any
    rewrite that changes meaning.
-7. Obtain Korean approval when the workflow requires bilingual publication,
+8. Obtain Korean approval when the workflow requires bilingual publication,
    then localize English naturally. Do not translate Korean idioms literally.
-8. Create/validate visuals with the correct companion skill and inspect rendered
+9. Create/validate visuals with the correct companion skill and inspect rendered
    output at article scale.
-9. Build the site and verify every changed route, locale pair, asset, and series
+10. Build the site and verify every changed route, locale pair, asset, and series
    link before completion.
 
 ## Evidence Rules
@@ -213,6 +217,12 @@ locale-publication, or site-build steps.
   Do not use the literal `정신 모형` or the structural term `사고 구조`.
 - Check subject/predicate and semantic dimension: impact scope is small/large,
   not short/long. Prefer `X 우선` for “X First” headings.
+- Separate dictionary choice from semantic role. Before replacing a term, decide
+  whether it names a collection or item, a database row or an action message, a
+  state identifier or a reader label, and a code token or explanatory prose.
+- When a repeated correction produces a new reusable rule, add both a concise
+  human rule and a machine-checkable example. Do not grow the glossary with a
+  one-off synonym that has no context boundary.
 - A strong section follows: reader problem -> smallest useful code/result ->
   interpretation -> caveat/selection rule.
 
@@ -267,8 +277,11 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
   - **Evidence:** Complete primary-locale route with local article shape and exact technical terms.
   - **Failure:** Revise feature-catalog, marketing, or evidence-free sections before localization.
 - [ ] **BLOG-05 — Pass voice and naturalness review**
-  - **Action:** Complete triggered naturalness/personal-voice checklists after facts are locked, preserving facts, identifiers, numbers, commands, links, and user wording.
-  - **Evidence:** Reviewed primary draft with reference checklist counts and no meaning-changing rewrite.
+  - **Action:** Run the contextual terminology audit, then complete triggered
+    naturalness/personal-voice checklists after facts are locked, preserving
+    facts, identifiers, numbers, commands, links, and user wording.
+  - **Evidence:** Audit report plus reviewed primary draft with reference
+    checklist counts and no meaning-changing rewrite.
   - **Failure:** Reject translationese, generic AI prose, invented metaphors, or altered technical meaning.
 - [ ] **BLOG-06 — Synchronize locale parity**
   - **Action:** After required primary approval, localize naturally and align route, part, title, claims, numbers, links, assets, and series navigation.
@@ -290,6 +303,8 @@ Apply `bluetape-workflow/references/checklist-contract.md`.
 For `bluetape4k.github.io` changes, run:
 
 - `git diff --check`;
+- `node ~/.codex/skills/bluetape-writer/scripts/audit-korean-terms.mjs` for
+  changed Korean article files when the terminology rules apply;
 - the repository site build, normally `npm run build`;
 - changed Korean and English route checks;
 - part-count/title/source-link/series-navigation parity;

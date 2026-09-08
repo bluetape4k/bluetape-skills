@@ -35,9 +35,9 @@ checklist.
   - **Evidence:** Source diff/SHA, workflow URL, snapshot metadata, and consumer mapping, or concrete evidence that this row is outside approved scope.
   - **Failure:** Never leave stable dependency branches on SNAPSHOT or point consumers at a future stable version.
 - [ ] **REL-08 — Complete the public docs handoff**
-  - **Action:** Update current install/baseline content and both locale indexes to the settled BOM and live Latest releases while preserving historical articles.
-  - **Evidence:** Stale-version searches, Central POM, live Releases, diff check, and site build.
-  - **Failure:** Keep documentation closeout blocked until current public guidance matches published reality.
+  - **Action:** Update current install/baseline content and both locale indexes to the settled BOM and live Latest releases while preserving historical articles. For a repository whose registry descriptor has `manual.ownership: central`, prepare drafts in the site repository before the source release, leave `publication.contentStatus: in-progress`, and never write a future tag or commit. After the target tag and public artifacts are proven, pin the central `manifest.yaml` to the exact source release ref/commit, regenerate `generated/manifest.json`, validate the central manual against an exact-tag source checkout, and refresh current EN/KO pages/assets without changing historical release-pinned narratives. After cutover, retire the source repository's standalone `Manual Documentation` workflow; do not recreate or wait for that workflow, and retain only explicitly declared release/CI checks that consume the central contract. For legacy repositories, keep the existing `docs/manual/**` handoff until cutover.
+  - **Evidence:** Stale-version searches, exact target tag/commit, Central POM, live Release, the central source/tooling descriptor, `npm run sync:manual -- --release <target-tag> --repository <slug> --source <code-checkout> --manual-source <site-checkout>`, central manifest/generated-manifest parity, `ruby scripts/manual/repositories/<slug>/validate_manuals.rb --code-root <code-checkout> --manual-root <site-checkout>/docs/manual/<slug> --source-root docs/manual/<slug>`, `ruby scripts/manual/repositories/<slug>/validate_release_manuals.rb --code-root <code-checkout> --manual-root <site-checkout>/docs/manual/<slug> --source-root docs/manual/<slug> --tag <target-tag> --sha <exact-tag-sha>`, locale parity, manual tree digest/provenance, diff check, and site build.
+  - **Failure:** Keep documentation closeout blocked until current public guidance and the stable manual anchor match published reality; future tags, SNAPSHOT refs, develop-only APIs, and a central manifest pinned before the public tag are invalid.
 - [ ] **REL-09 — Refresh the irreversible hold**
   - **Action:** Immediately before tag/dispatch, recheck open work, tag/release absence, workflow inputs, POM license/versions, SNAPSHOT absence, and artifact matrix.
   - **Evidence:** Timestamped live evidence gathered after the last mutable release event.
@@ -66,5 +66,17 @@ train version.
   duplicates, then test.
 - Site shows stale install/latest values: update current snippets and both
   locale indexes, while preserving historical narratives.
+- Central manual draft exists before the source tag: keep
+  `publication.contentStatus: in-progress`, do not write a future
+  `releaseRef`/`releaseCommit`, and validate only against the authoring ref.
+- Stable release manual is still pinned to the prior tag: prove the target tag
+  and public artifacts, update the central manifest/generated-manifest parity,
+  run the exact-tag central validator, record the manual tree digest, and only
+  then close the docs handoff.
+- A legacy repository has not been cut over: use its source `docs/manual/**`
+  path and do not mix central and legacy roots in one sync.
+- A centrally owned repository still has a standalone `Manual Documentation`
+  workflow: remove that obsolete source workflow after the central site is
+  deployed; do not restore it as a release gate.
 - User says the procedure is in the skill: reread and repair the named gate.
 - Immutable POM mistake: never retag; use a corrective patch.

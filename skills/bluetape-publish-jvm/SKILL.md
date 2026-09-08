@@ -103,9 +103,9 @@ state; reference rows remain required subchecks.
   - **Evidence:** Source SHA/version, workflow URL, public snapshot metadata, consumer mapping, or concrete evidence this row is outside scope.
   - **Failure:** Keep stable branches non-SNAPSHOT and never reference a future stable version.
 - [ ] **PUB-10 — Complete public documentation handoff**
-  - **Action:** Update current install/baseline content and locale indexes to live published versions while preserving historical narratives.
-  - **Evidence:** Stale-version searches, Central POM, live Releases, diff check, site build, or concrete evidence docs are outside scope.
-  - **Failure:** Keep documentation closeout blocked until current guidance matches published reality.
+  - **Action:** Update current install/baseline content and locale indexes to live published versions while preserving historical narratives. For repositories with `manual.ownership: central`, prepare drafts in `bluetape4k.github.io` before the source release, keep `publication.contentStatus: in-progress`, and do not write a future tag or commit. After the stable tag and public artifacts are proven, pin the central `manifest.yaml` to the exact source `releaseRef`/`releaseCommit`, regenerate `generated/manifest.json`, run the central validator against a source checkout at that exact tag, refresh current EN/KO pages/assets, and preserve historical snapshots. Once a repository has cut over to central ownership, its standalone `Manual Documentation` source workflow is retired; do not recreate or wait for that workflow, and keep only explicitly declared release/CI checks that consume the central contract. For legacy repositories, retain the old `docs/manual/**` handoff until their cutover is complete.
+  - **Evidence:** Stale-version searches, exact target tag/commit, Central POM, live Release, the central source/tooling descriptor, `npm run sync:manual -- --release <target-tag> --repository <slug> --source <code-checkout> --manual-source <site-checkout>`, exact-tag validator output, central `manifest.yaml` plus generated-manifest parity, locale parity, manual tree digest/provenance, diff check, and site build, or concrete evidence docs are outside scope.
+  - **Failure:** Keep documentation closeout blocked until current guidance and the stable manual anchor match published reality; never promote a future tag, SNAPSHOT, or develop-only API, and never mutate a legacy/source manual after its stable tag has been pinned.
 - [ ] **PUB-11 — Report release truth**
   - **Action:** Render every publish and reference row with counts, URLs, SHAs, versions, artifacts, waivers, exclusions, residual risks, and side-effect state.
   - **Evidence:** `Required checks: X/Y; N/A: N; Blocked: 0` with X=Y for completed scope and no missing artifact evidence.
@@ -123,7 +123,12 @@ state; reference rows remain required subchecks.
 7. Verify every expected artifact from the public endpoint, not merely workflow
    success.
 8. Complete GitHub Release/milestone closeout, next development line, downstream
-   consumer sync, and public-doc handoff that are in scope.
+   consumer sync, and the public-doc/manual handoff that are in scope. Stable
+   closeout must report the code `releaseRef`/`releaseCommit`, central manual
+   source ref/tree digest when applicable, exact-tag validator, generated-manifest
+   parity, and locale parity. Snapshot flows may prepare central drafts, but stable
+   promotion remains N/A until the tag and public artifacts are proven; legacy
+   flows keep their source manual pinned until cutover.
 9. Report Step DoD with URLs, SHAs, versions, artifact matrix, waivers, and
    remaining risks.
 
@@ -159,5 +164,7 @@ flow and preserve the checklist evidence.
 
 Report selected flow/class, execution order/batches, repos and SHAs, workflow
 URLs, Central/snapshot evidence, artifact matrix, retained/skipped versions,
-consumer/docs/next-line status, waivers, residual risks, and the parent Step DoD
-table. PR bodies end with `## DoD Status`; verify live bodies.
+consumer/docs/manual/next-line status (including the code release ref/commit,
+central manual release ref/commit/tree digest, and exact-tag validator when
+applicable), waivers, residual risks, and the parent Step DoD table. PR bodies
+end with `## DoD Status`; verify live bodies.
