@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "description": "Context-aware Korean terminology checks for bluetape technical writing.",
+  "series": {
+    "clinic-appointment": {
+      "pathIncludes": ["clinic-appointment-"],
+      "checks": [
+        {
+          "id": "appointment-commitment",
+          "pattern": "확정\\s+방문\\s+약속|방문\\s+약속",
+          "message": "Use reader-facing 예약 language; preserve commitment only in exact source identifiers or source excerpts.",
+          "replacement": "확정 예약 / 예약",
+          "severity": "error"
+        },
+        {
+          "id": "snapshot-loanword",
+          "pattern": "스냅(?:샷|숏)|(?<![A-Za-z])snapshot(?![A-Za-z])",
+          "message": "Name the concrete domain data instead of using a blanket snapshot loanword.",
+          "replacement": "기준 데이터 / 구매 기준 정보 / 실행 기준 데이터",
+          "severity": "error"
+        },
+        {
+          "id": "waitlist-or-backlog",
+          "pattern": "대기\\s*(?:열|명단)",
+          "message": "Distinguish the waitlist collection from notification backlog.",
+          "replacement": "대기 목록 (waitlist) or 미처리 누적(backlog)",
+          "severity": "error"
+        },
+        {
+          "id": "empty-time",
+          "pattern": "빈자리",
+          "message": "The appointment service occupies time, not physical space.",
+          "replacement": "빈시간",
+          "severity": "error"
+        },
+        {
+          "id": "appointment-service-spacing",
+          "pattern": "예약서비스",
+          "message": "Keep the approved compound-noun spacing.",
+          "replacement": "예약 서비스",
+          "severity": "error"
+        },
+        {
+          "id": "freshness-abstract-noun",
+          "pattern": "최신성",
+          "message": "Prefer a concrete predicate over the abstract noun 최신성.",
+          "replacement": "최신 여부 / 최신인지 확인",
+          "severity": "error"
+        },
+        {
+          "id": "durable-abstract-noun",
+          "pattern": "영속(?:적인|적)?\\s+(?:명령|작업|사실)",
+          "message": "Use reader-facing 저장된 wording unless 영속 is part of an exact contract.",
+          "replacement": "저장된 명령 / 저장된 작업 / 저장된 사실",
+          "severity": "warning"
+        },
+        {
+          "id": "action-queue-row",
+          "pattern": "조치\\s*(?:큐|queue)[^。.!?\\n]{0,36}행(?:에|마다|을|이|은|만)?",
+          "message": "An action queue contains work requests; do not describe the request as a database row.",
+          "replacement": "조치 메시지(작업 요청)",
+          "severity": "error"
+        },
+        {
+          "id": "member-circuit",
+          "pattern": "회원\\s+circuit",
+          "message": "Name the protected dependency in reader-facing prose.",
+          "replacement": "회원 조회(member) circuit",
+          "severity": "error"
+        },
+        {
+          "id": "degraded-review-label",
+          "pattern": "운영\\s+보류",
+          "message": "Use the approved reader-facing label for DEGRADED_REVIEW.",
+          "replacement": "운영 검토 대기",
+          "severity": "error"
+        },
+        {
+          "id": "terminal-decision-label",
+          "pattern": "종료\\s+상태\\s+결정",
+          "message": "Use the series-wide terminal decision label.",
+          "replacement": "최종 상태 결정",
+          "severity": "error"
+        },
+        {
+          "id": "redundant-active-offer",
+          "pattern": "한\\s+빈시간에는\\s+활성\\s+제안\\s+하나만\\s+남긴다",
+          "message": "Remove redundant Korean quantifiers from the invariant.",
+          "replacement": "빈시간에는 활성 제안만 남긴다",
+          "severity": "error"
+        }
+      ]
+    }
+  }
+}

@@ -216,13 +216,13 @@ not execution evidence.
 
 ### Native subagent model policy
 
-For every native subagent dispatched under this workflow, set the model request
-to `gpt-5.6-luna` with reasoning effort `max`, while keeping the installed
-canonical `agent_type` and its lens. This workflow-local override takes
-precedence over role defaults in `AGENTS.md`; do not silently fall back to
-another model or effort. If the current runtime or agent catalog cannot honor
-the pair, keep the lane `PENDING`, record the capability mismatch, and obtain
-an explicit fallback before dispatch.
+For every native subagent dispatched under this workflow, pass only the
+installed canonical `agent_type` (role) and its lens. Do not inject a `model`
+or `model_reasoning_effort` from the workflow. OMX resolves the effective model
+and effort from the per-agent registry (`.omx-config.json`), generated native
+agent TOML, and current `AGENTS.md`, so role-specific routing remains intact.
+If the selected role has no verified runtime mapping, keep the lane `PENDING`,
+record the capability mismatch, and obtain an explicit fallback before dispatch.
 
 Before mutation, `mutation-check` must identify exactly one verified running
 receipt bound to the current session and covering every target path. An empty
@@ -267,6 +267,35 @@ these invariants:
 - Use the CG-11 through CG-18 PR path from `common-gates.md`; do not restate or
   weaken it in a leaf. CG-16 fresh merge approval is not transferable from plan
   or PR-creation approval. Non-PR irreversible actions use CG-X01.
+
+## Independent Code Review Fallback
+
+For this workspace, independent code review remains the first attempt. If its
+execution is unavailable (spawn failure, thread limit, exhausted capacity
+retry, timeout, or no usable verdict), the main session must perform an inline
+code review without requesting fallback approval again. Follow the bounded
+retry and interruption rules in `references/liveness-contract.md`; do not loop
+on reviewer recovery or block delivery solely because that reviewer failed.
+This workspace-approved exception takes precedence over conflicting leaf-skill
+rules that forbid author/main-session fallback, including `code-review`.
+
+- Record the failed attempt, reason, and any partial findings. Label the new
+  evidence `inline fallback review`, not independent attestation.
+- Re-read the exact current head and diff against approved requirements and
+  the language patterns. Check correctness, security, lifecycle/cancellation,
+  compatibility, tests, and documentation; record file:line findings, severity,
+  disposition, validation evidence, remaining gaps, and an explicit verdict.
+- P0/P1 findings are not execution failures: retain and resolve them, including
+  findings from an incomplete independent review. An unfavorable verdict is
+  never grounds to discard a review or seek an easier approval.
+- Resume the original review gate only after inline proof passes. Required
+  tests/CI and a separately required architecture review remain mandatory.
+  Preserve fresh exact-head merge approval. Report unavailable requested
+  model/external provenance honestly; inline review does not establish it.
+- Preserve failed native receipts; record inline evidence under main-session
+  ownership using supported helper transitions. Never relabel a failed native
+  lane as successful or fabricate independent completion. A terminal run may
+  require a new approved-topology run linked to the preserved prior evidence.
 
 ## Reporting Contract
 

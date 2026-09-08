@@ -15,7 +15,7 @@ Use immediately before a Kotlin completion claim or review verdict.
   - **Evidence:** Clean diff search and targeted lifecycle tests when touched.
   - **Failure:** Remove the construct or block progression.
 - [ ] **KT-FIN-04 — Prove lifecycle ownership**
-  - **Action:** Verify resource ownership, cleanup, retry/timeout, and every failure path.
+  - **Action:** Apply triggered lifecycle/data-boundary checks for ownership, completion order, primary failure, retry/replay, and cache invalidation.
   - **Evidence:** Code paths and tests for the touched lifecycle.
   - **Failure:** Add explicit ownership/proof before PASS.
 - [ ] **KT-FIN-05 — Verify Exposed boundaries**
@@ -23,7 +23,7 @@ Use immediately before a Kotlin completion claim or review verdict.
   - **Evidence:** Current imports/source anchors and targeted tests, or concrete N/A.
   - **Failure:** Repair deprecated/ambiguous boundaries.
 - [ ] **KT-FIN-06 — Apply triggered references**
-  - **Action:** Complete every triggered Spring, testing, Testcontainers, HTTP/HC5, and module checklist.
+  - **Action:** Complete every triggered lifecycle, compatibility, data-boundary, Spring, testing, Testcontainers, HTTP/HC5, and module checklist.
   - **Evidence:** Reference checklist counts and evidence, or concrete trigger-based N/A.
   - **Failure:** An unloaded or partial reference blocks the Kotlin verdict.
 - [ ] **KT-FIN-07 — Prove named test behavior**

@@ -4,6 +4,26 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-09
+
+### 추가
+
+- 현재 승인된 canonical skill을 공개 bundle에 동기화했습니다. Kotlin에는
+  cancellation/lifecycle, JVM·직렬화 호환성, retry·cache 경계 reference를
+  추가하고, 실제 production wiring과 custom Spring capability를 검증하도록
+  했습니다.
+- `$bluetape-writer`에 문맥 기반 용어 audit와 재사용 가능한 용어 규칙 자료를
+  추가하고, `$bluetape-workflow`에 독립 review 불가 시 inline fallback 계약과
+  회귀 테스트를 추가했습니다.
+
+### 변경
+
+- Go 외부 provider·crypto·envelope·HTTP 경계와 JVM 배포 문서의 현재 검증
+  조건을 보강했습니다.
+- workflow model routing은 runtime agent registry를 사용하도록 정리하고,
+  diagram skill에서 공개 bundle에 포함되지 않아야 할 캐시 산출물을 제거했습니다.
+- 설치 및 업데이트 예제를 `v1.4.0` 기준으로 갱신했습니다.
+
 ## [1.3.4] - 2026-08-13
 
 ### 추가
@@ -183,7 +203,8 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
 [1.3.3]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.3
 [1.3.4]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.4
+[1.4.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.4.0
 [1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.3.4...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.4.0...develop

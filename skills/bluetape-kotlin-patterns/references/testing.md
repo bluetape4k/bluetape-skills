@@ -1,7 +1,8 @@
 # Kotlin Testing and Infrastructure
 
-Use for every new/touched Kotlin test, fixture, Testcontainers launcher, HTTP
-adapter conformance suite, or HC5 factory.
+Use for new/touched Kotlin tests and fixtures; Testcontainers, HTTP, or HC5;
+production plugin, generated-artifact, or transaction wiring; and secret-bearing
+provider failures or diagnostic redaction, even when existing tests are unchanged.
 
 ## Assertions and Structure
 
@@ -31,6 +32,27 @@ adapter conformance suite, or HC5 factory.
 - Cancellation tests exercise real job cancellation, cleanup, and propagation;
   do not construct manual continuations when `suspendCancellableCoroutine`
   expresses the behavior.
+
+## Proof That Exercises Production Behavior
+
+- Exercise the actual public adapter, installed plugin, generated artifact, or
+  transaction entrypoint. A fixture that recreates its implementation proves
+  the fixture, not production wiring. Mock the external boundary as needed.
+- Gate the named race with acquisition/action/cleanup signals; fixed sleeps do
+  not prove that cancellation hit the intended phase. Use bounded waits that
+  fail on timeout, not polling that returns the last observed value.
+- Assert outcomes after cleanup: close/release count, lock reacquisition,
+  retained checkpoint/resume position, no unintended remote side effect, or
+  verifiable output artifacts. A property assertion or mock call alone may be
+  insufficient for the claimed effect.
+- Preserve failure category, cause/suppression policy, and propagation. Do not
+  universally require exception object identity: coroutine stacktrace recovery
+  can copy exceptions. Use an identity-specific fixture only when identity is
+  the adapter contract being tested.
+- For secret-bearing provider failures, assert the externally observable message,
+  cause, suppressed exceptions, and rendered stack trace with synthetic canaries.
+  Sanitizing the top-level message alone does not prove the existing no-secrets
+  contract; do not discard safe diagnostics unnecessarily.
 
 ## Testcontainers and Shared Fixtures
 
@@ -86,3 +108,7 @@ otherwise.
   - **Action:** Run the smallest affected test, affected compile/tests, full module test before Kover, and record matrix counts.
   - **Evidence:** Fresh commands, expected/actual counts, and report-only coverage result.
   - **Failure:** Do not accept stale cache output or run Kover before behavior proof.
+- [ ] **KT-TEST-06 — Exercise real entrypoints and observable effects**
+  - **Action:** When behavior crosses a production wiring boundary, exercise that entrypoint; use deterministic gates for races and assert promised effects. Check diagnostic canaries when secret-bearing failures are touched.
+  - **Evidence:** Triggered entrypoint/gate/outcome/canary proof; concrete N/A for wiring or race checks on pure deterministic helpers.
+  - **Failure:** Replace duplicated wiring, sleep-only races, or assertions that cannot distinguish the original defect.
