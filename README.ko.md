@@ -8,6 +8,11 @@ Bluetape 개발 워크플로를 위한 설치 가능한 canonical [Codex skill](
 
 이 저장소는 관리자의 Codex 홈을 그대로 복제한 것이 아니라, 다른 개발자가 설치할 수 있도록 구성한 공개 배포본입니다. 재사용 가능한 skill 단위는 필요한 자료와 함께 온전히 제공하고, 사용자별 설정과 런타임 데이터는 배포 경계 밖에 둡니다.
 
+설정을 직접 적용하려는 개발자를 위해
+[모델 설정 수동 적용 안내](docs/codex-model-routing.ko.md)도 제공합니다.
+예시를 저장소가 자동 적용하지는 않습니다. `scripts/install.sh`는 skill
+폴더만 설치하며 `config.toml`이나 `.omx-config.json`은 수정하지 않습니다.
+
 [![공개 배포 경계: canonical Bluetape skill과 재사용 가능한 자료는 포함하고 개인 런타임 상태는 제외합니다](docs/images/bluetape-skills-public-bundle-boundary-01.png)](docs/images/bluetape-skills-public-bundle-boundary-01.svg)
 
 ## 설치
@@ -23,7 +28,7 @@ cd bluetape-skills
 
 검증에는 Bash, `rg`, Python 3, `uv`가 필요합니다. 검증 스크립트는 공개 배포 경계와 workflow contract를 확인한 뒤, 임시 Python 환경에서 함께 배포한 workflow 및 diagram audit 회귀 테스트를 실행합니다.
 
-설치 대상은 `${CODEX_HOME:-~/.codex}/skills`입니다. 동일한 canonical skill이 이미 있으면 설치 스크립트는 덮어쓰지 않고 멈춥니다. 교체가 필요할 때만 `--force`를 사용하세요. 기존 skill은 타임스탬프가 붙은 백업 디렉터리로 먼저 옮깁니다.
+설치 대상은 `${CODEX_HOME:-$HOME/.codex}/skills`입니다. 동일한 canonical skill이 이미 있으면 설치 스크립트는 덮어쓰지 않고 멈춥니다. 교체가 필요할 때만 `--force`를 사용하세요. 기존 skill은 타임스탬프가 붙은 백업 디렉터리로 먼저 옮깁니다.
 
 ```bash
 ./scripts/install.sh --dry-run
@@ -99,6 +104,7 @@ Full Feature 작업의 `2-R` Spec Review, `3-R` Plan Review, `6-R` Pre-PR Review
 
 ## 자세한 안내
 
+- [Codex와 OMX 모델 설정](docs/codex-model-routing.ko.md)은 선택 가능한 수동 적용 참고 문서이며 설치 스크립트가 설정을 적용하지 않습니다.
 - [Bluetape skill 공유와 설치](https://bluetape4k.github.io/ko/blog/bluetape-skills-sharing/)에서는 공개 배포본의 경계, canonical source 관리 원칙, 설치·업데이트 방법과 협업 모델을 설명합니다.
 - [Bluetape workflow 사용법](https://bluetape4k.github.io/ko/blog/bluetape-skills-workflow-guide/)에서는 작업 분류, checklist gate, 단계별 다관점 review와 P0/P1이 0이 될 때까지 반복하는 절차를 다룹니다.
 

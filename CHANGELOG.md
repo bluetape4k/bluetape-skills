@@ -4,6 +4,19 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+### 추가
+
+- Codex 기본 모델과 OMX의 현재 agent role별 모델·추론 강도를 수동 적용할
+  수 있도록 한·영 참고 문서와 README 링크를 추가했습니다. 설치 스크립트는
+  사용자 설정을 변경하지 않습니다.
+- workflow receipt의 owner file 경로 경계를 확인하고 fencing 값을 보호하는
+  재발 방지 교훈을 추가했습니다.
+
+### 변경
+
+- README의 기본 skill 설치 경로 예시에서 shell이 실제로 확장하지 않는
+  `~` 표현을 `$HOME`으로 바로잡았습니다.
+
 ## [1.4.0] - 2026-09-09
 
 ### 추가
