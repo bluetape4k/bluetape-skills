@@ -86,9 +86,9 @@
   - **Action:** 변경 diff·교훈·독립 review·exact commit을 수렴한다.
   - **Evidence:** exact commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8` 독립 final review `PASS`, actionable finding 0건; diff-tree check, 공개 bundle validator, 한국어 audit, 22-role locale parity 통과.
   - **Failure:** 필요한 증거가 없으면 PR을 만들지 않는다.
-- [ ] **E-07 — 공통 PR delivery**
+- [x] **E-07 — 공통 PR delivery**
   - **Action:** CG-11..15에 따라 PR을 준비하고 정확한 상태를 보고한다.
-  - **Evidence:** PR URL/head 및 live metadata read-back.
+  - **Evidence:** [PR #40](https://github.com/bluetape4k/bluetape-skills/pull/40), base `develop`, head `docs/codex-model-routing`; `documentation` label과 `debop` assignee, Korean body의 마지막 `## DoD Status`, 최신 푸시 head 및 live checks/review/thread 상태를 read-back했다.
   - **Failure:** authority 또는 exact-head 검증이 맞지 않으면 PR을 중단한다.
 - [ ] **E-08 — fresh merge approval 이후 closeout**
   - **Action:** 사용자 승인 후 CG-16..18을 순서대로 실행한다.
@@ -180,29 +180,29 @@
   - **Action:** 독립 review 후 P0/P1을 해소하고 exact local commit을 만든다.
   - **Evidence:** exact commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8` 독립 final `PASS`; 미해결 P0/P1 0건, `./scripts/validate.sh` 및 한국어 audit 통과. PR 제출할 후속 checklist-only commit도 push 전 재검토한다.
   - **Failure:** unresolved P0/P1 또는 dirty diff이면 PR을 만들지 않는다.
-- [ ] **CG-11 — PR authority 확인**
+- [x] **CG-11 — PR authority 확인**
   - **Action:** 대상 repository/base/head와 PR 생성 권한을 확인한다.
-  - **Evidence:** 사용자 승인 범위 `bluetape4k/bluetape-skills`, `develop`, `docs/codex-model-routing`.
+  - **Evidence:** 사용자 승인 범위 `bluetape4k/bluetape-skills`, `develop`, `docs/codex-model-routing`; PR #40 생성 후에도 대상이 일치한다.
   - **Failure:** 범위를 벗어난 PR을 생성하지 않는다.
-- [ ] **CG-12 — exact branch push**
+- [x] **CG-12 — exact branch push**
   - **Action:** 수렴된 head를 원격에 push하고 SHA를 되읽는다.
-  - **Evidence:** local/remote head 일치 결과.
+  - **Evidence:** PR #40에 연결된 `origin/docs/codex-model-routing`의 최종 SHA를 push 후 local/remote/GitHub에서 일치 확인했다. 체크리스트 상태 기록 commit도 같은 head에 반영하고 재확인했다.
   - **Failure:** 원격 head가 다르면 덮어쓰지 않고 멈춘다.
-- [ ] **CG-12A — PR 직전 guidance 갱신**
+- [x] **CG-12A — PR 직전 guidance 갱신**
   - **Action:** PR 생성 직전 AGENTS·leaf/common gate·template·issue metadata를 다시 읽는다.
-  - **Evidence:** 현재 적용할 작업 지침과 대상 metadata를 다시 읽은 결과.
+  - **Evidence:** 최신 AGENTS/워크플로 적용 규칙과 대상 repo의 PR template 부재, `documentation` label, milestone 상태를 PR 생성 직전에 재확인했다.
   - **Failure:** guidance drift가 있으면 영향 gate를 갱신한다.
-- [ ] **CG-13 — PR 생성/확인**
+- [x] **CG-13 — PR 생성/확인**
   - **Action:** Korean body와 `## DoD Status` 마지막 section을 사용해 PR을 만든다.
-  - **Evidence:** URL/number, head SHA, assignee/labels/milestone, body heading read-back.
+  - **Evidence:** PR #40 URL/head와 Korean body 마지막 `## DoD Status`를 read-back; assignee `debop`, label `documentation`, milestone 없음(해당 공개 계획 milestone 없음).
   - **Failure:** metadata/body가 다르면 CI 진행 전에 수정한다.
-- [ ] **CG-14 — CI, review, thread 확인**
+- [x] **CG-14 — CI, review, thread 확인**
   - **Action:** exact-head checks와 live review/thread 상태를 확인한다.
-  - **Evidence:** 독립 final code review 필요; live human-review subgate는 single-developer repository scope의 `N/A` 대상이다.
+  - **Evidence:** exact final head 독립 리뷰 `PASS`; GitHub workflow 없음, required status checks `0/0` 및 PR checks 없음(`N/A`, 실패가 아님); live reviews와 review threads/comments 각각 0. Branch ruleset은 PR 필수·승인 0건으로 설정되어 single-developer human-review subgate는 `N/A`다.
   - **Failure:** CI 실패·미해결 thread·P0/P1은 merge-ready를 막는다.
-- [ ] **CG-15 — merge-ready 보고**
+- [x] **CG-15 — merge-ready 보고**
   - **Action:** gate 수와 PR/head를 reconcile해 사용자에게 보고한다.
-  - **Evidence:** `Required checks: X/Y`, N/A/Blocked 수, exact SHA, CG-16..18 미완료 목록.
+  - **Evidence:** 최종 사용자 보고에 exact PR head, `Required checks: 0/0`(저장소 workflow/required checks 없음), N/A 상태, merge/동기화/정리/GNO gates의 미완료 상태를 명시한다. PR #40은 `MERGEABLE/CLEAN`이지만 merge 권한은 별도 fresh approval hold다.
   - **Failure:** 누락 증거가 있으면 fresh merge 승인을 요청하지 않는다.
 - [ ] **CG-16 — fresh merge 승인**
   - **Action:** merge-ready 보고 뒤 exact PR/head에 대해 새 승인을 받는다.
@@ -237,7 +237,7 @@
   - **Failure:** 후보 version이나 authority가 달라지면 재계획한다.
 - [x] **PUB-02 — live/historical 확인**
   - **Action:** GNO 이력과 live branch/release/PR/workflow 상태를 확인한다.
-  - **Evidence:** GNO 검색은 아래 검색 ledger; GitHub는 public/default `develop`, latest `v1.4.0`, open `develop` PR 없음, workflow 없음.
+  - **Evidence:** GNO 검색은 아래 검색 ledger; GitHub는 public/default `develop`, latest `v1.4.0`, PR 전 중복 없음, 현재 PR #40의 live exact-head state 확인, workflow 없음.
   - **Failure:** stale GNO를 live GitHub 사실로 취급하지 않는다.
 - [x] **PUB-03 — canonical skill parity**
   - **Action:** 변경된 canonical skill 수와 public parity를 확인한다.
@@ -247,9 +247,9 @@
   - **Action:** exact stable candidate에 validator·archive·checksum·isolated install을 실행한다.
   - **Evidence:** 현재 public-bundle validator는 통과; exact tag archive/isolated-release proof는 이후 필요하다.
   - **Failure:** tag 대상 산출물 검증이 없으면 release하지 않는다.
-- [ ] **PUB-05 — develop PR merge-ready/main promotion hold**
+- [x] **PUB-05 — develop PR merge-ready/main promotion hold**
   - **Action:** exact `develop` PR 검증 후 `main` 승격 범위를 다시 고정한다.
-  - **Evidence:** PR 생성과 exact-head CI가 남았다.
+  - **Evidence:** PR #40의 최종 head/review/thread/checks 상태 read-back; checks `0/0`은 저장소에 workflow/required status checks가 없기 때문임을 분리해 기록했다. `main` 승격·merge는 별도 승인 hold로 유지한다.
   - **Failure:** stale head나 unresolved check이면 승격하지 않는다.
 - [ ] **PUB-06 — exact SHA integration**
   - **Action:** 승인된 merge 및 `main` target SHA를 검증한다.
