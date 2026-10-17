@@ -51,9 +51,9 @@
   - **Action:** 설치된 `bluetape-flow.py`로 실행 증거를 초기화한다.
   - **Evidence:** run `20261017T121412Z-e50e8686`, component `public-model-reference`, state root `<worktree>/.bluetape`, 현재 receipt sequence 3.
   - **Failure:** `.bluetape`를 직접 편집하지 않는다.
-- [ ] **WF-05 — 의존 순서대로 실행**
+- [x] **WF-05 — 의존 순서대로 실행**
   - **Action:** 완료한 gate의 증거를 기록한 뒤 다음 gate로 진행한다.
-  - **Evidence:** 완료 후 최종 gate/checklist read-back.
+  - **Evidence:** receipt `20261017T121412Z-e50e8686` 완료, `verify` 통과(sequence 16); 정확한 PR head의 문서 검증·독립 리뷰·live read-back을 확인했다. merge/release 후속 gate는 별도 승인 보류다.
   - **Failure:** 누락된 gate는 완료로 주장하지 않는다.
 - [x] **WF-06 — 약한 gate 복구**
   - **Action:** 초기화 입력 경로 오류를 수정하고 영향을 받은 증거를 재확인한다.
