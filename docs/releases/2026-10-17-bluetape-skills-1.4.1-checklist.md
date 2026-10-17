@@ -82,9 +82,9 @@
   - **Action:** 공개 bundle validator, 한국어 용어 audit, 링크·JSON·diff 검사를 실행한다.
   - **Evidence:** 최종 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram suite 50 tests); Korean terminology audit 5 files, 0 findings; JSON 22-role locale parity; internal links와 `git diff --check` 통과. machine-surface self-audit과 chezmoi sync는 N/A: 해당 runtime surface 변경 없음.
   - **Failure:** 실패한 적용 gate가 있으면 PR 전 수리한다.
-- [ ] **E-06 — durable pre-PR proof**
+- [x] **E-06 — durable pre-PR proof**
   - **Action:** 변경 diff·교훈·독립 review·exact commit을 수렴한다.
-  - **Evidence:** final review와 commit 후 갱신한다.
+  - **Evidence:** exact commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8` 독립 final review `PASS`, actionable finding 0건; diff-tree check, 공개 bundle validator, 한국어 audit, 22-role locale parity 통과.
   - **Failure:** 필요한 증거가 없으면 PR을 만들지 않는다.
 - [ ] **E-07 — 공통 PR delivery**
   - **Action:** CG-11..15에 따라 PR을 준비하고 정확한 상태를 보고한다.
@@ -101,9 +101,9 @@
   - **Action:** EN/KO 안내의 독자·출처·구조·정확성·최종 렌더를 확인한다.
   - **Evidence:** official Codex/OMX 근거와 22 role JSON parity 확인; 독립 문서 리뷰 2회에 걸친 수정 후 final `PASS`, 남은 actionable finding 없음.
   - **Failure:** source mismatch가 있으면 문서를 고친 뒤 관련 검증을 반복한다.
-- [ ] **SPW-01..05 — workflow 교훈**
+- [x] **SPW-01..05 — workflow 교훈**
   - **Action:** 관찰·근거·결정·재발 방지 guard가 있는 교훈을 검토한다.
-  - **Evidence:** `docs/lessons/2026-10-17-workflow-owner-file-path.md`; 독립 review와 commit 후 닫는다.
+  - **Evidence:** `docs/lessons/2026-10-17-workflow-owner-file-path.md`를 commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8`에 포함; 정확한 commit 독립 검토에서 사실·guard 모두 `PASS`.
   - **Failure:** 재사용 가능한 guard가 없으면 교훈을 확정하지 않는다.
 - [x] **SPW-01..05 — 릴리스 계획/checklist**
   - **Action:** 승인 범위·순서·evidence·release hold를 마지막으로 다시 읽는다.
@@ -135,7 +135,8 @@
 - 첫 verdict는 `REQUEST CHANGES`: OMX 강제 설정 갱신 영향·중첩 role map 보존·shell fallback 표기에서 MEDIUM 2건과 LOW 1건을 지적했다.
 - 수정: scope별 dry-run과 일치하는 적용 mode, 가능한 설정 변경·보관·제거 효과를 EN/KO에 기록하고, 예제에 없는 role을 보존하도록 명시했다. shell parameter expansion 안에서 확장되지 않는 `~` fallback을 `$HOME` 경로로 바꿔 README와 가이드 모두 수정했다.
 - 공식 OMX setup guide와 현재 CLI 도움말을 확인했고, 독립 재검토 후 최종 `PASS`; 남은 actionable finding은 없다.
-- 리뷰 후 변경은 체크리스트 상태·증거 정합화만 포함한다. PR 생성 시 최종 commit SHA의 정확한 diff와 상태를 다시 확인한다.
+- exact commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8` 최종 검토: `PASS`; 전체 변경과 checklist/lesson 포함, actionable finding 없음. 검증 151 tests/164 subtests/50 diagram tests, 한국어 audit 5 files/0 findings, 22-role locale parity 통과.
+- 이 검토를 기록하는 checklist 상태 갱신 후 새 exact commit을 만들며, PR push 전에 새 commit을 다시 독립 검토한다. PR 생성 시 live exact-head 상태도 재확인한다.
 
 ## Common Workflow 게이트
 
@@ -171,13 +172,13 @@
   - **Action:** 해당하는 DB/native/emulator/benchmark 검증을 직렬로 수행한다.
   - **Evidence:** N/A — 문서 전용이며 그런 검증을 시작하지 않았다.
   - **Failure:** 해당 검증이 추가되면 병렬 실행을 피한다.
-- [ ] **CG-09 — lesson gate**
+- [x] **CG-09 — lesson gate**
   - **Action:** 재사용 가능한 helper path 실수를 기록하고 검토/commit한다.
-  - **Evidence:** lesson 파일은 추가했으며 독립 review와 commit이 남았다.
+  - **Evidence:** lesson commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8`; 독립 exact-commit review `PASS`, guard가 관찰된 helper containment 제약과 일치한다.
   - **Failure:** 교훈 증거 없이 pre-PR 검토로 진행하지 않는다.
-- [ ] **CG-10 — final pre-PR 수렴**
+- [x] **CG-10 — final pre-PR 수렴**
   - **Action:** 독립 review 후 P0/P1을 해소하고 exact local commit을 만든다.
-  - **Evidence:** 최종 review·검증·commit SHA.
+  - **Evidence:** exact commit `6629cd9c2b6977fbbdd0f2ba4505df2e272343d8` 독립 final `PASS`; 미해결 P0/P1 0건, `./scripts/validate.sh` 및 한국어 audit 통과. PR 제출할 후속 checklist-only commit도 push 전 재검토한다.
   - **Failure:** unresolved P0/P1 또는 dirty diff이면 PR을 만들지 않는다.
 - [ ] **CG-11 — PR authority 확인**
   - **Action:** 대상 repository/base/head와 PR 생성 권한을 확인한다.
