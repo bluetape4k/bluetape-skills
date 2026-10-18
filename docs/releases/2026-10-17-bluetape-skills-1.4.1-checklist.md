@@ -23,7 +23,7 @@
 - 2026-10-18 live read-back: PR #41은 OPEN이며 base `develop`, head `release/bluetape-skills-1.4.1`, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, mergeable `MERGEABLE`; checks, reviews, comments는 없다.
 - 같은 시점 `main`은 `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 공개 릴리스는 `v1.4.0`; `v1.4.1` tag/Release는 없다.
 - GitHub Actions workflow가 없으므로 CI/checks는 실행 결과 PASS가 아니라 N/A이다. 단일 개발자 lane의 human-review subgate는 N/A로 기록하되, exact-head 확인, 적용 가능한 독립/inline review, thread read-back 및 최종 검토는 계속 필요하다.
-- 이번 checklist/lesson 수정은 PR #41에 반영할 후속 문서 변경이다. push 뒤 새 PR head, 본문, metadata, checks/reviews/comments를 다시 읽고 DoD를 갱신한다. 이 표의 SHA는 후속 commit 전의 역사적 read-back이다.
+- 이번 checklist/lesson 보정은 PR #41에 반영됐다. 최초 후보 SHA는 역사적 read-back으로 유지하고, 후속 exact head와 PR 본문·metadata·checks/reviews/comments의 최종 상태는 아래 CG-12..15 증거로 추적한다.
 - `main` 승격은 PR #41의 정확한 병합 tree만 대상으로 별도 promotion PR을 만든다. exact main SHA의 tag approval 후 signed tag를 만들고 archive/checksum/isolated install을 검증한다. non-prerelease GitHub Release 직전에 별도 fresh approval을 확인한다.
 
 ## 근거와 독자 계약
@@ -103,9 +103,9 @@
   - **Action:** 후속 문서 diff·교훈·독립 review 또는 승인된 inline fallback·exact commit을 수렴한다.
   - **Evidence:** 이번 checklist/lesson 보정 diff의 독립 review는 `PASS`, actionable finding 0건이다. 두 파일만 포함한 scoped Lore commit을 생성했고, PR #41 exact-head read-back은 push 뒤 다시 수행한다. 최초 candidate의 inline verdict와 PR #40의 과거 review는 이 후속 변경 증거로 계산하지 않는다.
   - **Failure:** 새 문서 diff의 review와 검증 증거 없이 PR #41을 갱신하지 않는다.
-- [ ] **E-07 — 공통 PR delivery**
+- [x] **E-07 — 공통 PR delivery**
   - **Action:** CG-11..15에 따라 PR #41을 갱신하고 정확한 상태를 보고한다.
-  - **Evidence:** PR #41은 이미 `develop` <- `release/bluetape-skills-1.4.1`로 생성됐다. 이번 후속 commit push와 본문 갱신 뒤 exact SHA 및 PR metadata/read-back을 다시 기록한다.
+  - **Evidence:** PR #41 `develop` <- `release/bluetape-skills-1.4.1`; 후속 checklist/lesson commit의 push 후 local/remote/PR head를 대조하고, Korean body·assignee·label·milestone·checks·review/thread 상태를 read-back했다. exact-head 독립 review PASS와 사용자 merge-ready 보고를 완료했다. exact SHA는 live PR body에서 확인한다.
   - **Failure:** 원격 head가 새 local commit과 일치하지 않으면 갱신 완료로 처리하지 않는다.
 - [ ] **E-08 — fresh merge approval 이후 closeout**
   - **Action:** 사용자 승인 후 CG-16..18을 순서대로 실행한다.
@@ -216,25 +216,25 @@
   - **Action:** 대상 repository/base/head와 PR 생성 권한을 확인한다.
   - **Evidence:** 사용자가 대상 repo `bluetape4k/bluetape-skills`의 version-sync PR 경로를 승인했고 PR #41(`develop` <- `release/bluetape-skills-1.4.1`)이 생성·공개됐다. 이번 후속 head는 push/read-back 후 갱신한다.
   - **Failure:** 범위를 벗어난 PR을 생성하지 않는다.
-- [ ] **CG-12 — exact branch push**
+- [x] **CG-12 — exact branch push**
   - **Action:** 수렴된 head를 원격에 push하고 SHA를 되읽는다.
-  - **Evidence:** 기존 PR head push는 완료됐다. 이번 문서 갱신 commit의 push와 local/remote SHA 대조는 아직 필요하다.
+  - **Evidence:** 후속 문서 commit을 force 없이 `release/bluetape-skills-1.4.1`에 push했고 `git rev-parse HEAD`, `git ls-remote origin`, live PR `headRefOid`가 일치함을 확인했다.
   - **Failure:** 원격 head가 다르면 덮어쓰지 않고 멈춘다.
-- [ ] **CG-12A — PR 직전 guidance 갱신**
+- [x] **CG-12A — PR 직전 guidance 갱신**
   - **Action:** PR body 갱신 직전 AGENTS·leaf/common gate·template·issue metadata를 다시 읽는다.
-  - **Evidence:** 기존 guidance 계층과 PR #41 metadata를 현재 turn에서 read-back했다. 후속 commit push 직전에 exact base/head와 template, label, milestone, assignee를 다시 확인한다.
+  - **Evidence:** PR 갱신 직전 user/workspace/repository guidance, `bluetape-workflow`, `release`, `bluetape-publish-jvm`, `bluetape-maintenance`, `bluetape-writer`, common gates, release rule, PR template을 재확인했다. 연결 이슈 없음, base/head·assignee·label·milestone read-back을 확인했다.
   - **Failure:** guidance drift가 있으면 영향 gate를 갱신한다.
-- [ ] **CG-13 — PR 갱신/확인**
+- [x] **CG-13 — PR 갱신/확인**
   - **Action:** Korean body와 `## DoD Status` 마지막 section을 유지하면서 PR #41 body를 갱신한다.
-  - **Evidence:** 후속 exact head push 뒤 live PR URL/head/metadata/body를 다시 read-back한다.
+  - **Evidence:** PR #41 live URL·base·exact head·body·metadata를 read-back했고 `## DoD Status`가 마지막 H2임을 확인했다. 최종 body는 후속 exact head와 `CG-11..15` 상태를 반영한다.
   - **Failure:** metadata/body가 다르면 CI 진행 전에 수정한다.
-- [ ] **CG-14 — CI, review, thread 확인**
+- [x] **CG-14 — CI, review, thread 확인**
   - **Action:** exact-head checks와 live review/thread 상태를 확인한다.
-  - **Evidence:** 새 version-sync candidate의 exact-head 독립 리뷰, live checks 및 review/thread 상태를 수집한 뒤 기록한다.
+  - **Evidence:** 후속 exact head의 독립 문서 review PASS, finding 0, P0/P1 0. Actions workflow 0개와 PR checks 0개라 CI=N/A; 단일 개발자 lane human-review subgate=N/A. GitHub reviews/comments/review threads 0개이고 unresolved thread가 없다.
   - **Failure:** CI 실패·미해결 thread·P0/P1은 merge-ready를 막는다.
-- [ ] **CG-15 — merge-ready 보고**
+- [x] **CG-15 — merge-ready 보고**
   - **Action:** gate 수와 PR/head를 reconcile해 사용자에게 보고한다.
-  - **Evidence:** PR #41 exact head와 checks/reviews/comments, 적용 가능한 독립/inline review 및 N/A 수를 대조해 사용자에게 별도 보고한다.
+  - **Evidence:** 사용자에게 PR #41의 exact head, `MERGEABLE`, checks/reviews/comments/threads, 독립 review, CG-11..18 count, CI 및 single-developer human-review N/A 근거를 보고했다. CG-16은 exact PR/head의 fresh merge approval 대기 상태다.
   - **Failure:** 누락 증거가 있으면 fresh merge 승인을 요청하지 않는다.
 - [ ] **CG-16 — fresh merge 승인**
   - **Action:** merge-ready 보고 뒤 exact PR/head에 대해 새 승인을 받는다.
