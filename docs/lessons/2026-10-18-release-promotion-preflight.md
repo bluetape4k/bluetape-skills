@@ -44,10 +44,26 @@ release checklist에서 최신 공개 tag와 현재 `develop` SHA를 먼저 기�
 tag 후보와 대조한다. 버전 참조가 준비되지 않았다면 promotion을 만들지 말고
 version-sync 단계를 먼저 완료한다.
 
+### 릴리스 closeout 기록도 승격 전에 대조한다
+
+2026-10-19 후속 점검에서 과거 릴리스 checklist의 완료 증거가 `main`에는
+남아 있지만 `develop` 사본에는 빠진 경우를 확인했다. PR #34/#35는 이미
+병합됐지만 `1.3.4` tag/Release는 없었고, PR #38/#39와 `v1.4.0` Release는
+완료됐다. 병합, tag, Release, archive 검증은 서로 다른 상태이므로 하나의
+완료 표시로 뭉뚱그리지 않는다.
+
+다음 stable promotion 전에 exact `develop`·`main` SHA를 고정하고,
+`docs/releases/*checklist.md`와 연관 lesson을 서로 비교한다. 빠진 사실은
+live GitHub에서 재확인하고 기존 checklist를 덮어쓰지 않는 날짜별 후속
+read-back으로 `develop`에 보존한다. 그 후 promotion candidate tree가 이
+증거를 삭제하거나 과거 `PENDING`을 근거 없이 `PASS`로 바꾸지 않는지
+확인한다. 이 단계가 끝나기 전에는 promotion PR을 만들지 않는다.
+
 ## 검증
 
 - 최초 version-sync candidate에서 `./scripts/validate.sh`: workflow 151 tests, 164 subtests, diagram 50 tests 통과.
 - 현재 checklist/lesson 수정분도 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram 50 tests), `git diff --check` 통과. 이는 archive/checksum/isolated install을 포함한 tag 기반 release 검증을 대신하지 않는다.
 - README의 안정 버전 예제와 CHANGELOG의 `1.4.1` heading/link가 일치하고, README에 이전 `v1.4.0` 참조는 없다.
 - 관련 Korean terminology rule set은 `clinic-appointment` 전용이라 미적용이다. 독립 reviewer lane은 최초 candidate에서 bounded timeout 후 중단했고, 당시 lesson은 최초 version-sync candidate의 inline fallback review에서 검토했다. 이 verdict는 이번 사실 갱신 diff를 포함하지 않으며 독립 attestation도 아니다.
-- tag/archive/checksum과 isolated install: 이 기록을 갱신하는 시점에는 tag가 없는 후보 단계로, 승인된 release 직전에 별도로 검증해야 한다.
+- 2026-10-18 version-sync 후보 점검 시점에는 `v1.4.1` tag/Release가 없었다. archive/checksum과 isolated install은 게시 전 별도로 검증해야 한다.
+- 2026-10-19 closeout read-back에서 [PR #34](https://github.com/bluetape4k/bluetape-skills/pull/34), [PR #35](https://github.com/bluetape4k/bluetape-skills/pull/35), [PR #38](https://github.com/bluetape4k/bluetape-skills/pull/38), [PR #39](https://github.com/bluetape4k/bluetape-skills/pull/39), `v1.4.0` SSH tag verification, GitHub Release를 확인했다. archive/checksum 파일 내용과 isolated install은 이번 문서 복구에서 재검증하지 않았다.
