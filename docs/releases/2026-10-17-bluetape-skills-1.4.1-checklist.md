@@ -12,18 +12,24 @@
 | 후보 브랜치 | `release/bluetape-skills-1.4.1` (PR #41, base `develop`) |
 | 기준 커밋 | `31e69c613e9f908bec27f3a7ebee6e34cabebe21` (`develop`, PR #40 병합 후) |
 | PR #41 시작 시 head | `373a160e8b8e3a9b7103949a7d5d199897ea436a` (최초 후보 시점의 역사적 SHA); 후속 exact head는 live PR body와 CG-12 증거에서 확인 |
-| PR #41 상태 | OPEN; base `develop`, head `release/bluetape-skills-1.4.1`; 생성·push 권한은 이미 행사됨 |
+| PR #41 상태 | 2026-10-18 pre-follow-up snapshot: OPEN; base `develop`, head `release/bluetape-skills-1.4.1`; 생성·push 권한은 이미 행사됨 |
 | 배포 범위 | Codex 기본 모델 및 OMX 역할별 모델을 직접 적용하는 한·영 참고 문서와 README 연결 |
 | 제외 범위 | installer 동작, skill inventory, 사용자 개인 설정/chezmoi, 자동 설정·동기화 |
 | dispatch hold | GitHub Actions workflow 없음 — workflow dispatch는 N/A |
 | 승인 경계 | 사용자가 전체 closeout(merge, `main` 승격, tag/Release, 이 작업의 worktree 정리)을 요청했다. 각 merge-ready exact PR/head 보고 뒤 merge 승인을 받고, exact `main` SHA tag 승인 및 archive 검증 후 별도 GitHub Release 승인도 저장소 규칙대로 확인한다. |
 
-## 현재 closeout 상태
+## Evidence snapshot boundary
+
+- 이 checklist는 live dashboard가 아니라 승인·검증 경계를 남기는 버전 관리 스냅샷이다. 아래 상태는 각 행에 명시된 관찰 시점의 사실이며, 이후 GitHub 상태는 live PR과 최신 사용자 보고가 authority다.
+- 2026-10-18 follow-up preflight snapshot에서 마지막 공개 후보는 `c675df75c96f43f7207ba558a8ae650cd34df22f`였고, PR 본문은 오래된 `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`을 가리켰다. `c675df7` exact-head 독립 리뷰는 이 checklist의 commit/push 및 PR-head 증거가 오래된 점을 지적해 `REQUEST CHANGES`를 반환했다. 이 후속 보정은 그 불일치를 바로잡고 새 exact-head 리뷰를 받아야 한다.
+- 체크박스는 이 스냅샷 당시의 gate 상태를 나타낸다. 이 후보의 최종 review·PR body·approval 및 post-merge/tag/release 증거는 live PR 본문과 closeout 보고에 기록하며, 외부 상태만 반영하기 위해 checklist를 다시 커밋해 exact head를 순환 변경하지 않는다.
+
+## 2026-10-18 pre-follow-up candidate snapshot
 
 - 2026-10-18 최초 live read-back: PR #41은 OPEN이며 base `develop`, head `release/bluetape-skills-1.4.1`, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, mergeable `MERGEABLE`; checks, reviews, comments는 없다. 이 SHA는 최초 상태 기록이며 이후 후보 상태를 나타내지 않는다.
-- 같은 시점 `main`은 `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 공개 릴리스는 `v1.4.0`; `v1.4.1` tag/Release는 없다.
+- 2026-10-18 follow-up 직전 live read-back: PR #41은 OPEN/`MERGEABLE`; base `develop` SHA `31e69c613e9f908bec27f3a7ebee6e34cabebe21`, 마지막 공개 head `c675df75c96f43f7207ba558a8ae650cd34df22f`, PR 본문 SHA `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`로 서로 달랐다. Actions workflow/checks/reviews/issue comments/review threads는 모두 0개다. `main`은 `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`; 최신 공개 릴리스는 `v1.4.0`; `v1.4.1` tag/Release는 없다.
 - GitHub Actions workflow가 없으므로 CI/checks는 실행 결과 PASS가 아니라 N/A이다. 단일 개발자 lane의 human-review subgate는 N/A로 기록하되, exact-head 확인, 적용 가능한 독립/inline review, thread read-back 및 최종 검토는 계속 필요하다.
-- 이전 checklist/lesson 보정은 PR #41에 반영됐다. 최초 후보 SHA는 역사적 read-back으로 유지하고, 최신 exact head와 PR 본문·metadata·checks/reviews/comments 상태는 아래 CG-12..15의 최종 read-back으로 추적한다.
+- 최신 checklist/lesson 보정 커밋 `c675df75c96f43f7207ba558a8ae650cd34df22f`은 해당 snapshot 시점에 이미 원격 PR branch에 반영돼 있었다. 그 커밋에 대한 독립 검토에서 발견된 상태 증거 불일치는 이 follow-up correction으로 수리한다. 이후 exact head와 PR body의 실제 상태는 live PR에서 확인한다.
 - `main` 승격은 PR #41의 정확한 병합 tree만 대상으로 별도 promotion PR을 만든다. exact main SHA의 tag approval 후 signed tag를 만들고 archive/checksum/isolated install을 검증한다. non-prerelease GitHub Release 직전에 별도 fresh approval을 확인한다.
 
 ## 근거와 독자 계약
@@ -97,15 +103,15 @@
   - **Failure:** user-scope 변경이 추가되면 이 행을 다시 연다.
 - [x] **E-05 — 유지보수 검증**
   - **Action:** 공개 bundle validator, 한국어 용어 audit, 링크·JSON·diff 검사를 실행한다.
-  - **Evidence:** 최신 local checklist correction 뒤 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram 50 tests), `git diff --check` 통과, EN/KO README 및 CHANGELOG 참조 parity 확인, public 문서에서 machine-local runtime 식별자/복구 진단 문자열이 없음을 확인했다. 과거 독립 review `PASS`는 이전 exact head에만 적용되며, 현재 candidate review는 E-06에서 새로 확인한다. `clinic-appointment` 전용 terminology rules는 본 문서에 적용되지 않는다. machine-surface self-audit과 chezmoi sync는 N/A: runtime surface 변경 없음.
+  - **Evidence:** 이번 follow-up local checklist correction 뒤 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram 50 tests), `git diff --check` 통과, EN/KO README 및 CHANGELOG 참조 parity 확인, public 문서에서 machine-local runtime 식별자/복구 진단 문자열이 없음을 확인했다. `55ff6b4`에 대한 과거 독립 review PASS는 후속 exact head에 승계되지 않는다. `clinic-appointment` 전용 terminology rules는 본 문서에 적용되지 않는다. machine-surface self-audit과 chezmoi sync는 N/A: runtime surface 변경 없음.
   - **Failure:** 실패한 적용 gate가 있으면 PR 전 수리한다.
 - [ ] **E-06 — durable PR-update proof**
   - **Action:** 후속 문서 diff·교훈·독립 review 또는 승인된 inline fallback·exact commit을 수렴한다.
-  - **Evidence:** 기존 독립 review `PASS`는 이전 exact head에만 적용된다. `55ff6b4` 이후 추가된 최종 checklist 보정은 아직 독립 검토·commit·push·PR read-back 전이므로, 새 exact-head 증거를 수집한 뒤 완료한다.
+  - **Evidence:** `c675df7` exact-head review는 두 상태 근거의 불일치로 `REQUEST CHANGES`를 반환했다. 이 follow-up correction은 해당 불일치를 고치며, 그 새 exact head의 독립 검토와 PR body read-back이 끝날 때까지 이 스냅샷에서는 PENDING이다.
   - **Failure:** 새 문서 diff의 review와 검증 증거 없이 PR #41을 갱신하지 않는다.
 - [ ] **E-07 — 공통 PR delivery**
   - **Action:** CG-11..15에 따라 PR #41을 갱신하고 정확한 상태를 보고한다.
-  - **Evidence:** PR #41의 마지막 published head는 `55ff6b4993a482b3700dab1107b3fc77b53d1bcc`이나, 그 뒤 checklist가 수정됐다. 이 후보의 push 후 local/remote/PR head, Korean body, metadata, checks/review/thread 상태와 exact-head 독립 검토를 다시 대조하고 사용자에게 새 merge-ready 보고를 해야 한다.
+  - **Evidence:** 이 follow-up 직전 local/remote/PR head는 `c675df75c96f43f7207ba558a8ae650cd34df22f`로 일치했으나 PR body는 `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`을 가리켰다. checklist 보정 후 새 exact head의 push, PR body/metadata read-back, 독립 review 및 사용자 보고가 남아 있다.
   - **Failure:** 원격 head가 새 local commit과 일치하지 않으면 갱신 완료로 처리하지 않는다.
 - [ ] **E-08 — fresh merge approval 이후 closeout**
   - **Action:** 사용자 승인 후 CG-16..18을 순서대로 실행한다.
@@ -124,7 +130,7 @@
   - **Failure:** 재사용 가능한 guard가 없으면 교훈을 확정하지 않는다.
 - [ ] **SPW-01..05 — 릴리스 계획/checklist**
   - **Action:** 승인 범위·순서·evidence·release hold를 마지막으로 다시 읽는다.
-  - **Evidence:** 본 checklist는 PR #41 OPEN, 초기 base/head, 당시 exact SHA, current main SHA, v1.4.0 최신 release, checks/reviews 부재, fresh approval 경계에 맞춰 갱신했다. 다만 마지막 local status correction은 아직 독립 review 전이므로 새 review 결과를 확인한 뒤 이 gate를 닫는다.
+  - **Evidence:** 2026-10-18 pre-follow-up snapshot은 PR #41 OPEN/`MERGEABLE`, base SHA `31e69c6`, 마지막 공개 head `c675df7`, 본문 SHA `7844382`, current main SHA `e0e688b`, 최신 release `v1.4.0`, workflow/check/review 부재 및 fresh approval 경계를 기록한다. 이 correction의 exact-head review와 live PR read-back은 다음 단계다.
   - **Failure:** 빠진 gate나 잘못된 authority가 있으면 PR 전 고친다.
 - [x] **SPW-01..05 — `README.md`**
   - **Action:** 버전 예제와 한국어 README의 대응 내용·독자 안내를 검토한다.
@@ -148,7 +154,7 @@
   - **Failure:** 기능 범위를 과장하거나 영문 분류 heading을 남기지 않는다.
 - [ ] **KO-01..07 — release checklist**
   - **Action:** 상태·사실·용어·최종 렌더를 검토하고 용어 audit을 다시 실행한다.
-  - **Evidence:** 기존 독립 review는 이전 exact head까지의 checklist만 다뤘다. `55ff6b4` 이후 추가한 status correction의 최종 사실·한국어·용어 검토 결과를 새 exact-head review에서 확인한 뒤 닫는다. `clinic-appointment` 전용 terminology rules는 적용하지 않는다.
+  - **Evidence:** `c675df7` checklist의 exact-head review에서 commit/push/PR head 근거의 MEDIUM 불일치 2건을 수정한다. 이 follow-up의 최종 사실·한국어·용어 검토 결과는 새 exact-head review 후 live PR 본문에 남긴다. `clinic-appointment` 전용 terminology rules는 적용하지 않는다.
   - **Failure:** 미해결 terminology finding을 닫지 않는다.
 - [x] **KO-01..07 — `docs/lessons/2026-10-17-workflow-owner-file-path.md`**
   - **Action:** lesson의 사실·재발 방지 guard와 자연스러운 한국어를 검토한다.
@@ -208,17 +214,17 @@
   - **Action:** 재사용 가능한 릴리스 선행 조건 누락을 기록하고 독립 검토를 우선 시도한다; 실패 시 inline fallback과 commit을 사용한다.
   - **Evidence:** `docs/lessons/2026-10-18-release-promotion-preflight.md`를 PR #41 OPEN read-back과 구분하도록 정정해 scoped Lore commit에 포함했다. 독립 review 최종 `PASS`; canonical GNO indexing은 post-merge CG-18에 둔다.
   - **Failure:** 교훈 증거 없이 pre-PR 검토로 진행하지 않는다.
-- [ ] **CG-10 — final pre-PR 수렴**
+- [ ] **CG-10 — final candidate 수렴**
   - **Action:** 독립 review를 우선 시도한다. 불가하면 inline fallback에서 P0/P1을 해소하고 exact local commit을 만든다.
-  - **Evidence:** 이전 scoped checklist/lesson diff는 독립 review와 validator를 통과해 `55ff6b4`까지 반영됐다. 최신 checklist correction은 아직 independent review와 scoped Lore commit 전이므로, 이 변경까지 검토·기록한 뒤 닫는다.
-  - **Failure:** unresolved P0/P1 또는 dirty diff이면 PR을 만들지 않는다.
+  - **Evidence:** `c675df7` exact-head review가 checklist의 commit/push 및 PR-head 증거 불일치를 MEDIUM 2건으로 지적했다. 이 follow-up correction은 그 finding을 수리하며, 새 exact-head review가 통과하고 PR 본문 read-back까지 끝나기 전에는 이 스냅샷에서 gate를 닫지 않는다.
+  - **Failure:** unresolved P0/P1 또는 dirty diff이면 PR body 갱신과 merge-ready 보고를 진행하지 않는다.
 - [x] **CG-11 — PR authority 확인**
   - **Action:** 대상 repository/base/head와 PR 생성 권한을 확인한다.
   - **Evidence:** 사용자가 대상 repo `bluetape4k/bluetape-skills`의 version-sync PR 경로를 승인했고 PR #41(`develop` <- `release/bluetape-skills-1.4.1`)이 생성·공개됐다. 후속 exact head는 CG-12와 live PR body에서 확인한다.
   - **Failure:** 범위를 벗어난 PR을 생성하지 않는다.
 - [ ] **CG-12 — exact branch push**
   - **Action:** 수렴된 head를 원격에 push하고 SHA를 되읽는다.
-  - **Evidence:** 마지막으로 대조한 published head는 `55ff6b4993a482b3700dab1107b3fc77b53d1bcc`이다. 그 뒤 추가한 checklist correction은 아직 해당 remote head에 포함되지 않아 최종 scoped commit 이후 다시 push/read-back해야 한다.
+  - **Evidence:** 이 follow-up 직전 마지막 published head는 `c675df75c96f43f7207ba558a8ae650cd34df22f`였다. 이 checklist follow-up commit을 push한 뒤 `HEAD`, remote branch, live PR `headRefOid`가 일치하는지 다시 읽는다.
   - **Failure:** 원격 head가 다르면 덮어쓰지 않고 멈춘다.
 - [ ] **CG-12A — PR 직전 guidance 갱신**
   - **Action:** PR body 갱신 직전 AGENTS·leaf/common gate·template·issue metadata를 다시 읽는다.
@@ -226,11 +232,11 @@
   - **Failure:** guidance drift가 있으면 영향 gate를 갱신한다.
 - [ ] **CG-13 — PR 갱신/확인**
   - **Action:** Korean body와 `## DoD Status` 마지막 section을 유지하면서 PR #41 body를 갱신한다.
-  - **Evidence:** 마지막 live body는 `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`을 가리키며 현재 remote head `55ff6b4993a482b3700dab1107b3fc77b53d1bcc`와도 불일치한다. 최종 후보 push 뒤 body와 metadata를 다시 갱신·read-back한다.
+  - **Evidence:** 2026-10-18 follow-up 직전 live body는 `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`, live remote head는 `c675df75c96f43f7207ba558a8ae650cd34df22f`였다. 이 checklist correction을 push한 뒤 새 exact head에 맞춰 본문과 metadata를 갱신·read-back한다.
   - **Failure:** metadata/body가 다르면 CI 진행 전에 수정한다.
 - [ ] **CG-14 — CI, review, thread 확인**
   - **Action:** exact-head checks와 live review/thread 상태를 확인한다.
-  - **Evidence:** 현재 remote head `55ff6b4`에는 최신 checklist correction의 독립 review가 아직 없다. Actions workflow 0개와 PR checks 0개라 CI=N/A; 단일 개발자 lane human-review subgate=N/A. 현재 remote read-back에서 GitHub reviews/comments/review threads는 0개이며, 새 candidate head에 대해 재확인한다.
+  - **Evidence:** `c675df7`의 독립 review는 MEDIUM 2건을 찾아 `REQUEST CHANGES`했다. Actions workflow 0개와 PR checks 0개라 CI=N/A; 단일 개발자 lane human-review subgate=N/A. 이 snapshot 시점의 GitHub reviews/comments/review threads는 0개이며, correction push 뒤 새 exact head의 independent review와 live 상태를 다시 확인한다.
   - **Failure:** CI 실패·미해결 thread·P0/P1은 merge-ready를 막는다.
 - [ ] **CG-15 — merge-ready 보고**
   - **Action:** gate 수와 PR/head를 reconcile해 사용자에게 보고한다.
@@ -269,7 +275,7 @@
   - **Failure:** 후보 version이나 authority가 달라지면 재계획한다.
 - [x] **PUB-02 — live/historical 확인**
   - **Action:** GNO 이력과 live branch/release/PR/workflow 상태를 확인한다.
-  - **Evidence:** 아래 GNO 검색에서 현재 후보와 관련한 결과는 없었다. 2026-10-18 최초 live read-back에서 PR #41 OPEN, base `develop`, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, main `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 `v1.4.0`을 확인했다. 후속 push 뒤 PR #41 OPEN/`MERGEABLE`, local/remote/live exact head 일치, checks/reviews/comments/review threads 0개, Actions workflow 0개를 다시 읽었다. `v1.4.1` tag/Release는 없다; live GitHub가 현재 authority다.
+  - **Evidence:** 아래 GNO 검색에서 현재 후보와 관련한 결과는 없었다. 2026-10-18 snapshot 시점의 live read-back에서 PR #41 OPEN/`MERGEABLE`, base `develop` SHA `31e69c613e9f908bec27f3a7ebee6e34cabebe21`, published head `c675df75c96f43f7207ba558a8ae650cd34df22f`, 본문 SHA `7844382e1b2ff5465d3aa9fe668f3e9c0e36a7f0`, main `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 `v1.4.0`, workflow/check/review/comment/thread 0개 및 `v1.4.1` tag/Release 부재를 확인했다. 이 값은 스냅샷이며 이후 상태는 live GitHub에서 다시 확인한다.
   - **Failure:** stale GNO를 live GitHub 사실로 취급하지 않는다.
 - [x] **PUB-03 — canonical skill parity**
   - **Action:** 변경된 canonical skill 수와 public parity를 확인한다.
@@ -325,4 +331,4 @@
 
 ## 결과 기록
 
-최종 갱신 시 각 적용 gate의 상태와 증거, PR URL/head SHA, fresh approval, merged `main` SHA, tag/Release URL, archive checksum 및 isolated installation 결과를 기록한다. 현재 미실행된 게시 게이트를 통과한 것으로 표현하지 않는다.
+이 체크리스트는 version-sync 후보 승인 전 스냅샷으로 동결한다. 이후 exact PR/head review·approval·merge·`main` promotion·tag/Release·archive/checksum/isolated-install 결과는 최종 live PR 본문과 closeout 보고에 기록하고, 그 외부 상태만 기록하기 위한 후속 checklist commit으로 exact head를 다시 움직이지 않는다. 미실행된 게시 게이트는 완료로 표현하지 않는다.
