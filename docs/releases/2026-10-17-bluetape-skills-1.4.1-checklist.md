@@ -9,14 +9,22 @@
 | 대상 버전 / 태그 | `1.4.1` / `v1.4.1` |
 | 최신 공개 릴리스 | `v1.4.0` (`2026-09-08`) |
 | 통합 브랜치 / 안정 브랜치 | `develop` / `main` |
-| 후보 브랜치 | `release/bluetape-skills-1.4.1` (로컬 version-sync 후보) |
+| 후보 브랜치 | `release/bluetape-skills-1.4.1` (PR #41, base `develop`) |
 | 기준 커밋 | `31e69c613e9f908bec27f3a7ebee6e34cabebe21` (`develop`, PR #40 병합 후) |
-| 후보 SHA | local `HEAD`를 기준으로 하며 원격 작업 승인 요청 직전에 다시 읽어 기록; 원격 ref는 아직 없음 |
-| 후보 PR 권한 | PENDING — 제안 대상 `bluetape4k/bluetape-skills`, base `develop`, head `release/bluetape-skills-1.4.1`; 이 exact pair와 candidate SHA에 대한 push/PR 생성 승인은 아직 없음 |
+| PR #41 시작 시 head | `373a160e8b8e3a9b7103949a7d5d199897ea436a`; 후속 commit push 후 exact head를 다시 확인 |
+| PR #41 상태 | OPEN; base `develop`, head `release/bluetape-skills-1.4.1`; 생성·push 권한은 이미 행사됨 |
 | 배포 범위 | Codex 기본 모델 및 OMX 역할별 모델을 직접 적용하는 한·영 참고 문서와 README 연결 |
 | 제외 범위 | installer 동작, skill inventory, 사용자 개인 설정/chezmoi, 자동 설정·동기화 |
-| dispatch hold | GitHub Actions workflow 없음 — workflow dispatch는 N/A; tag와 Release는 별도 승인 전까지 보류 |
-| 별도 승인 보류 | 후보 PR push/생성, PR merge, `main` 승격, 서명 태그, GitHub Release 및 archive 업로드 |
+| dispatch hold | GitHub Actions workflow 없음 — workflow dispatch는 N/A |
+| 승인 경계 | 사용자가 전체 closeout(merge, `main` 승격, tag/Release, 이 작업의 worktree 정리)을 요청했다. 각 merge-ready exact PR/head 보고 뒤 merge 승인을 받고, exact `main` SHA tag 승인 및 archive 검증 후 별도 GitHub Release 승인도 저장소 규칙대로 확인한다. |
+
+## 현재 closeout 상태
+
+- 2026-10-18 live read-back: PR #41은 OPEN이며 base `develop`, head `release/bluetape-skills-1.4.1`, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, mergeable `MERGEABLE`; checks, reviews, comments는 없다.
+- 같은 시점 `main`은 `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 공개 릴리스는 `v1.4.0`; `v1.4.1` tag/Release는 없다.
+- GitHub Actions workflow가 없으므로 CI/checks는 실행 결과 PASS가 아니라 N/A이다. 단일 개발자 lane의 human-review subgate는 N/A로 기록하되, exact-head 확인, 적용 가능한 독립/inline review, thread read-back 및 최종 검토는 계속 필요하다.
+- 이번 checklist/lesson 수정은 PR #41에 반영할 후속 문서 변경이다. push 뒤 새 PR head, 본문, metadata, checks/reviews/comments를 다시 읽고 DoD를 갱신한다. 이 표의 SHA는 후속 commit 전의 역사적 read-back이다.
+- `main` 승격은 PR #41의 정확한 병합 tree만 대상으로 별도 promotion PR을 만든다. exact main SHA의 tag approval 후 signed tag를 만들고 archive/checksum/isolated install을 검증한다. non-prerelease GitHub Release 직전에 별도 fresh approval을 확인한다.
 
 ## 근거와 독자 계약
 
@@ -31,6 +39,7 @@
 
 - PR #40은 모델 설정 참고 자료를 `develop`에 병합했지만, 병합 직후 `README.md`와 `README.ko.md`는 여전히 `v1.4.0`을 가리키고 `CHANGELOG.md` 변경은 `[Unreleased]` 아래에 있었다.
 - 따라서 `31e69c613e9f908bec27f3a7ebee6e34cabebe21`을 바로 `main`에 승격하지 않는다. 먼저 `v1.4.1` 버전 참조를 `develop`에 반영하고, 그 exact head를 검증·승인받은 뒤 별도의 `main` promotion PR을 준비한다.
+- 현재 version-sync 후보 PR은 #41로 이미 생성되어 있다. 아래 PR 상태는 최초 후보 준비 기록과 현재 live closeout 상태를 구분해 읽는다.
 - 다음 release에서도 안정 승격 전 `develop`의 README 태그 예제와 CHANGELOG heading/link가 목표 버전과 일치하는지 확인한다.
 
 ## Workflow Gate
@@ -45,27 +54,27 @@
   - **Failure:** 사용자 설정 자체를 변경하는 범위로 확장하지 않는다.
 - [x] **WF-02 — 구체적인 실행 계획**
   - **Action:** 작업 순서·산출물·중단 게이트를 먼저 제시한다.
-  - **Evidence:** 2026-10-18 계획은 저장소·`1.4.1`·`develop` 기준 SHA·후보 branch를 고정하고, 본 checklist 갱신 → 두 README와 CHANGELOG 동기화 → 문서/validator 검증 → exact-head 권한 경계 보고 순서로 실행한다. PR push/생성 전 권한이 없으면 멈춘다.
+  - **Evidence:** 2026-10-18 계획은 저장소·`1.4.1`·`develop` 기준 SHA·후보 branch를 고정한다. checklist/lesson 정정 → validator·정확한 PR read-back → merge-ready 보고와 fresh approval → `develop` 동기화 → exact-tree `main` promotion PR 및 별도 승인 → exact main SHA tag approval 및 signed tag → archive/checksum/install 검증 → 별도 GitHub Release approval과 asset 게시 → 이 작업의 worktree만 정리한다.
   - **Failure:** 승인되지 않은 범위는 실행하지 않는다.
 - [x] **WF-03 — 최초 계획 승인**
   - **Action:** 첫 계획에 대한 명시적 승인을 확인한다.
-  - **Evidence:** 사용자의 `다음 단계 진행해` 지시로 승인된 1.4.1 release 경로 중 local candidate preparation을 계속한다. PR 생성·merge·stable publish 권한으로 확대하지 않는다.
-  - **Failure:** 계획에 없는 외부·불가역 작업은 보류한다.
+  - **Evidence:** 사용자는 merge, `main` 승격, tag/Release, worktree 정리를 포함한 전체 closeout을 요청했다. 저장소 공통 gate와 `.omx/RELEASE_RULE.md`에 따라 각 exact PR/head merge-ready 보고 뒤 fresh merge approval, exact main SHA의 tag approval, 별도 non-prerelease GitHub Release approval은 계속 요구된다.
+  - **Failure:** 전체 작업 지시를 exact-target 승인으로 간주해 별도 gate를 건너뛰지 않는다.
 - [x] **WF-04 — 실행 계약 로드**
   - **Action:** leaf·공통 gate·writer·release·OpenAI 문서 계약을 읽는다.
   - **Evidence:** `bluetape-maintenance`, `bluetape-writer`, `release`, `openai-docs`, `common-gates.md`, writer Korean checklist와 Type E checklist를 적용했다.
   - **Failure:** 필요한 실행 계약이 없으면 편집을 중단한다.
 - [x] **WF-04A — workflow receipt 초기화**
   - **Action:** 설치된 `bluetape-flow.py`로 실행 증거를 초기화한다.
-  - **Evidence:** 현재 workflow P receipt(component `release-prep-1-4-1`)는 이 linked worktree의 `.bluetape`를 사용한다. 앞선 receipt는 canonical `develop` checkout을 repo root로 잘못 고정해 `BLOCKED` 처리했고, reviewer lane의 timeout/probe/interrupt/fail 이력은 그 local receipt에 보존했다. 최종 receipt는 local candidate와 대조해 handoff 전에 verify한다.
+  - **Evidence:** Type P 실행 증거는 `bluetape-flow.py`가 검증했다. 배포 문서에는 검증 결과만 남기고 실행별 내부 식별 정보는 포함하지 않는다.
   - **Failure:** `.bluetape`를 직접 편집하지 않는다.
 - [x] **WF-05 — 의존 순서대로 실행**
   - **Action:** 완료한 gate의 증거를 기록한 뒤 다음 gate로 진행한다.
-  - **Evidence:** version-sync 편집 → 검증 → 독립 리뷰 시도와 bounded fallback → exact local commit → receipt `completion-check`/`verify` 순서로 수렴한다. helper 종료 증거를 보고하기 직전 다시 읽으며, push·PR·merge·tag·Release는 이 실행에 포함하지 않는다.
+  - **Evidence:** 현재는 checklist/lesson 정정 → 검증·리뷰 → exact branch push 및 PR #41 본문/read-back 갱신 → merge-ready 보고 → exact-target 승인 후 merge와 sync → exact-tree promotion PR 및 승인 → signed tag approval/생성 → archive 검증 → 별도 Release approval/게시 → owned worktree cleanup 순서다. 각 helper/remote 상태를 다음 단계 직전에 다시 읽는다.
   - **Failure:** 누락된 gate는 완료로 주장하지 않는다.
 - [x] **WF-06 — 약한 gate 복구**
   - **Action:** 초기화 입력 경로 오류를 수정하고 영향을 받은 증거를 재확인한다.
-  - **Evidence:** 첫 `mutation-check`는 아직 run이 없는 worktree-local `.bluetape`에서 거부됐다. 이후 생성한 canonical-root receipt가 integration checkout을 가리킨다는 scope 오류를 확인해 `BLOCKED` 처리하고, 후보 worktree 전용 receipt를 다시 초기화했다. 첫 `stall-record`도 `--decision`에 JSON 파일 경로가 필요하다는 계약을 놓쳐 거부됐으며 receipt는 바뀌지 않았다. decision JSON/checksum을 사용한 재시도는 통과했다. `.bluetape`는 helper로만 갱신했다.
+  - **Evidence:** 초기 helper 호출에서 입력 경로·형식 문제를 확인해 documented CLI contract에 맞게 복구했다. 재실행한 helper 검증은 통과했으며 workflow state는 helper를 통해서만 갱신했다. 실행별 실패 기록과 임시 런타임 세부사항은 public bundle에 싣지 않는다.
   - **Failure:** 재시도에도 증거가 맞지 않으면 실행을 중단한다.
 
 ## Type E 게이트
@@ -88,20 +97,20 @@
   - **Failure:** user-scope 변경이 추가되면 이 행을 다시 연다.
 - [x] **E-05 — 유지보수 검증**
   - **Action:** 공개 bundle validator, 한국어 용어 audit, 링크·JSON·diff 검사를 실행한다.
-  - **Evidence:** 이번 편집 이후 `./scripts/validate.sh` 통과(151 tests, 164 subtests, diagram 50 tests), README의 `v1.4.0` 참조 0건 및 `v1.4.1` 참조 일치, CHANGELOG heading/link 확인, `git diff --check` 통과, 새 lesson 후행 공백 0건. 현재 terminology rules는 `clinic-appointment` 전용이라 본 문서에는 적용되지 않음; 해당 없는 audit을 실행하지 않고 자연스러움은 아래 inline fallback review에서 확인한다. machine-surface self-audit과 chezmoi sync는 N/A: 해당 runtime surface 변경 없음.
+  - **Evidence:** 최종 checklist/lesson 수정분에서 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram 50 tests), `git diff --check` 통과, EN/KO README 및 CHANGELOG 참조 parity 확인, public 문서에서 machine-local runtime 식별자/복구 진단 문자열이 없음을 확인했다. 독립 문서 review 최종 `PASS`, actionable finding 0건. `clinic-appointment` 전용 terminology rules는 본 문서에 적용되지 않는다. machine-surface self-audit과 chezmoi sync는 N/A: runtime surface 변경 없음.
   - **Failure:** 실패한 적용 gate가 있으면 PR 전 수리한다.
-- [x] **E-06 — durable pre-PR proof**
-  - **Action:** 변경 diff·교훈·독립 review 또는 승인된 inline fallback·exact commit을 수렴한다.
-  - **Evidence:** 현재 candidate diff와 새 lesson을 inline fallback으로 검토하고 P0/P1=0을 기록했다. reviewer 실행은 timeout 후 중단됐으며 독립 attestation으로 계산하지 않는다. final local commit과 receipt의 exact-head 확인을 함께 기록한다. PR #40의 이전 review는 새 변경 증거가 아니다.
-  - **Failure:** 필요한 증거가 없으면 PR을 만들지 않는다.
+- [x] **E-06 — durable PR-update proof**
+  - **Action:** 후속 문서 diff·교훈·독립 review 또는 승인된 inline fallback·exact commit을 수렴한다.
+  - **Evidence:** 이번 checklist/lesson 보정 diff의 독립 review는 `PASS`, actionable finding 0건이다. 두 파일만 포함한 scoped Lore commit을 생성했고, PR #41 exact-head read-back은 push 뒤 다시 수행한다. 최초 candidate의 inline verdict와 PR #40의 과거 review는 이 후속 변경 증거로 계산하지 않는다.
+  - **Failure:** 새 문서 diff의 review와 검증 증거 없이 PR #41을 갱신하지 않는다.
 - [ ] **E-07 — 공통 PR delivery**
-  - **Action:** CG-11..15에 따라 PR을 준비하고 정확한 상태를 보고한다.
-  - **Evidence:** version-sync 후보 PR은 생성·push 권한이 확인되지 않아 미실행이다. PR #40은 선행 문서 변경의 과거 이력일 뿐 새 후보의 PR 증거가 아니다.
-  - **Failure:** exact candidate SHA에 대한 별도 권한과 검증 없이 PR을 생성하지 않는다.
+  - **Action:** CG-11..15에 따라 PR #41을 갱신하고 정확한 상태를 보고한다.
+  - **Evidence:** PR #41은 이미 `develop` <- `release/bluetape-skills-1.4.1`로 생성됐다. 이번 후속 commit push와 본문 갱신 뒤 exact SHA 및 PR metadata/read-back을 다시 기록한다.
+  - **Failure:** 원격 head가 새 local commit과 일치하지 않으면 갱신 완료로 처리하지 않는다.
 - [ ] **E-08 — fresh merge approval 이후 closeout**
   - **Action:** 사용자 승인 후 CG-16..18을 순서대로 실행한다.
-  - **Evidence:** merge, canonical sync, 정리, GNO 결과.
-  - **Failure:** 승인 전에는 merge/정리를 하지 않는다.
+  - **Evidence:** 각 merge-ready exact PR/head 보고 뒤 approval, canonical sync, owned cleanup, GNO 결과. main tag와 GitHub Release는 각각 별도 exact-target approval을 요구한다.
+  - **Failure:** 범용 closeout 요청만으로 exact-target merge/tag/Release approval을 대체하지 않는다.
 
 ## Writer Gate
 
@@ -115,7 +124,7 @@
   - **Failure:** 재사용 가능한 guard가 없으면 교훈을 확정하지 않는다.
 - [x] **SPW-01..05 — 릴리스 계획/checklist**
   - **Action:** 승인 범위·순서·evidence·release hold를 마지막으로 다시 읽는다.
-  - **Evidence:** 본 checklist의 `1.4.1` 후보·기준 SHA·권한 hold를 현재 상태에 맞춰 read-back했고, PR #40 이력과 새 후보 증거를 분리했다.
+  - **Evidence:** 본 checklist를 PR #41 OPEN, live base/head, 당시 exact SHA, current main SHA, v1.4.0 최신 release, checks/reviews 부재, fresh approval 경계에 맞춰 갱신했다. 독립 review 최종 `PASS`; P0/P1/P2/P3와 actionable finding 0건.
   - **Failure:** 빠진 gate나 잘못된 authority가 있으면 PR 전 고친다.
 - [x] **SPW-01..05 — `README.md`**
   - **Action:** 버전 예제와 한국어 README의 대응 내용·독자 안내를 검토한다.
@@ -123,7 +132,7 @@
   - **Failure:** 영어·한국어 예제가 서로 다르면 후보를 제출하지 않는다.
 - [x] **SPW-01..05 — `docs/lessons/2026-10-18-release-promotion-preflight.md`**
   - **Action:** 관찰한 사실·결정·재발 방지 guard와 자연스러운 한국어를 검토한다.
-  - **Evidence:** 새 lesson을 main-session inline fallback으로 검토했다. 독립 reviewer timeout은 기록했으며 이 verdict는 독립 attestation이 아니다. 적용 가능한 terminology series는 없다.
+  - **Evidence:** lesson의 과거 inline verdict를 최초 candidate로 한정하고 PR #41 OPEN 사실과 current update를 구분했다. 독립 review 최종 `PASS`; actionable finding 0건. 적용 가능한 terminology series는 없다.
   - **Failure:** 근거를 넘어서 일반화하거나 승인 경계를 흐리지 않는다.
 - [x] **KO-01..07 — `docs/codex-model-routing.ko.md`**
   - **Action:** 자연스러움·용어·사실·JSON·locale 링크를 확인하고 contextual terminology audit을 실행한다.
@@ -139,7 +148,7 @@
   - **Failure:** 기능 범위를 과장하거나 영문 분류 heading을 남기지 않는다.
 - [x] **KO-01..07 — release checklist**
   - **Action:** 상태·사실·용어·최종 렌더를 검토하고 용어 audit을 다시 실행한다.
-  - **Evidence:** 새 후보의 검증 상태와 권한 경계, PR #40 이력과의 분리를 최종 read-back했다. `clinic-appointment` 전용 terminology rules는 적용하지 않는다.
+  - **Evidence:** checklist 후속 diff의 상태·한국어 용어·자연스러움을 독립 review에서 확인했고 actionable finding 0건이다. `clinic-appointment` 전용 terminology rules는 적용하지 않는다.
   - **Failure:** 미해결 terminology finding을 닫지 않는다.
 - [x] **KO-01..07 — `docs/lessons/2026-10-17-workflow-owner-file-path.md`**
   - **Action:** lesson의 사실·재발 방지 guard와 자연스러운 한국어를 검토한다.
@@ -158,17 +167,18 @@
 - Inline fallback finding: 심각 0, 중요 0, 사소 0. README는 의도한 `v1.4.1` target과 일치하고, 미공개 tag/PR/merge/release를 완료된 사실로 표현하지 않으며, 기존 installer·canonical skill·chezmoi 범위를 변경하지 않았다.
 - Inline fallback 검증: `./scripts/validate.sh` 통과, README/CHANGELOG parity 확인, tracked diff whitespace 검사와 신규 lesson whitespace 검사 통과. 이는 main-session 자체 검토이며 독립 attestation이 아니다.
 - Inline verdict: PASS; P0=0, P1=0.
-- Exact local commit은 이 checklist/inline review report를 포함한다. PR 생성 승인이 있으면 live branch/head와 원격 checks/reviews/threads를 별도로 다시 확인한다.
+- 최초 candidate commit `373a160e8b8e3a9b7103949a7d5d199897ea436a`에 이 checklist와 inline review report가 포함됐고 PR #41이 생성됐다. 그 review verdict는 해당 candidate 당시 diff에만 적용된다.
+- 후속 문서 diff 독립 검토 1차(2026-10-18)는 `REQUEST CHANGES`였다. 지적: 기존 verdict 범위, checklist KO 상태, tag/archive/Release 순서, machine-local runtime 세부, lesson의 PR #41 링크. 다섯 항목을 수정한 뒤 follow-up 독립 검토에서 `PASS`를 받았고 actionable finding은 0건이다. 두 검토 모두 GitHub PR review가 아니라 현재 문서 diff에 대한 별도 검토 증거다.
 
 ## Common Workflow 게이트
 
 - [x] **CG-01 — authority 재확인**
   - **Action:** 현재 AGENTS, plan, status, diff를 확인한다.
-  - **Evidence:** user/workspace/repository guidance, `$release`, `$bluetape-maintenance`, `$bluetape-writer`, common gates 및 current clean canonical `develop`를 확인했다. 현재 계획은 `1.4.1` version-sync 후보 준비로 제한된다.
+  - **Evidence:** user/workspace/repository guidance, `$release`, `$bluetape-maintenance`, `$bluetape-writer`, common gates, PR #41 metadata 및 clean canonical `develop`를 확인했다. 현재 계획은 PR #41 문서 갱신 이후의 검증·승인 gate, exact-tree main promotion, 승인된 tag/Release와 owned cleanup까지 포함한다.
   - **Failure:** 지침이 달라지면 영향받은 gate를 다시 연다.
 - [x] **CG-02 — historical/live 조사**
   - **Action:** GNO를 검색하고 직접 live GitHub를 확인한다.
-  - **Evidence:** 이번 turn GNO에서 repository/domain/action 검색은 관련 결과 없음; live default `develop`, 최신 release `v1.4.0`, PR #40 head `6c527b92b6ed4c67efbf4c092459e55f9f3d0181`가 merge commit `31e69c613e9f908bec27f3a7ebee6e34cabebe21`으로 병합됨, workflows 없음.
+  - **Evidence:** GNO에서 repository/domain/action 검색은 관련 결과 없음. live GitHub에서 PR #41 OPEN, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, checks/reviews/comments 부재, PR #40 merge commit `31e69c613e9f908bec27f3a7ebee6e34cabebe21`, `main` `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 `v1.4.0`, Actions workflow 및 `v1.4.1` tag/Release 부재를 확인했다.
   - **Failure:** 불명확한 이력에 의존해 외부 변경을 하지 않는다.
 - [x] **CG-03 — 기존 작업 보호**
   - **Action:** clean integration checkout에서 격리 worktree를 만든다.
@@ -188,7 +198,7 @@
   - **Failure:** 한 locale 또는 실행 예제가 빠지면 PR을 멈춘다.
 - [x] **CG-07 — 최소 검증**
   - **Action:** 실제 변경 범위를 검증하는 최소 명령을 실행한다.
-  - **Evidence:** `./scripts/validate.sh` 통과(151 tests, 164 subtests, diagram 50 tests); tracked `git diff --check` 통과; 신규 lesson 후행 공백 검사 통과; README 버전 refs 및 CHANGELOG release heading/compare URL 일치.
+  - **Evidence:** 최종 checklist/lesson diff에서 `./scripts/validate.sh` 통과(151 tests, 164 subtests; diagram 50 tests), `git diff --check` 통과, README/CHANGELOG parity 및 live PR #41 사실을 확인했다.
   - **Failure:** 실패 결과를 분류하고 수리 후 재실행한다.
 - [x] **CG-08 — 무거운 검증 직렬화**
   - **Action:** 해당하는 DB/native/emulator/benchmark 검증을 직렬로 수행한다.
@@ -196,27 +206,27 @@
   - **Failure:** 해당 검증이 추가되면 병렬 실행을 피한다.
 - [x] **CG-09 — lesson gate**
   - **Action:** 재사용 가능한 릴리스 선행 조건 누락을 기록하고 독립 검토를 우선 시도한다; 실패 시 inline fallback과 commit을 사용한다.
-  - **Evidence:** `docs/lessons/2026-10-18-release-promotion-preflight.md`에 관찰·결정·guard를 기록하고 checklist의 inline review에 함께 검토했다. workflow receipt는 독립 reviewer 실패를 보존한다. 이전 사용자 요청인 “결정이 필요하면 대상과 선택의 의미를 자세히 설명할 것”도 checklist의 버전·branch·권한 hold에 반영했다.
+  - **Evidence:** `docs/lessons/2026-10-18-release-promotion-preflight.md`를 PR #41 OPEN read-back과 구분하도록 정정해 scoped Lore commit에 포함했다. 독립 review 최종 `PASS`; canonical GNO indexing은 post-merge CG-18에 둔다.
   - **Failure:** 교훈 증거 없이 pre-PR 검토로 진행하지 않는다.
 - [x] **CG-10 — final pre-PR 수렴**
   - **Action:** 독립 review를 우선 시도한다. 불가하면 inline fallback에서 P0/P1을 해소하고 exact local commit을 만든다.
-  - **Evidence:** 독립 review 실행 실패 후 workspace-approved inline fallback verdict `PASS; P0=0, P1=0`을 checklist에 기록하고 exact local commit을 생성한다. remote PR/check evidence는 포함하지 않는다.
+  - **Evidence:** 후속 checklist/lesson diff 독립 review `PASS`, actionable finding 0건; `./scripts/validate.sh` 및 `git diff --check` 통과. 최종 scoped Lore commit은 README/CHANGELOG/기존 PR 내용을 보존하고 후속 checklist/lesson diff만 추가했다.
   - **Failure:** unresolved P0/P1 또는 dirty diff이면 PR을 만들지 않는다.
-- [ ] **CG-11 — PR authority 확인**
+- [x] **CG-11 — PR authority 확인**
   - **Action:** 대상 repository/base/head와 PR 생성 권한을 확인한다.
-  - **Evidence:** 제안 pair는 `bluetape4k/bluetape-skills`, `develop`, `release/bluetape-skills-1.4.1`; 사용자가 이 exact pair와 candidate head의 PR 생성 권한을 승인하기 전까지 PENDING.
+  - **Evidence:** 사용자가 대상 repo `bluetape4k/bluetape-skills`의 version-sync PR 경로를 승인했고 PR #41(`develop` <- `release/bluetape-skills-1.4.1`)이 생성·공개됐다. 이번 후속 head는 push/read-back 후 갱신한다.
   - **Failure:** 범위를 벗어난 PR을 생성하지 않는다.
 - [ ] **CG-12 — exact branch push**
   - **Action:** 수렴된 head를 원격에 push하고 SHA를 되읽는다.
-  - **Evidence:** exact-head PR 생성 authority 이후 push 결과와 local/remote SHA를 기록한다.
+  - **Evidence:** 기존 PR head push는 완료됐다. 이번 문서 갱신 commit의 push와 local/remote SHA 대조는 아직 필요하다.
   - **Failure:** 원격 head가 다르면 덮어쓰지 않고 멈춘다.
 - [ ] **CG-12A — PR 직전 guidance 갱신**
-  - **Action:** PR 생성 직전 AGENTS·leaf/common gate·template·issue metadata를 다시 읽는다.
-  - **Evidence:** PR 생성 권한이 주어지면 exact `develop`/candidate head, 현재 template·label·milestone 및 guidance를 그 직전에 재확인한다.
+  - **Action:** PR body 갱신 직전 AGENTS·leaf/common gate·template·issue metadata를 다시 읽는다.
+  - **Evidence:** 기존 guidance 계층과 PR #41 metadata를 현재 turn에서 read-back했다. 후속 commit push 직전에 exact base/head와 template, label, milestone, assignee를 다시 확인한다.
   - **Failure:** guidance drift가 있으면 영향 gate를 갱신한다.
-- [ ] **CG-13 — PR 생성/확인**
-  - **Action:** Korean body와 `## DoD Status` 마지막 section을 사용해 PR을 만든다.
-  - **Evidence:** exact-head authority 후 live PR URL/head/metadata/body를 read-back한다.
+- [ ] **CG-13 — PR 갱신/확인**
+  - **Action:** Korean body와 `## DoD Status` 마지막 section을 유지하면서 PR #41 body를 갱신한다.
+  - **Evidence:** 후속 exact head push 뒤 live PR URL/head/metadata/body를 다시 read-back한다.
   - **Failure:** metadata/body가 다르면 CI 진행 전에 수정한다.
 - [ ] **CG-14 — CI, review, thread 확인**
   - **Action:** exact-head checks와 live review/thread 상태를 확인한다.
@@ -224,7 +234,7 @@
   - **Failure:** CI 실패·미해결 thread·P0/P1은 merge-ready를 막는다.
 - [ ] **CG-15 — merge-ready 보고**
   - **Action:** gate 수와 PR/head를 reconcile해 사용자에게 보고한다.
-  - **Evidence:** 새 version-sync PR의 exact head와 checks/리뷰/N/A 수를 보고한다. PR #40은 이미 `31e69c6`으로 병합됐으며 새 PR 상태를 대신하지 않는다.
+  - **Evidence:** PR #41 exact head와 checks/reviews/comments, 적용 가능한 독립/inline review 및 N/A 수를 대조해 사용자에게 별도 보고한다.
   - **Failure:** 누락 증거가 있으면 fresh merge 승인을 요청하지 않는다.
 - [ ] **CG-16 — fresh merge 승인**
   - **Action:** merge-ready 보고 뒤 exact PR/head에 대해 새 승인을 받는다.
@@ -248,18 +258,18 @@
   - **Failure:** feature worktree에서 색인하지 않는다.
 - [ ] **CG-X01 — 불가역 배포 action 승인**
   - **Action:** stable main promotion/tag/release 직전에 정확한 SHA와 fresh approval을 확인한다.
-  - **Evidence:** 이번 계획 승인은 이 action을 허용하지 않는다.
-  - **Failure:** 승인 없이는 main merge, tag, Release를 실행하지 않는다.
+  - **Evidence:** 전체 closeout 요청은 있지만 정확한 merge-ready PR/head, main target SHA tag, 별도 GitHub Release approval을 아직 얻지 않았다.
+  - **Failure:** 각 exact-target approval 전에는 main merge, tag, Release를 실행하지 않는다.
 
 ## Stable Release 게이트
 
 - [x] **PUB-01 — release 대상/authority 고정**
   - **Action:** 버전, 이전 공개 버전, 범위와 hold를 기록한다.
-  - **Evidence:** 최신 공개 릴리스 `v1.4.0`; 목표 `1.4.1`; 수동 참고자료 소비자 범위; `develop` 기준 SHA `31e69c613e9f908bec27f3a7ebee6e34cabebe21`. `develop` <- `release/bluetape-skills-1.4.1` 후보 쌍은 제안 상태이며 외부 push/PR 권한은 미승인이다. `main`/tag/Release 보류를 유지한다.
+  - **Evidence:** 최신 공개 릴리스 `v1.4.0`; 목표 `1.4.1`; 독자가 참고해 수동 적용하는 범위; `develop` 기준 SHA `31e69c613e9f908bec27f3a7ebee6e34cabebe21`. PR #41은 `develop` <- `release/bluetape-skills-1.4.1`로 OPEN이다. 사용자는 전체 closeout을 요청했으며 merge/tag/Release는 각 exact-target approval 전까지 hold한다.
   - **Failure:** 후보 version이나 authority가 달라지면 재계획한다.
 - [x] **PUB-02 — live/historical 확인**
   - **Action:** GNO 이력과 live branch/release/PR/workflow 상태를 확인한다.
-  - **Evidence:** 아래 GNO 검색에서 현재 후보와 관련한 결과는 없었다. Live GitHub에서 public/default `develop`, 최신 `v1.4.0`, PR #40 병합, GitHub Actions workflow 부재, `v1.4.1` tag/Release 부재를 확인했다. 현재 release PR은 아직 생성하지 않았다.
+  - **Evidence:** 아래 GNO 검색에서 현재 후보와 관련한 결과는 없었다. 2026-10-18 live read-back에서 PR #41 OPEN, base `develop`, 당시 head `373a160e8b8e3a9b7103949a7d5d199897ea436a`, checks/reviews/comments 부재, main `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309`, 최신 `v1.4.0`, Actions workflow 및 `v1.4.1` tag/Release 부재를 확인했다. 후속 push 전 새 exact head를 다시 읽는다.
   - **Failure:** stale GNO를 live GitHub 사실로 취급하지 않는다.
 - [x] **PUB-03 — canonical skill parity**
   - **Action:** 변경된 canonical skill 수와 public parity를 확인한다.
@@ -267,20 +277,20 @@
   - **Failure:** skill 내용 변경이 생기면 source parity gate를 연다.
 - [ ] **PUB-04 — release validation**
   - **Action:** exact stable candidate에 validator·archive·checksum·isolated install을 실행한다.
-  - **Evidence:** 이번 version-sync 편집 후 `./scripts/validate.sh`는 통과했다(151 tests, 164 subtests, diagram 50 tests). 다만 이 gate가 요구하는 exact stable candidate의 tag/archive/checksum/isolated-install 증명은 아직 없으며 승인된 stable release 단계에서 수행한다.
+  - **Evidence:** 최초 version-sync 편집과 현재 checklist/lesson 수정분 모두 `./scripts/validate.sh`를 통과했다(각 151 tests, 164 subtests, diagram 50 tests). 다만 exact stable tag 기반 archive/checksum/isolated-install 증명은 아직 없어 승인된 release 단계에서 검증해야 한다.
   - **Failure:** tag 대상 산출물 검증이 없으면 release하지 않는다.
 - [ ] **PUB-05 — develop PR merge-ready/main promotion hold**
   - **Action:** exact `develop` PR 검증 후 `main` 승격 범위를 다시 고정한다.
-  - **Evidence:** PR #40은 현재 `develop` 기준에 병합됐지만, `1.4.1` 버전 동기화 후보 PR은 아직 생성·검토되지 않았다. 새 PR의 exact-head merge-ready 확인 후 `main` 승격 보류 조건을 갱신한다.
+  - **Evidence:** PR #41은 OPEN이며 exact-head merge-ready가 아직 아니다. 병합 후 exact merge tree를 고정해 별도 `main` promotion PR을 만든다.
   - **Failure:** stale head나 unresolved check이면 승격하지 않는다.
 - [ ] **PUB-06 — exact SHA integration**
   - **Action:** 승인된 merge 및 `main` target SHA를 검증한다.
-  - **Evidence:** 아직 merge 권한을 받지 않았다.
+  - **Evidence:** 사용자는 전체 merge 경로를 요청했지만 PR #41의 merge-ready exact-head 보고와 그 뒤의 fresh approval은 아직 없다.
   - **Failure:** 다른 SHA를 release target으로 선택하지 않는다.
 - [ ] **PUB-07 — tag와 GitHub Release**
-  - **Action:** 별도 fresh approval 뒤 SSH-signed immutable `v1.4.1` tag와 Release를 생성한다.
-  - **Evidence:** 현재 미승인/미실행.
-  - **Failure:** approval 전에는 tag나 Release를 만들지 않는다.
+  - **Action:** exact main SHA의 승인 뒤 SSH-signed immutable `v1.4.1` tag를 만든다. tag 기반 archive/checksum/isolated-install 검증을 마친 다음 non-prerelease GitHub Release 직전에 별도 approval을 받고 asset을 게시한다.
+  - **Evidence:** main target SHA와 tag approval, tag 검증, archive 검증, 별도 Release approval이 순차적으로 필요하다. 현재는 모두 미실행이다.
+  - **Failure:** tag 승인 전에는 tag를 만들지 않고, artifact validation과 별도 Release approval 전에는 Release나 asset을 게시하지 않는다.
 - [x] **PUB-08 — downstream consumer sync**
   - **Action:** automated consumer update 대상을 확인한다.
   - **Evidence:** N/A — 문서는 독자별 수동 적용이며 자동 downstream consumer가 없다.
@@ -290,8 +300,8 @@
   - **Evidence:** N/A — 별도 승인 없이는 이번 범위에 포함하지 않는다.
   - **Failure:** 후속 feature를 이 PR에 끼워 넣지 않는다.
 - [ ] **PUB-10 — locale/release archive/checksum**
-  - **Action:** release 시 README locale, Korean notes, `.tar.gz`, `.zip`, `SHA256SUMS`를 검증한다.
-  - **Evidence:** release tag가 아직 승인·생성되지 않았다.
+  - **Action:** release 시 README locale, Korean notes, versioned top-level directory를 포함한 `.tar.gz`/`.zip`, `SHA256SUMS`를 생성·검증한다.
+  - **Evidence:** release tag와 정식 Release가 아직 생성되지 않아 archive/checksum과 locale 검증은 미실행이다.
   - **Failure:** 불일치 artifact를 게시하지 않는다.
 - [ ] **PUB-11 — artifact와 residual risk 보고**
   - **Action:** URL, SHA, isolation 결과, 잔여 위험을 최종 보고한다.
@@ -310,8 +320,8 @@
 - 새 모델/effort가 수신자의 공식 Codex 설정 문서나 OMX 설정 schema에서 확인되지 않으면 해당 예제를 공개하지 않는다.
 - 사용자별 설정 값은 공개하지 않으며 예제 JSON은 model 관련 두 key만 담는다. 기존 JSON의 다른 key는 보존하도록 안내한다.
 - PR head가 바뀌면 exact-head review·CI·상태 evidence를 다시 수집한다.
-- Merge, `main` 승격, tag, release는 각 대상 SHA와 hold 상태를 다시 읽고 사용자가 별도로 승인하기 전에는 실행하지 않는다.
-- 후보 branch push/PR 생성도 사용자가 저장소, base `develop`, head `release/bluetape-skills-1.4.1`, 검토된 candidate SHA를 지정해 승인하기 전까지 보류한다.
+- Merge는 merge-ready 보고 직후 exact PR/head에 대한 fresh approval을 받고 실행한다. `main` promotion PR도 같은 exact-head gate를 거친다. tag는 exact main SHA의 별도 approval, non-prerelease GitHub Release는 다시 별도 approval을 요구한다.
+- version-sync PR #41 생성·push 권한은 행사됐다. 후속 commit은 새 exact head를 push한 뒤 remote/local parity와 PR metadata를 재검증한다.
 
 ## 결과 기록
 
