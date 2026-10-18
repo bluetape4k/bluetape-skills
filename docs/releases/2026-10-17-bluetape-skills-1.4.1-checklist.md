@@ -47,6 +47,7 @@
 - 따라서 `31e69c613e9f908bec27f3a7ebee6e34cabebe21`을 바로 `main`에 승격하지 않는다. 먼저 `v1.4.1` 버전 참조를 `develop`에 반영하고, 그 exact head를 검증·승인받은 뒤 별도의 `main` promotion PR을 준비한다.
 - 현재 version-sync 후보 PR은 #41로 이미 생성되어 있다. 아래 PR 상태는 최초 후보 준비 기록과 현재 live closeout 상태를 구분해 읽는다.
 - 다음 release에서도 안정 승격 전 `develop`의 README 태그 예제와 CHANGELOG heading/link가 목표 버전과 일치하는지 확인한다.
+- `main` promotion PR을 만들기 전에는 아래 `PUB-12` release-closeout reconciliation gate를 통과한다. 버전 참조 동기화만으로 과거 릴리스의 병합·게시 증거가 보존됐다고 간주하지 않는다.
 
 ## Workflow Gate
 
@@ -289,6 +290,10 @@
   - **Action:** exact `develop` PR 검증 후 `main` 승격 범위를 다시 고정한다.
   - **Evidence:** 이전 merge-ready 보고는 이후 branch 변경으로 supersede됐다. 최종 exact head에 대한 독립 review·live metadata·checks/thread read-back 및 새 사용자 보고를 완료한 뒤, 병합 후 exact merge tree만 별도 `main` promotion PR에 사용한다.
   - **Failure:** stale head나 unresolved check이면 승격하지 않는다.
+- [ ] **PUB-12 — main/develop release-closeout reconciliation**
+  - **Action:** main promotion 후보를 만들기 전에 `develop`과 `main`의 모든 `docs/releases/*checklist.md`와 관련 lesson을 exact SHA 기준으로 비교한다. main에만 있는 완료 증거는 live GitHub에서 다시 검증한 뒤 `develop` 문서에 날짜가 있는 후속 read-back으로 복구한다. 과거 체크리스트 기록은 덮어쓰지 않는다.
+  - **Evidence:** 2026-10-19 `develop` `1156a0ffbcdd25edd4be97f6dc1a4c0092737b03` / `main` `e0e688bc23e2d5af2476ef245f6f7cc4d0b39309` preflight에서 `docs/releases/2026-08-13-bluetape-skills-1.3.4-checklist.md`의 PR #34/#35 병합 증거와 `docs/releases/2026-09-09-bluetape-skills-1.4.0-checklist.md`의 PR #38/#39·`v1.4.0` 공개 증거가 `main` 문서에는 있으나 `develop` 사본에는 일부 빠진 것을 확인했다. 이 변경은 빠진 기록과 재발 방지 규칙을 복구한다. 이 gate는 변경이 `develop`에 병합된 뒤 exact `develop`/`main` SHA와 promotion candidate tree를 다시 비교할 때까지 `PENDING`이다.
+  - **Failure:** 완료된 merge/tag/Release proof가 candidate tree에서 빠지거나 두 branch 사이 차이를 설명하지 못하면 promotion PR 생성을 중단하고 `develop` 기록부터 복구한다.
 - [ ] **PUB-06 — exact SHA integration**
   - **Action:** 승인된 merge 및 `main` target SHA를 검증한다.
   - **Evidence:** 이전 PR #41 exact-head 보고는 이후 branch 변경으로 supersede됐다. 최종-head 보고와 fresh merge approval 이후 실제 merge SHA를 확인하고, main promotion PR 병합 뒤 exact main SHA를 기록한다.
@@ -319,6 +324,7 @@
 - Initial GNO query: `bluetape-skills Codex model config public bundle manual settings release` in `bluetape4k-github`, `bluetape4k-docs`, `bluetape4k-wiki`.
 - Reformulated queries: `bluetape-skills model routing reference manual config codex`, `bluetape-skills public model configuration example`, `model routing manual setup codex`; no relevant issue/PR/release/lesson was found.
 - Current release-prep queries: `bluetape-skills v1.4.1 release stable promotion main tag GitHub Release` (`bluetape4k-github`), `bluetape-skills release v1.4.0 v1.4.1 main tag stable branch` (`bluetape4k-docs`), and `public skill bundle release promotion main immutable tag GitHub Release` (`bluetape4k-wiki`); no relevant results. Live GitHub read-back supplies current authority.
+- 2026-10-19 reconciliation queries: `bluetape-skills 1.3.4 1.4.0 closeout merge tag release main develop` (`bluetape4k-github`) and `bluetape-skills release evidence reconciliation merge closeout` (`bluetape4k-docs`); no results. Live PR/tag/Release read-back and exact branch comparison supply current authority.
 - Live GitHub remains the authority for default branch, release, PR and workflow state.
 
 ## 중단 조건
@@ -328,6 +334,7 @@
 - PR head가 바뀌면 exact-head review·CI·상태 evidence를 다시 수집한다.
 - Merge는 merge-ready 보고 직후 exact PR/head에 대한 fresh approval을 받고 실행한다. `main` promotion PR도 같은 exact-head gate를 거친다. tag는 exact main SHA의 별도 approval, non-prerelease GitHub Release는 다시 별도 approval을 요구한다.
 - version-sync PR #41의 생성·push 권한은 행사됐다. PR head가 바뀌면 해당 SHA에 대해 independent review, checks/reviews/thread read-back, 사용자 merge-ready 보고를 다시 수행한다.
+- `PUB-12`가 `PENDING`이면 `main` promotion branch/PR을 만들지 않는다. 복구된 release checklist와 lesson이 merge된 뒤 새 branch diff에서 closeout 증거의 보존을 확인한다.
 
 ## 결과 기록
 
