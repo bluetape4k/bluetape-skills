@@ -8,6 +8,11 @@ Installable, canonical [Codex skills](https://developers.openai.com/codex/skills
 
 The repository is a portable public bundle, not a copy of a maintainer's Codex home. It includes the complete reusable skill units while keeping user-specific configuration and runtime data outside the distribution boundary.
 
+It also provides an optional [manual model-configuration reference](docs/codex-model-routing.md)
+for developers who want to apply settings themselves. The installer does not
+apply these examples: `scripts/install.sh` installs skill folders only and
+never edits `config.toml` or `.omx-config.json`.
+
 [![Public bundle boundary: canonical Bluetape skills and their reusable resources are included, while personal runtime state is excluded](docs/images/bluetape-skills-public-bundle-boundary-01.png)](docs/images/bluetape-skills-public-bundle-boundary-01.svg)
 
 ## Install
@@ -15,7 +20,7 @@ The repository is a portable public bundle, not a copy of a maintainer's Codex h
 Install the stable release, validate the bundle, and run the installer:
 
 ```bash
-git clone --branch v1.4.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
+git clone --branch v1.4.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git
 cd bluetape-skills
 ./scripts/validate.sh
 ./scripts/install.sh
@@ -23,7 +28,7 @@ cd bluetape-skills
 
 Validation requires Bash, `rg`, Python 3, and `uv`. It checks the public bundle boundary and workflow contracts, then runs the bundled workflow and diagram-audit regression suites in ephemeral Python environments.
 
-The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrite an existing canonical skill. Use `--force` only when you want a timestamped backup of the installed skill before replacement.
+The installer writes to `${CODEX_HOME:-$HOME/.codex}/skills`. It refuses to overwrite an existing canonical skill. Use `--force` only when you want a timestamped backup of the installed skill before replacement.
 
 ```bash
 ./scripts/install.sh --dry-run
@@ -33,15 +38,15 @@ The installer writes to `${CODEX_HOME:-~/.codex}/skills`. It refuses to overwrit
 
 Restart Codex after installation so the new skills are discovered.
 
-To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.4.0 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
+To follow unreleased changes, clone the default `develop` branch by omitting the `--branch v1.4.1 --depth 1` options. The `main` branch is reserved for reviewed stable-release promotion. Published versions and downloadable bundles are available from [GitHub Releases](https://github.com/bluetape4k/bluetape-skills/releases).
 
 ## Update
 
 Release tags are immutable. To upgrade a stable installation, clone the newer tag into a fresh directory, validate it, and replace the installed skills with a backup:
 
 ```bash
-git clone --branch v1.4.0 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.4.0
-cd bluetape-skills-v1.4.0
+git clone --branch v1.4.1 --depth 1 https://github.com/bluetape4k/bluetape-skills.git bluetape-skills-v1.4.1
+cd bluetape-skills-v1.4.1
 ./scripts/validate.sh
 ./scripts/install.sh --force
 ```
@@ -99,6 +104,7 @@ Any remaining `P0` or `P1` finding blocks the next gate. Repair the blocker, rer
 
 ## Guides
 
+- [Codex and OMX model settings](docs/codex-model-routing.md) is an optional manual reference; it is not applied by the installer.
 - [Sharing and installing Bluetape skills](https://bluetape4k.github.io/blog/bluetape-skills-sharing/) explains the public bundle, source ownership, installation, updates, and collaboration model.
 - [Using the Bluetape workflow](https://bluetape4k.github.io/blog/bluetape-skills-workflow-guide/) explains task classification, checklist gates, staged multi-perspective review, and the P0/P1 zero-blocker loop.
 

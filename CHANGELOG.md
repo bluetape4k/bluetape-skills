@@ -4,6 +4,23 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-10-18
+
+### 추가
+
+- Codex 기본 모델과 OMX의 현재 agent role별 모델·추론 강도를 수동 적용할
+  수 있도록 한·영 참고 문서와 README 링크를 추가했습니다. 설치 스크립트는
+  사용자 설정을 변경하지 않습니다.
+- workflow receipt의 owner file 경로 경계를 확인하고 fencing 값을 보호하는
+  재발 방지 교훈을 추가했습니다.
+
+### 변경
+
+- README의 기본 skill 설치 경로 예시에서 shell이 실제로 확장하지 않는
+  `~` 표현을 `$HOME`으로 바로잡았습니다.
+- 안정 `main` 승격 전에 `develop`의 README tag 예제와 CHANGELOG를 목표 버전에
+  맞추도록 release checklist의 선행 순서를 명확히 했습니다.
+
 ## [1.4.0] - 2026-09-09
 
 ### 추가
@@ -203,8 +220,9 @@ Bluetape Skills의 주요 변경 사항을 이 파일에 기록합니다.
 [1.2.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.2.2
 [1.3.3]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.3
 [1.3.4]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.4
+[1.4.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.4.1
 [1.4.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.4.0
 [1.3.2]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/bluetape4k/bluetape-skills/releases/tag/v1.3.0
-[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.4.0...develop
+[Unreleased]: https://github.com/bluetape4k/bluetape-skills/compare/v1.4.1...develop
